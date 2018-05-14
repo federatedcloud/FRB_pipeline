@@ -1,0 +1,6 @@
+# python ignores
+*.pyc
+
+# folders to ignore
+test/
+othertest/
