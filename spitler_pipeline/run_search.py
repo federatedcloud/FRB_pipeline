@@ -20,6 +20,7 @@ class Timer:
         self.realfft = 0.0
         self.accelsearch = 0.0
         self.presto_sp = 0.0
+        self.mod_index = 0.0
         self.total = 0.0
 
     def print_summary(self):
@@ -34,6 +35,7 @@ class Timer:
         print "realfft                              %.2f" %(self.realfft/60.)
         print "accelsearch                          %.2f" %(self.accelsearch/60.)
         print "single_pulse_search                  %.2f" %(self.presto_sp/60.)
+        print "palfa_calc_mi                        %.2f" %(self.mod_index/60.)
         print "\n"
         print "Total Runtime = %.2f min" %(self.total/60.)
 
@@ -50,6 +52,7 @@ class Timer:
         fout.write( "realfft                              %.2f\n" %(self.realfft/60.))
         fout.write( "accelsearch                          %.2f\n" %(self.accelsearch/60.))
         fout.write( "single_pulse_search                  %.2f\n" %(self.presto_sp/60.))
+        fout.write( "palfa_calc_mi                        %.2f\n" %(self.mod_index/60.))
         fout.write( "\n"                                                   )
         fout.write( "Total Runtime = %.2f min\n" %(self.total/60.))
         fout.close()
@@ -72,6 +75,8 @@ def check_dependencies(work_dir, fits_dir, fitsbase):
         print "   - PRESTO acceleration search and candidate sifting"
     if params.do_presto_sp:
         print "   - PRESTO singlepulse search (singlepulse.py)"
+    if params.do_mod_index:
+        print "   - PALFA2 modulation index calculation"
     # Print to screen what processing steps are being skipped
     print "\nThe following processing steps are being skipped:\n"
     if params.do_rfifind == 0:
@@ -82,6 +87,8 @@ def check_dependencies(work_dir, fits_dir, fitsbase):
         print "   - PRESTO acceleration search and candidate sifting"
     if params.do_presto_sp == 0:
         print "   - PRESTO singlepulse search (singlepulse.py)"
+    if params.do_mod_index:
+        print "   - PALFA2 modulation index calculation"
     print "\nChecking dependencies...\n"
     # There must be at least one .fits file in the fits directory
     fl = glob(fits_dir + '/%s*.fits' %fitsbase)
@@ -580,6 +587,25 @@ def run_singlepulse_search(work_dir):
     t_sp_end = time.time()
     dt = t_sp_end - t_sp_start
     return dt
+
+def combine_sp_files():
+    """
+    Combines all the .singlepulse files from the single_pulse_search into a single .sp file
+    that the modulation index calculation is expecting.
+    
+    TODO: this function is currently under construction... use with caution.
+    """
+    return
+
+def run_mod_index():
+    """
+    Calculates the modulation index using the Laura Spitler method.
+    
+    TODO: this function is currently under construction... use with caution.
+    """
+    print("Calculating modulation index...\n")
+    print("CAUTION: this code is not complete\n")
+    return
 
 def search_beam(fitsname, fits_dir, work_dir):
     tt = Timer()

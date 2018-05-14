@@ -17,6 +17,7 @@ do_prepsub    = 1       # Run PRESTO prepsubband dedispersion
 do_fft        = 0       # FFT *dat files before accelsearch
 do_candsearch = 0       # Run PRESTO accelsearch on the data
 do_presto_sp  = 1       # Run PRESTO singlepulse.py
+do_mod_index  = 0       # Run PALFA2 modulation index calculation
 do_param_cp   = 0       # copy parameter file to output directory 
 
 # data format type
@@ -62,6 +63,8 @@ accel_cores = 1         # number of processing cores
 max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
 sp_otherflags = "-f "   # Other flags
+
+# Modulation Index calculation parameters
 
 
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):
