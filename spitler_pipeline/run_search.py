@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-import pipe_params as params
+import params
 import sifting
 import re
 import shlex
