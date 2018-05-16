@@ -144,7 +144,7 @@ def try_cmd(cmd, stdout=None, stderr=None):
     """
     print "\n\n %s \n\n" %cmd
     try:
-        retval = sp.check_call(cmd, shell=True, stdout=stdout, stderr=stderr)
+        retval = sp.check_call(cmd, shell=True, stdout=stdout, stderr=stderr, executable='/bin/bash')
     except sp.CalledProcessError:
         print("The command:\n %s \ndid not work, quitting..." %cmd)
         sys.exit(0)
@@ -588,14 +588,25 @@ def run_singlepulse_search(work_dir):
     dt = t_sp_end - t_sp_start
     return dt
 
-def combine_sp_files():
+def combine_sp_files(basename, work_dir):
     """
     Combines all the .singlepulse files from the single_pulse_search into a single .sp file
     that the modulation index calculation is expecting.
     
     TODO: this function is currently under construction... use with caution.
     """
-    return
+    print("Combining .singlepulse files...\n")
+    t_awk_start = time.time()
+    sp_dir = work_dir+'/single_pulse/'
+    
+    awk_cmd = """awk '$1!="#" {print}' %s_DM*.singlepulse > %s_MF.sp""" %(basename, basename)
+    cmd = "(pushd %s && %s; popd)" %(sp_dir, awk_cmd) # run command in sp_dir
+    try_cmd(cmd)
+    
+    t_awk_end = time.time()
+    dt = t_awk_end - t_awk_start
+    print("awk command took %.2f hours.\n" %(dt/3600.))
+    return dt
 
 def run_mod_index():
     """

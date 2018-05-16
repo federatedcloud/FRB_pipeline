@@ -4,3 +4,7 @@
 # folders to ignore
 test/
 othertest/
+
+# my testing files
+test.py
+junk.py
