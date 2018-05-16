@@ -27,7 +27,9 @@ dat_type = 'psrfits'
 
 # Locations of all the required scripts
 #singlepulse = 'single_pulse_search.py'
-singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"
+#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"
+singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"
+palfa_mi = "/home/jovyan/modulation_index/mi_src/palfa_mi"
 
 # rfifind params
 use_mask  = 1           # use the rfi mask?
@@ -64,8 +66,9 @@ max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
 sp_otherflags = "-f "   # Other flags
 
-# Modulation Index calculation parameters
-
+# Maskdata and Modulation Index calculation parameters
+md_flags = "-nobary -noweights -nooffsets -noscales -mask "
+md_otherflags = "-o junk.dat "
 
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):
 #--------------------------------------------------------------
