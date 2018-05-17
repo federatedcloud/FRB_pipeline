@@ -17,7 +17,7 @@ do_prepsub    = 1       # Run PRESTO prepsubband dedispersion
 do_fft        = 0       # FFT *dat files before accelsearch
 do_candsearch = 0       # Run PRESTO accelsearch on the data
 do_presto_sp  = 1       # Run PRESTO singlepulse.py
-do_mod_index  = 0       # Run PALFA2 modulation index calculation
+do_mod_index  = 1       # Run PALFA2 modulation index calculation
 do_param_cp   = 0       # copy parameter file to output directory 
 
 # data format type
@@ -27,8 +27,8 @@ dat_type = 'psrfits'
 
 # Locations of all the required scripts
 #singlepulse = 'single_pulse_search.py'
-#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"
-singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"
+#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"; sp_modified = False
+singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
 palfa_mi = "/home/jovyan/modulation_index/mi_src/palfa_mi"
 
 # rfifind params
@@ -68,7 +68,7 @@ sp_otherflags = "-f "   # Other flags
 
 # Maskdata and Modulation Index calculation parameters
 md_flags = "-nobary -noweights -nooffsets -noscales -mask "
-md_otherflags = "-o junk.dat "
+md_otherflags = " -o junk.dat "
 
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):
 #--------------------------------------------------------------

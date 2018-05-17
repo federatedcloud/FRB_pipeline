@@ -576,7 +576,10 @@ def run_singlepulse_search(work_dir):
     print("Looking for single pulses...\n")
     t_sp_start = time.time()
     #cmd = sp_exe+' -m '+str(w_max)+' '+work_dir+'/*.dat'
-    cmd = "%s -m %.6f -d %d %s %s/*.dat" %(sp_exe, w_max, dfac, flags, work_dir)
+    if params.sp_modified:
+        cmd = "%s -m %.6f %s %s/*.dat" %(sp_exe, w_max, flags, work_dir)
+    else:
+        cmd = "%s -m %.6f -d %d %s %s/*.dat" %(sp_exe, w_max, dfac, flags, work_dir)
     try_cmd(cmd)
 
     sp_dir = work_dir+'/single_pulse/'
@@ -588,19 +591,18 @@ def run_singlepulse_search(work_dir):
     dt = t_sp_end - t_sp_start
     return dt
 
-def run_maskdata(maskname):
+def run_maskdata(maskname, basename):
     """
     Creates a masked dynamic spectrum called raw_data_with_mask.fits,
     which is the file needed for modulation index
-    
-    TODO: this function is currently under construction... use with caution.
     """
     print("Creating masked dynamic spectrum...\n")
     
     t_md_start = time.time()
     
     md_exec = "maskdata "
-    cmd = md_exec + params.md_flags + maskname + params.otherflags + filenamestr
+    filenamestr = params.fits_dir + "/" + basename + ".fits" #"thisisjusttoseeifitworks"
+    cmd = md_exec + params.md_flags + maskname + params.md_otherflags + filenamestr
     try_cmd(cmd)
     
     t_md_end = time.time()
@@ -622,19 +624,17 @@ def combine_sp_files(work_dir, basename):
     
     t_awk_end = time.time()
     dt = t_awk_end - t_awk_start
-    print("awk command took %.2f hours.\n" %(dt/3600.))
-    return
+    return dt
 
 def run_mod_index(work_dir, basename):
     """
     Calculates the modulation index using the Laura Spitler method.
-    
-    TODO: this function is currently under construction... use with caution.
     """
     print("Calculating modulation index...\n")
-    print("CAUTION: this code is not complete\n")
     
     t_mi_start = time.time()
+    
+    combine_sp_files(work_dir, basename)
     
     mi_exec = params.palfa_mi
     combined_file = work_dir + "/single_pulse/" + "%s_MF.sp" %(basename)
@@ -708,15 +708,11 @@ def search_beam(fitsname, fits_dir, work_dir):
     
     # Create the masked dynamic spectrum
     if params.do_mod_index:
-        run_maskdata(maskname)
-    
-    # Consolidate all singlepulse files into a single file
-    if params.do_mod_index:
-        combine_sp_files(work_dir, fitsname)
+        tt.mod_index = run_maskdata(maskname, fitsname)
     
     # Calculate the modulation index
     if params.do_mod_index:
-        run_mod_index(work_dir, fitsname)
+        tt.mod_index += run_mod_index(work_dir, fitsname)
     
     # Create the plots
     # TODO
