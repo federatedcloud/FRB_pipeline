@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import os
 import simple_dm as dedisp
 
+import params
+
 def plot_fil_dspec(filfile, n=8, nsblk=15270, nchan=960):
     """
     filfile = raw_data_with_mask.fits file
@@ -102,15 +104,20 @@ def make_avg_plot(filfile, tstart, tread, dt, freqs,
 
 
 # MAKE AVG DETECT PLOT
-fildir = '/mnt/data1/make_dynamic_spectra_without_RFI/testing_datafile'
-filfile = '%s/raw_data_with_mask.fits' %fildir
+#fildir = '/mnt/data1/make_dynamic_spectra_without_RFI/testing_datafile'
+#filfile = '%s/raw_data_with_mask.fits' %fildir
+#
+#freqs = 1214.28955078 + np.arange(960) * 0.336182022493
+#dt = 6.54761904761905E-05
+#
+#tstart = 128.0 # sec
+#tread  = 0.5   # sec
 
-freqs = 1214.28955078 + np.arange(960) * 0.336182022493
-dt = 6.54761904761905E-05
+freqs = 1214.28955078 + np.arange(params.nsub) * 0.336182022493
+vmin = params.vmin
+vmax = params.vmax
 
-tstart = 128.0 # sec
-tread  = 0.5   # sec
-
-make_avg_plot(filfile, tstart, tread, dt, freqs, 
-              avg_chan=10, avg_samp=20, dm0=557.0, 
-              vmin=6, vmax=7)
+#make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, freqs, 
+#              params.avg_chan, params.avg_samp, params.dm0, 
+#              vmin=6, vmax=7)
+##              vmin, vmax)

@@ -3,7 +3,7 @@
 import os
 import sys
 import time
-import params
+#import params
 import sifting
 import re
 import shlex
@@ -12,6 +12,9 @@ import readhdr
 import subprocess as sp
 import multiprocessing as mp
 from glob import glob
+
+import params
+import make_plots
 
 class Timer:
     def __init__(self):
@@ -668,6 +671,9 @@ def search_beam(fitsname, fits_dir, work_dir):
         cp_cmd = 'cp params.py %s/params.txt' %work_dir
         try_cmd(cp_cmd)
     
+    # Combine mocks - here?
+    # TODO
+    
     # If we haven't done so already, go to results directory
     os.chdir(work_dir)
     
@@ -715,7 +721,10 @@ def search_beam(fitsname, fits_dir, work_dir):
         tt.mod_index += run_mod_index(work_dir, fitsname)
     
     # Create the plots
-    # TODO
+    if params.do_make_plots:
+        make_plots.make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
+            params.avg_chan, params.avg_samp, params.dm0, 
+            vmin=6, vmax=7)
     
     # Finish up time profiling and print summary to screen
     t_finish = time.time()
