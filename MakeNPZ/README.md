@@ -5,7 +5,7 @@
   
   Specifically, this script takes in 2 FITS files **(specifically from the Arecibo Telescope)**, combines them, unpacks the data
   from 8 bit to 4 bit data, manipulates the data array correctly by time vs frequency, and then saves the resulting data array into 
-  an npz file along with headers(subint and primary headers). The resulting npz file is **always** written to disc as **combined_dynamic_spectra.npz**
+  an npz file along with headers(subint and primary headers). The resulting npz file is **ALWAYS** written to disc as **combined_dynamic_spectra.npz**
   
   ### Some Notes
   
