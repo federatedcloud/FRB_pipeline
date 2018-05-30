@@ -12,10 +12,8 @@ subint_header
 from astropy.io import fits
 import numpy as np
 import sys
-
-#NEED TO ADD IN COMBINE MOCKS AS SOON AS ITS FIXED. SO FOR NOW HAVE TO INPUT A COMBINED FITS FILE
-#Command would be just
 import subprocess
+
 file1 = sys.argv[1]
 file2 = sys.argv[2]
 outbasenm = file1[:len(file1)-4] + "combined"
