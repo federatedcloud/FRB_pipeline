@@ -36,5 +36,6 @@
     #if you want the subint header
     variable = npzfile["subint_header"][0] (need to just access the only element in the array to access the dictionary)
   
-  
+  -**Shiva Lakshmanan**  
+   **May 2018**
   
