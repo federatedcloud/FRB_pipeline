@@ -722,9 +722,18 @@ def search_beam(fitsname, fits_dir, work_dir):
     
     # Create the plots
     if params.do_make_plots:
-        make_plots.make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
-            params.avg_chan, params.avg_samp, params.dm0, 
-            vmin=6, vmax=7)
+        if params.do_plot_color:
+            make_plots.make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
+                params.avg_chan, params.avg_samp, params.dm0, 
+                vmin=6, vmax=7)
+        if params.do_plot_grey:
+            make_plots.make_grey_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
+                params.avg_chan, params.avg_samp, params.dm0, 
+                vmin=6, vmax=7)
+        if params.do_plot_reverse:
+            make_plots.make_reverse_grey_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
+                params.avg_chan, params.avg_samp, params.dm0, 
+                vmin=6, vmax=7)
     
     # Finish up time profiling and print summary to screen
     t_finish = time.time()

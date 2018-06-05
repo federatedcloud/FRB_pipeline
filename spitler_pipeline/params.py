@@ -17,12 +17,12 @@ search_dir = "/mnt/data1/pete/test/spitler_pipeline/search"
 # =============================================================================
 # Processing steps to do
 # =============================================================================
-do_rfifind    = 1       # Run PRESTO rfifind and generate a mask
-do_prepsub    = 1       # Run PRESTO prepsubband dedispersion
+do_rfifind    = 0#1       # Run PRESTO rfifind and generate a mask
+do_prepsub    = 0#1       # Run PRESTO prepsubband dedispersion
 do_fft        = 0       # FFT *dat files before accelsearch
 do_candsearch = 0       # Run PRESTO accelsearch on the data
-do_presto_sp  = 1       # Run PRESTO singlepulse.py
-do_mod_index  = 1       # Run PALFA2 modulation index calculation
+do_presto_sp  = 0#1       # Run PRESTO singlepulse.py
+do_mod_index  = 0#1       # Run PALFA2 modulation index calculation
 do_make_plots = 1       # Plots and shows single pulse candidates
 do_param_cp   = 0       # copy parameter file to output directory 
 
@@ -92,6 +92,10 @@ md_otherflags = " -o junk.dat "
 # =============================================================================
 # Plotting Parameters
 # =============================================================================
+do_plot_color = 1       # Plots color and shows single pulse candidates
+do_plot_grey = 1        # Plots grey and shows single pulse candidates
+do_plot_reverse = 1     # Plots reverse grey and shows single pulse candidates
+
 fildir = search_dir
 filfile = "%s/raw_data_with_mask.fits" %fildir
 

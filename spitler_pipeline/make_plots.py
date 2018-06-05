@@ -102,7 +102,56 @@ def make_avg_plot(filfile, tstart, tread, dt, freqs,
     return 
 
 
+def make_grey_avg_plot(filfile, tstart, tread, dt, freqs,
+                  avg_chan=1, avg_samp=1, dm0=0, **plt_kwargs):
+    # READ IN DATA FROM FILFILE
+    nchan = len(freqs)
+    tt, dd = read_fil(filfile, tstart, tread, dt, nchan)
 
+    # AVG DATA
+    favg, davg = dedisp.dspec_avg_tf_dm(dd, freqs, freqs[-1], dt, 
+                        avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
+    
+    # MAKE PLOT
+    ext = [favg[0], favg[-1], tt[0], tt[-1]]
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.imshow(davg, aspect='auto', interpolation='nearest', 
+               origin='lower', extent=ext, cmap='gray', **plt_kwargs)
+    ax.set_xlabel("Frequency (MHz)")
+    ax.set_ylabel("Time (s)")
+    
+    plt.colorbar()
+    plt.show()
+    return 
+
+
+def make_reverse_grey_avg_plot(filfile, tstart, tread, dt, freqs,
+                  avg_chan=1, avg_samp=1, dm0=0, **plt_kwargs):
+    # READ IN DATA FROM FILFILE
+    nchan = len(freqs)
+    tt, dd = read_fil(filfile, tstart, tread, dt, nchan)
+
+    # AVG DATA
+    favg, davg = dedisp.dspec_avg_tf_dm(dd, freqs, freqs[-1], dt, 
+                        avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
+    
+    # MAKE PLOT
+    ext = [favg[0], favg[-1], tt[0], tt[-1]]
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.imshow(davg, aspect='auto', interpolation='nearest', 
+               origin='lower', extent=ext, cmap='gray_r', **plt_kwargs)
+    ax.set_xlabel("Frequency (MHz)")
+    ax.set_ylabel("Time (s)")
+    
+    plt.colorbar()
+    plt.show()
+    return
+
+ 
 # MAKE AVG DETECT PLOT
 #fildir = '/mnt/data1/make_dynamic_spectra_without_RFI/testing_datafile'
 #filfile = '%s/raw_data_with_mask.fits' %fildir
