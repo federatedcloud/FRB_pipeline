@@ -10,3 +10,5 @@ A complete re-production of the PALFA2 pipeline as adapted by Laura Spitler, but
 #### To Be Added Soon
 * Plots - at the end of a run to show candidates for human inspection
 * `combine_mocks` - combines the upper and lower subbands into one `.fits` file
+
+CHANGE
