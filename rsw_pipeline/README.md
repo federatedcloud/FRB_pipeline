@@ -1,6 +1,6 @@
 # rsw_pipeline
 
-Robert Wharton's pipeline as adapted from the PALFA2 pipeline.  This includes the ability to turn on/off various pieces of functionality via the `pipe_params.py` file.
+Robert Wharton's pipeline as adapted from the [PALFA2 pipeline](https://github.com/federatedcloud/transients_pipeline2#transients_pipeline2) streamlined to search for single pulses.  This includes the ability to turn on/off various pieces of functionality via the `pipe_params.py` file.
 
 #### This pipeline includes the ability to run the `PRESTO` commands:
 * `rfifind`
