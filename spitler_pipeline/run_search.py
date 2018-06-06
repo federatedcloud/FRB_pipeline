@@ -1,9 +1,6 @@
-# Much of this code has been copied and modified from the rsw_pipeline written by Robert Wharton
-
 import os
 import sys
 import time
-#import params
 import sifting
 import re
 import shlex
@@ -18,6 +15,7 @@ import make_plots
 
 class Timer:
     def __init__(self):
+        self.combine_mocks = 0.0
         self.rfifind = 0.0
         self.prepsubband = 0.0
         self.realfft = 0.0
@@ -33,6 +31,7 @@ class Timer:
         print "\n"
         print "Program:                         Running Time (min): "
         print "--------                         -----------------  "
+        print "combine_mocks                        %.2f" %(self.combine_mocks/60.)
         print "rfifind                              %.2f" %(self.rfifind/60.)
         print "prepsubband                          %.2f" %(self.prepsubband/60.)
         print "realfft                              %.2f" %(self.realfft/60.)
@@ -50,6 +49,7 @@ class Timer:
         fout.write( "\n"                                                     )
         fout.write( "Program:                         Running Time (min): \n")
         fout.write( "--------                         -----------------  \n")
+        fout.write( "combine_mocks                        %.2f\n" %(self.combine_mocks/60.))
         fout.write( "rfifind                              %.2f\n" %(self.rfifind/60.))
         fout.write( "prepsubband                          %.2f\n" %(self.prepsubband/60.))
         fout.write( "realfft                              %.2f\n" %(self.realfft/60.))
@@ -151,6 +151,22 @@ def try_cmd(cmd, stdout=None, stderr=None):
     except sp.CalledProcessError:
         print("The command:\n %s \ndid not work, quitting..." %cmd)
         sys.exit(0)
+
+def run_combine_mocks(file1, file2, basename, fits_dir):
+    print("Combining 2 fits files")
+    t_combine_start = time.time()
+    
+    file1full = "%s/%s.fits" %(fits_dir, file1)
+    file2full = "%s/%s.fits" %(fits_dir, file2) 
+    fitsname = "%s/%s" %(fits_dir, basename)
+    
+    cmd = "combine_mocks %s %s -o %s" % (file1full, file2full, fitsname)
+    try_cmd(cmd)
+    
+    t_combine_end = time.time()
+    dt = t_combine_end - t_combine_start
+    print("\nCombining files took %f minutes\n" %(dt/60.))
+    return dt
 
 def run_rfifind(fitslist, fitsname, work_dir):
     print("Running rfifind on the psrfits files")
@@ -662,6 +678,11 @@ def search_beam(fitsname, fits_dir, work_dir):
     # Check to see if results directory exists. If not, create it.
     if not os.path.exists(work_dir):
         os.makedirs(work_dir)
+    
+    # If selected, do combine_mocks first
+    if params.do_combine_mocks:
+        tt.combine_mocks = run_combine_mocks(params.combinefile1, params.combinefile2,
+            fitsname, fits_dir)
     
     # Check dependencies for planned processing steps.
     check_dependencies(work_dir, fits_dir, fitsname)

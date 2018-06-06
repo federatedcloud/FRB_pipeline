@@ -1,5 +1,3 @@
-# Much of this code has been copied and modified from the rsw_pipeline written by Robert Wharton
-
 # Get the number of samples from a list of data files
 # 
 # The psrfits header-reading code draws heavily from P. Lazarus'
