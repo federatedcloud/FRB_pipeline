@@ -122,7 +122,8 @@ def dspec_avg_tf_dm(dspec, freqs, f0, dt, avg_chan=1, avg_samp=1, dm0=0.0):
     dd_dm0_t = dspec_avg_time(dd_dm0.T, avg_samp=avg_samp)
     avg_freqs, davg_dm0 = dspec_avg_chan(dd_dm0_t, freqs, avg_chan=avg_chan)
     davg = dedisperse_dspec(davg_dm0.T, dm0, avg_freqs, f0, avg_samp * dt, reverse=True)
-    return avg_freqs, davg.T
+    #return avg_freqs, davg.T
+    return avg_freqs, davg
 
 
 def dspec_avg_chan_dm_GHz(dspec, freqs, f0, dt, avg_chan=1, dm0=0.0):

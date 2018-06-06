@@ -25,7 +25,7 @@ class Timer:
         self.total = 0.0
 
     def print_summary(self):
-        print "****************************************************"
+        print "\n****************************************************"
         print "                  TIME SUMMARY                      "
         print "****************************************************"
         print "\n"
@@ -43,7 +43,7 @@ class Timer:
 
     def write_summary(self, outfile):
         fout = open(outfile, 'w')
-        fout.write( "****************************************************\n")
+        fout.write( "\n****************************************************\n")
         fout.write( "                  TIME SUMMARY                      \n")
         fout.write( "****************************************************\n")
         fout.write( "\n"                                                     )
@@ -70,6 +70,8 @@ def check_dependencies(work_dir, fits_dir, fitsbase):
     """
     # Print to screen what processing steps have been selected
     print "The following processing steps have been selected:\n"
+    if params.do_combine_mocks:
+        print "   - PALFA2 psrfits_utils combine_mocks"
     if params.do_rfifind:
         print "   - PRESTO rfifind (RFI mitigation tools)"
     if params.do_prepsub:
@@ -80,8 +82,12 @@ def check_dependencies(work_dir, fits_dir, fitsbase):
         print "   - PRESTO singlepulse search (singlepulse.py)"
     if params.do_mod_index:
         print "   - PALFA2 modulation index calculation"
+    if params.do_make_plots:
+        print "   - Plot single pulse candidates that meet mi threshold"
     # Print to screen what processing steps are being skipped
     print "\nThe following processing steps are being skipped:\n"
+    if params.do_combine_mocks == 0:
+        print "   - PALFA2 psrfits_utils combine_mocks"
     if params.do_rfifind == 0:
         print "   - PRESTO rfifind (RFI mitigation tools)"
     if params.do_prepsub == 0:
@@ -90,8 +96,10 @@ def check_dependencies(work_dir, fits_dir, fitsbase):
         print "   - PRESTO acceleration search and candidate sifting"
     if params.do_presto_sp == 0:
         print "   - PRESTO singlepulse search (singlepulse.py)"
-    if params.do_mod_index:
+    if params.do_mod_index == 0:
         print "   - PALFA2 modulation index calculation"
+    if params.do_make_plots == 0:
+        print "   - Plot single pulse candidates that meet mi threshold"
     print "\nChecking dependencies...\n"
     # There must be at least one .fits file in the fits directory
     fl = glob(fits_dir + '/%s*.fits' %fitsbase)

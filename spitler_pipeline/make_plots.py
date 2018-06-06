@@ -88,14 +88,14 @@ def make_avg_plot(filfile, tstart, tread, dt, freqs,
                         avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
     
     # MAKE PLOT
-    ext = [favg[0], favg[-1], tt[0], tt[-1]]
+    ext = [tt[0], tt[-1], favg[0], favg[-1]]
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.imshow(davg, aspect='auto', interpolation='nearest', 
                origin='lower', extent=ext, **plt_kwargs)
-    ax.set_xlabel("Frequency (MHz)")
-    ax.set_ylabel("Time (s)")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Frequency (MHz)")
     
     plt.colorbar()
     plt.show()
@@ -113,14 +113,14 @@ def make_grey_avg_plot(filfile, tstart, tread, dt, freqs,
                         avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
     
     # MAKE PLOT
-    ext = [favg[0], favg[-1], tt[0], tt[-1]]
+    ext = [tt[0], tt[-1], favg[0], favg[-1]]
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.imshow(davg, aspect='auto', interpolation='nearest', 
                origin='lower', extent=ext, cmap='gray', **plt_kwargs)
-    ax.set_xlabel("Frequency (MHz)")
-    ax.set_ylabel("Time (s)")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Frequency (MHz)")
     
     plt.colorbar()
     plt.show()
@@ -138,14 +138,14 @@ def make_reverse_grey_avg_plot(filfile, tstart, tread, dt, freqs,
                         avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
     
     # MAKE PLOT
-    ext = [favg[0], favg[-1], tt[0], tt[-1]]
+    ext = [tt[0], tt[-1], favg[0], favg[-1]]
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.imshow(davg, aspect='auto', interpolation='nearest', 
                origin='lower', extent=ext, cmap='gray_r', **plt_kwargs)
-    ax.set_xlabel("Frequency (MHz)")
-    ax.set_ylabel("Time (s)")
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Frequency (MHz)")
     
     plt.colorbar()
     plt.show()
