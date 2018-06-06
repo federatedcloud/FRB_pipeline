@@ -735,7 +735,11 @@ def search_beam(fitsname, fits_dir, work_dir):
     
     # Create the masked dynamic spectrum
     if params.do_mod_index:
-        tt.mod_index = run_maskdata(maskname, fitsname)
+        # Use correct fitsname
+        if params.do_combine_mocks:
+            tt.mod_index = run_maskdata(maskname, fitsname + "_0001")
+        else:
+            tt.mod_index = run_maskdata(maskname, fitsname)
     
     # Calculate the modulation index
     if params.do_mod_index:
