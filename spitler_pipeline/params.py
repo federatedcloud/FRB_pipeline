@@ -2,7 +2,8 @@
 # Important directory locations
 # =============================================================================
 #fits_dir = "/mnt/data1/rsw_test/pipeline/psrfits"
-fits_dir = "/mnt/data1/pete/data"
+#fits_dir = "/mnt/data1/pete/data"
+fits_dir = "/mnt/data1/plato/data"
 
 # Names of both .fits files to combine (if using combine_mocks)
 combinefile1 = "4bit-p2030.20121102.G175.04-00.26.C.b4s0g0.00000"
@@ -13,8 +14,8 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 basename = "testng_combine_mocks" #"waller_test_combined_0001"
 
 # Search output directory
-search_dir = "/mnt/data1/pete/test/combine_mocks/search"
-
+#search_dir = "/mnt/data1/pete/test/combine_mocks/search"
+search_dir = "/mnt/data1/plato"
 
 # =============================================================================
 # Processing steps to do
@@ -42,7 +43,8 @@ dat_type = 'psrfits'
 # =============================================================================
 #singlepulse = 'single_pulse_search.py'
 #singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"; sp_modified = False
-singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
+#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
+singlepulse = "/mnt/data1/plato/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
 
 palfa_mi = "/home/jovyan/modulation_index/mi_src/palfa_mi"
 
