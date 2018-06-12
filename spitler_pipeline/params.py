@@ -10,7 +10,7 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 
 # Base name of fits files in FITS dir
 #basename = "waller"
-basename = "testng_combine_mocks" #"waller_test_combined_0001"
+basename = "testing_combine_mocks" #"waller_test_combined_0001"
 
 # Search output directory
 search_dir = "/mnt/data1/pete/test/combine_mocks/search"
