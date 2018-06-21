@@ -105,8 +105,6 @@ mi_mode = "threshold"   # either "threshold" or "quantity"
 mi_threshold = 0.96      # maximum modulation index value
 mi_quantity = 10        # quantity of candidates to keep
 
-
-
 # =============================================================================
 # Plato's Plotting Parameters
 # =============================================================================
@@ -120,7 +118,6 @@ tread = 1.0             # sec
 dt = 6.54761904761905E-05
 avg_chan = 10
 avg_samp = 20
-dm0 = 557.0
 vmin = 6
 vmax = 7
 
@@ -131,21 +128,8 @@ do_plot_color = 0       # Plots color and shows single pulse candidates
 do_plot_grey = 1        # Plots grey and shows single pulse candidates
 do_plot_reverse = 0     # Plots reverse grey and shows single pulse candidates
 
-#fildir = search_dir
-#filfile = "%s/raw_data_with_mask.fits" %fildir
-
-
-# SEE above for commented parameters
-#dt = 6.54761904761905E-05
-#tstart = 189.0          # sec
-#tread  = 2.0            # sec
-
-#avg_chan = 10
-#avg_samp = 20
-#dm0 = 557.0
-#vmin = 6
-#vmax = 7
-
+tstart = 189.0          # sec
+dm0 = 557.0
 
 # =============================================================================
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):
