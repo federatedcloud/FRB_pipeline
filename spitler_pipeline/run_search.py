@@ -11,7 +11,8 @@ import multiprocessing as mp
 from glob import glob
 
 import params
-import make_plots
+import make_plots2
+import plot_times
 
 class Timer:
     def __init__(self):
@@ -675,6 +676,19 @@ def run_mod_index(work_dir, basename):
     dt = t_mi_end - t_mi_start
     return dt
 
+def run_mi_filter(work_dir, basename, mi_mode, flex_val):
+    """
+    Filters candidate pulses and chooses either
+        1) all candidates with modulation index less than a threshold
+        2) a specific number of candidates with the lowest modulation indices 
+    to plot
+    """
+    print "Filtering candidates by lowest modulation index...\n"
+
+    from mi_filter import mi_filter1
+    filt_cands = mi_filter1(work_dir, basename, mi_mode, flex_val)
+
+
 def search_beam(fitsname, fits_dir, work_dir):
     tt = Timer()
     t_start = time.time()
@@ -753,8 +767,29 @@ def search_beam(fitsname, fits_dir, work_dir):
     if params.do_mod_index:
         tt.mod_index += run_mod_index(work_dir, fitsname)
     
-    # Create the plots
+    # Select candidates with the lowest modulation indices
+    if params.do_mi_filter:
+        mi_mode = params.mi_mode
+        if mi_mode == "threshold":
+            run_mi_filter(work_dir, basename, mi_mode, params.mi_threshold)
+        else: # params.mi_mode == "quantity"
+            run_mi_filter(work_dir, basename, mi_mode, params.mi_quantity)
+
+    # Make plots for all MI filtered candidates
     if params.do_make_plots:
+        print "Getting list of plotting start times..."
+        times_list = plot_times.get_plot_times(work_dir, basename, tread=params.tread)
+        print times_list
+        print "Plotting dynamic spectra..."
+        for [tstart,dm] in times_list:
+            make_plots2.make_avg_plot(params.filfile, work_dir, params.plot_mode, 
+                params.plot_color, tstart, params.tread, params.dt, params.freqs, 
+                params.avg_chan, params.avg_samp, dm, vmin=6, vmax=7)
+
+ 
+
+    # Create the plots
+    '''if params.do_make_plots:
         if params.do_plot_color:
             make_plots.make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
                 params.avg_chan, params.avg_samp, params.dm0, 
@@ -767,7 +802,7 @@ def search_beam(fitsname, fits_dir, work_dir):
             make_plots.make_reverse_grey_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
                 params.avg_chan, params.avg_samp, params.dm0, 
                 vmin=6, vmax=7)
-    
+    '''
     # Finish up time profiling and print summary to screen
     t_finish = time.time()
     tt.total = t_finish - t_start
