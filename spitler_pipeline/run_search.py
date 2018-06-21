@@ -714,9 +714,6 @@ def search_beam(fitsname, fits_dir, work_dir):
         cp_cmd = 'cp params.py %s/params.txt' %work_dir
         try_cmd(cp_cmd)
     
-    # Combine mocks - here?
-    # TODO
-    
     # If we haven't done so already, go to results directory
     os.chdir(work_dir)
     
