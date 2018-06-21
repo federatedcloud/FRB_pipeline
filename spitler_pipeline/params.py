@@ -17,7 +17,11 @@ basename = "pipe_test1" #"waller_test_combined_0001"
 
 # Search output directory
 #search_dir = "/mnt/data1/pete/test/combine_mocks/search"
+<<<<<<< HEAD
 search_dir = "/mnt/data1/plato/pipe_test/"
+=======
+search_dir = "/mnt/data1/plato"
+>>>>>>> 2797a53167775a1b09e7f63911bbd9079c1a476a
 
 # =============================================================================
 # Processing steps to do
@@ -120,7 +124,6 @@ tread = 1.0             # sec
 dt = 6.54761904761905E-05
 avg_chan = 10
 avg_samp = 20
-dm0 = 557.0
 vmin = 6
 vmax = 7
 
@@ -131,21 +134,8 @@ do_plot_color = 0       # Plots color and shows single pulse candidates
 do_plot_grey = 1        # Plots grey and shows single pulse candidates
 do_plot_reverse = 0     # Plots reverse grey and shows single pulse candidates
 
-#fildir = search_dir
-#filfile = "%s/raw_data_with_mask.fits" %fildir
-
-
-# SEE above for commented parameters
-#dt = 6.54761904761905E-05
-#tstart = 189.0          # sec
-#tread  = 2.0            # sec
-
-#avg_chan = 10
-#avg_samp = 20
-#dm0 = 557.0
-#vmin = 6
-#vmax = 7
-
+tstart = 189.0          # sec
+dm0 = 557.0
 
 # =============================================================================
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):
