@@ -1,3 +1,5 @@
+import numpy as np
+
 # =============================================================================
 # Important directory locations
 # =============================================================================
@@ -11,22 +13,23 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 
 # Base name of fits files in FITS dir
 #basename = "waller"
-basename = "testng_combine_mocks" #"waller_test_combined_0001"
+basename = "pipe_test1" #"waller_test_combined_0001"
 
 # Search output directory
 #search_dir = "/mnt/data1/pete/test/combine_mocks/search"
-search_dir = "/mnt/data1/plato"
+search_dir = "/mnt/data1/plato/pipe_test/"
 
 # =============================================================================
 # Processing steps to do
 # =============================================================================
-do_combine_mocks = 1    # Run combine_mocks on the upper and lower subbands
-do_rfifind       = 1    # Run PRESTO rfifind and generate a mask
-do_prepsub       = 1    # Run PRESTO prepsubband dedispersion
+do_combine_mocks = 0    # Run combine_mocks on the upper and lower subbands
+do_rfifind       = 0    # Run PRESTO rfifind and generate a mask
+do_prepsub       = 0    # Run PRESTO prepsubband dedispersion
 do_fft           = 0    # FFT *dat files before accelsearch
 do_candsearch    = 0    # Run PRESTO accelsearch on the data
-do_presto_sp     = 1    # Run PRESTO singlepulse.py
-do_mod_index     = 1    # Run PALFA2 modulation index calculation
+do_presto_sp     = 0    # Run PRESTO singlepulse.py
+do_mod_index     = 0    # Run PALFA2 modulation index calculation
+do_mi_filter     = 1    # Filter candidates by modulation index value
 do_make_plots    = 1    # Plots and shows single pulse candidates
 do_param_cp      = 0    # copy parameter file to output directory 
 
@@ -95,25 +98,53 @@ md_otherflags = " -o junk.dat "
 
 
 # =============================================================================
-# Plotting Parameters
+# Modulation Index Filtering Parameters
 # =============================================================================
-do_plot_color = 1       # Plots color and shows single pulse candidates
-do_plot_grey = 1        # Plots grey and shows single pulse candidates
-do_plot_reverse = 1     # Plots reverse grey and shows single pulse candidates
+work_dir = "/mnt/plato/code/pipe_test"
+mi_mode = "threshold"   # either "threshold" or "quantity"
+mi_threshold = 0.96      # maximum modulation index value
+mi_quantity = 10        # quantity of candidates to keep
 
+
+
+# =============================================================================
+# Plato's Plotting Parameters
+# =============================================================================
+plot_mode = "save"      # either "show" or "save"
+plot_color = "gray"     # either "gray", "reverse_gray", or "color"
 fildir = search_dir
 filfile = "%s/raw_data_with_mask.fits" %fildir
 
-#freqs = 1214.28955078 + np.arange(nsub) * 0.336182022493
+freqs = 1214.28955078 + np.arange(nsub) * 0.336182022493
+tread = 1.0             # sec
 dt = 6.54761904761905E-05
-tstart = 128.0          # sec
-tread  = 0.5            # sec
-
 avg_chan = 10
 avg_samp = 20
 dm0 = 557.0
 vmin = 6
 vmax = 7
+
+# =============================================================================
+# Plotting Parameters
+# =============================================================================
+do_plot_color = 0       # Plots color and shows single pulse candidates
+do_plot_grey = 1        # Plots grey and shows single pulse candidates
+do_plot_reverse = 0     # Plots reverse grey and shows single pulse candidates
+
+#fildir = search_dir
+#filfile = "%s/raw_data_with_mask.fits" %fildir
+
+
+# SEE above for commented parameters
+#dt = 6.54761904761905E-05
+#tstart = 189.0          # sec
+#tread  = 2.0            # sec
+
+#avg_chan = 10
+#avg_samp = 20
+#dm0 = 557.0
+#vmin = 6
+#vmax = 7
 
 
 # =============================================================================
