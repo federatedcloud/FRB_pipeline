@@ -41,7 +41,6 @@ dat_type = 'psrfits'
 # Important Script Locations
 # =============================================================================
 #singlepulse = 'single_pulse_search.py'
-#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"; sp_modified = False
 singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
 
 palfa_mi = "/home/jovyan/modulation_index/mi_src/palfa_mi"
