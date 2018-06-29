@@ -10,16 +10,16 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 
 # Base name of fits files in FITS dir
 #basename = "waller"
-basename = "testing_combine_mocks" #"waller_test_combined_0001"
+basename = "testing_pulsarutils_0001" #"waller_test_combined_0001"
 
 # Search output directory
-search_dir = "/mnt/data1/pete/test/combine_mocks/search"
+search_dir = "/mnt/data1/pete/test/pulsarutils/search"
 
 
 # =============================================================================
 # Processing steps to do
 # =============================================================================
-do_combine_mocks = 1    # Run combine_mocks on the upper and lower subbands
+do_combine_mocks = 0    # Run combine_mocks on the upper and lower subbands
 do_rfifind       = 1    # Run PRESTO rfifind and generate a mask
 do_prepsub       = 1    # Run PRESTO prepsubband dedispersion
 do_fft           = 0    # FFT *dat files before accelsearch
@@ -81,7 +81,7 @@ accel_cores = 1         # number of processing cores
 # Single pulse
 max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
-sp_otherflags = "-f "   # Other flags
+sp_otherflags = ""      # Other flags
 
 
 # =============================================================================
