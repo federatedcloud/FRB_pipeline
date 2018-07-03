@@ -116,6 +116,7 @@ filfile = "%s/raw_data_with_mask.fits" %fildir
 freqs = 1214.28955078 + np.arange(nsub) * 0.336182022493
 tread = 1.0             # sec
 dt = 6.54761904761905E-05
+dv = 0.336182022493
 avg_chan = 10
 avg_samp = 20
 vmin = 6
