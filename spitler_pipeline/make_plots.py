@@ -72,8 +72,11 @@ def read_fil(filfile, tstart, tread, dt, nchan):
     nread = nspec_read * nchan
     dd = np.fromfile(f, dtype='float32', count=nread)
     dd = np.reshape(dd, (-1, nchan))
+    dd = dd.transpose()
 
-    tt = np.arange(len(dd)) * dt + nspec_start * dt
+    tt = np.arange(dd.shape[1]) * dt + nspec_start * dt
+    print "data array size: "
+    print dd.shape
     return tt, dd
 
 
