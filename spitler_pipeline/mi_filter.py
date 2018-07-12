@@ -21,8 +21,8 @@ def mi_filter1(work_dir, basename, mi_mode, flex_val):
         print "mi_mode parameter is set incorrectly. Quitting..."
         return
     
-    infile = work_dir + "%s_MF.mi" %(basename,)
-    outfile = work_dir + "%s_MF_fin.mi" %(basename,)
+    infile = work_dir + "/%s_MF.mi" %(basename,)
+    outfile = work_dir + "/%s_MF_fin.mi" %(basename,)
     f = open(infile, 'r') # open in reading mode
     fout = open(outfile, 'w') # new blank file for writing
 
