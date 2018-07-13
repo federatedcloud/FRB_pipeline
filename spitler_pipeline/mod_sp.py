@@ -603,8 +603,8 @@ def main():
                       default=False, help="Use iterative cleaning for stats calc")
     parser.add_option("-c", "--clust", action="store_true", dest="doclust",
                       default=False, help="Also apply cluster algorithm")
-    parser.add_option("-w", "--clust_maxgap", type="float", dest="maxgap", default=0.0,
-                      help="Set the maximum gap (in seconds) for clustering")
+    parser.add_option("-w", "--clust_maxgap", type="int", dest="maxgap", default=1,
+                      help="Set the maximum gap (in bins) for clustering")
     parser.add_option("-r", "--noflag", action="store_true", dest="noflag",
                       default=False, help="Do not do any RFI flagging")
     (opts, args) = parser.parse_args()

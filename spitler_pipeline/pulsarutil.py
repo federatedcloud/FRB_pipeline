@@ -590,7 +590,7 @@ def decimate(ts):
 
 	return dts
 
-def cluster(ts, overthr, nbin=2, mode='mean'):
+def cluster(ts, overthr, nbin=1, mode='mean'):
         #Implementation of cluster or friends-of-friends algorithm
         # ts = times series 
         # overthr = sample in ts and ts2 that are over threshold
