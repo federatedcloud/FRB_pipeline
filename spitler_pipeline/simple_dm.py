@@ -78,14 +78,14 @@ def dedisperse_dspec(dspec, dm, freqs, f0, dt, kdm=kdm, reverse=False):
 def dspec_avg_chan(dspec, freqs, avg_chan=1):
     Nchan = dspec.shape[1]
     n = int(Nchan / avg_chan)
-
+    
     freq_out = np.zeros(n)
     dd_out = np.zeros( (dspec.shape[0], n) )
 
     for ii in xrange(n):
         sl = slice(ii * avg_chan, (ii+1) * avg_chan)
         freq_out[ii] = np.mean(freqs[sl])
-        dd_out[:, ii] = np.mean(dspec[:, sl], axis=1)
+        dd_out[:, ii] = np.mean(dspec[:,sl], axis=1)
 
     return freq_out, dd_out
 
@@ -93,12 +93,12 @@ def dspec_avg_chan(dspec, freqs, avg_chan=1):
 def dspec_avg_time(dspec, avg_samp=1):
     Nsamp = dspec.shape[0]
     n = int(Nsamp / avg_samp)
-
+    
     dd_out = np.zeros( (n, dspec.shape[1]) )
 
     for ii in xrange(n):
         sl = slice(ii * avg_samp, (ii+1) * avg_samp)
-        dd_out[ii, :] = np.mean(dspec[sl, :], axis=0)
+        dd_out[ii,:] = np.mean(dspec[sl, :], axis=0)
 
     return dd_out
 
@@ -137,5 +137,3 @@ def dspec_avg_chan_dm_GHz(dspec, freqs, f0, dt, avg_chan=1, dm0=0.0):
     avg_freqs = avg_freqs_MHz / 1e3
 
     return avg_freqs, davg.T
-
-

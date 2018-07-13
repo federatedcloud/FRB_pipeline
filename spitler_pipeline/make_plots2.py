@@ -1,3 +1,12 @@
+
+# Contains plotting function "make_avg_plot", used to create plots
+# of particular regions of a dynamic spectra. In the pipeline, these regions 
+# are determined by selecting candidates with the lowest modulation indices
+
+# "plot_fil_dspec" and "plot_fil_dspec_classic" are plotting functions
+# from Pete's "make_plots.py". I left them in here
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -60,7 +69,7 @@ def plot_fil_dspec_classic(filfile, n=8, nsblk=15270, nchan=960):
     plt.show()
     return 
 
-
+# Read data from a fits file to a numpy array
 def read_fil(filfile, tstart, tread, dt, nchan):
     nspec_start = int(tstart / dt)
     nspec_read  = int(tread / dt)
@@ -72,16 +81,22 @@ def read_fil(filfile, tstart, tread, dt, nchan):
     nread = nspec_read * nchan
     dd = np.fromfile(f, dtype='float32', count=nread)
     dd = np.reshape(dd, (-1, nchan))
-    dd = dd.transpose()
 
-    tt = np.arange(dd.shape[1]) * dt + nspec_start * dt
-    print "data array size: "
-    print dd.shape
+    tt = np.arange(len(dd)) * dt + nspec_start * dt
     return tt, dd
 
-
-def make_avg_plot(filfile, tstart, tread, dt, freqs,  
+# Plot some specified region of a dynamic spectrum
+def make_avg_plot(filfile, work_dir, mode, color, tstart, tread, dt, freqs,  
                   avg_chan=1, avg_samp=1, dm0=0, **plt_kwargs):
+    
+    # MAKE SURE MODE AND COLOR PARAMETERS ARE OK
+    if mode not in ["save","show"]:
+        print "Invalid <mode> variable. <mode> must be 'save' or 'show'\nExiting..."
+        return
+    if color not in ["gray","reverse_gray","color"]:
+        print "Invalid <color> setting. Must be 'gray', 'reverse_gray', or 'color'.\nExiting..."
+        return
+
     # READ IN DATA FROM FILFILE
     nchan = len(freqs)
     tt, dd = read_fil(filfile, tstart, tread, dt, nchan)
@@ -95,81 +110,27 @@ def make_avg_plot(filfile, tstart, tread, dt, freqs,
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    plt.imshow(davg, aspect='auto', interpolation='nearest', 
-               origin='lower', extent=ext, **plt_kwargs)
+    
+    if color == "color":
+        plt.imshow(davg, aspect='auto', interpolation='nearest', 
+                   origin='lower', extent=ext, **plt_kwargs)
+    elif color == "gray":
+        plt.imshow(davg, aspect='auto', interpolation='nearest',
+                   origin='lower', extent=ext, cmap='gray', **plt_kwargs)    
+    elif color == "reverse_gray":
+        plt.imshow(davg, aspect='auto', interpolation='nearest',
+                   origin='lower', extent=ext, cmap='gray_r', **plt_kwargs)    
+
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Frequency (MHz)")
     
     plt.colorbar()
-    plt.show()
+    # Show or Save the plot, depending on the mode given
+    if mode == "show":
+        plt.show()
+    if mode == "save":
+        plt.savefig(work_dir + "tstart=" + str(tstart) + ".png")
+
     return 
 
 
-def make_grey_avg_plot(filfile, tstart, tread, dt, freqs,
-                  avg_chan=1, avg_samp=1, dm0=0, **plt_kwargs):
-    # READ IN DATA FROM FILFILE
-    nchan = len(freqs)
-    tt, dd = read_fil(filfile, tstart, tread, dt, nchan)
-
-    # AVG DATA
-    favg, davg = dedisp.dspec_avg_tf_dm(dd, freqs, freqs[-1], dt, 
-                        avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
-    
-    # MAKE PLOT
-    ext = [tt[0], tt[-1], favg[0], favg[-1]]
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    plt.imshow(davg, aspect='auto', interpolation='nearest', 
-               origin='lower', extent=ext, cmap='gray', **plt_kwargs)
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Frequency (MHz)")
-    
-    plt.colorbar()
-    plt.show()
-    return 
-
-
-def make_reverse_grey_avg_plot(filfile, tstart, tread, dt, freqs,
-                  avg_chan=1, avg_samp=1, dm0=0, **plt_kwargs):
-    # READ IN DATA FROM FILFILE
-    nchan = len(freqs)
-    tt, dd = read_fil(filfile, tstart, tread, dt, nchan)
-
-    # AVG DATA
-    favg, davg = dedisp.dspec_avg_tf_dm(dd, freqs, freqs[-1], dt, 
-                        avg_chan=avg_chan, avg_samp=avg_samp, dm0=dm0)
-    
-    # MAKE PLOT
-    ext = [tt[0], tt[-1], favg[0], favg[-1]]
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    plt.imshow(davg, aspect='auto', interpolation='nearest', 
-               origin='lower', extent=ext, cmap='gray_r', **plt_kwargs)
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Frequency (MHz)")
-    
-    plt.colorbar()
-    plt.show()
-    return
-
- 
-# MAKE AVG DETECT PLOT
-#fildir = '/mnt/data1/make_dynamic_spectra_without_RFI/testing_datafile'
-#filfile = '%s/raw_data_with_mask.fits' %fildir
-#
-#freqs = 1214.28955078 + np.arange(960) * 0.336182022493
-#dt = 6.54761904761905E-05
-#
-#tstart = 128.0 # sec
-#tread  = 0.5   # sec
-
-freqs = 1214.28955078 + np.arange(params.nsub) * 0.336182022493
-vmin = params.vmin
-vmax = params.vmax
-
-#make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, freqs, 
-#              params.avg_chan, params.avg_samp, params.dm0, 
-#              vmin=6, vmax=7)
-##              vmin, vmax)

@@ -1,8 +1,10 @@
+import numpy as np
+
 # =============================================================================
 # Important directory locations
 # =============================================================================
 #fits_dir = "/mnt/data1/rsw_test/pipeline/psrfits"
-fits_dir = "/mnt/data1/pete/data"
+fits_dir = "/mnt/data1/plato/pipe_test5"
 
 # Names of both .fits files to combine (if using combine_mocks)
 combinefile1 = "4bit-p2030.20121102.G175.04-00.26.C.b4s0g0.00000"
@@ -10,22 +12,24 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 
 # Base name of fits files in FITS dir
 #basename = "waller"
-basename = "testing_pulsarutils_0001" #"waller_test_combined_0001"
+basename = "pipe_test5" #"waller_test_combined_0001"
 
 # Search output directory
-search_dir = "/mnt/data1/pete/test/pulsarutils/search"
+#search_dir = "/mnt/data1/pete/test/combine_mocks/search"
+search_dir = "/mnt/data1/plato/pipe_test5/"
 
 
 # =============================================================================
 # Processing steps to do
 # =============================================================================
 do_combine_mocks = 0    # Run combine_mocks on the upper and lower subbands
-do_rfifind       = 1    # Run PRESTO rfifind and generate a mask
-do_prepsub       = 1    # Run PRESTO prepsubband dedispersion
+do_rfifind       = 0    # Run PRESTO rfifind and generate a mask
+do_prepsub       = 0    # Run PRESTO prepsubband dedispersion
 do_fft           = 0    # FFT *dat files before accelsearch
 do_candsearch    = 0    # Run PRESTO accelsearch on the data
-do_presto_sp     = 1    # Run PRESTO singlepulse.py
+do_presto_sp     = 0    # Run PRESTO singlepulse.py
 do_mod_index     = 1    # Run PALFA2 modulation index calculation
+do_mi_filter     = 1    # Filter candidates by modulation index value
 do_make_plots    = 1    # Plots and shows single pulse candidates
 do_param_cp      = 0    # copy parameter file to output directory 
 
@@ -41,7 +45,8 @@ dat_type = 'psrfits'
 # Important Script Locations
 # =============================================================================
 #singlepulse = 'single_pulse_search.py'
-singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
+#singlepulse = "/mnt/data1/pete/code/FRB_pipeline/spitler_pipeline/single_pulse_search.py"; sp_modified = False
+singlepulse = "/mnt/data1/plato/code/FRB_pipeline/spitler_pipeline/mod_sp.py"; sp_modified = True
 
 palfa_mi = "/home/jovyan/modulation_index/mi_src/palfa_mi"
 
@@ -82,6 +87,8 @@ accel_cores = 1         # number of processing cores
 max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
 sp_otherflags = ""      # Other flags
+#cluster_width = 0.005    # maximum allowed width (seconds) between peaks for clustering
+#sp_otherflags = "--noflag --fast --clust -p"   # Other flags
 
 
 # =============================================================================
@@ -92,26 +99,39 @@ md_otherflags = " -o junk.dat "
 
 
 # =============================================================================
-# Plotting Parameters
+# Modulation Index Filtering Parameters
 # =============================================================================
-do_plot_color = 1       # Plots color and shows single pulse candidates
-do_plot_grey = 1        # Plots grey and shows single pulse candidates
-do_plot_reverse = 1     # Plots reverse grey and shows single pulse candidates
+work_dir = "/mnt/plato/code/pipe_test5/"
+mi_mode = "quantity"   # either "threshold" or "quantity"
+mi_threshold = 0.96      # maximum modulation index value
+mi_quantity = 10        # quantity of candidates to keep
 
+# =============================================================================
+# Candidate Plotting Parameters
+# =============================================================================
+plot_mode = "save"      # either "show" or "save"
+plot_color = "gray"     # either "gray", "reverse_gray", or "color"
 fildir = search_dir
 filfile = "%s/raw_data_with_mask.fits" %fildir
 
-#freqs = 1214.28955078 + np.arange(nsub) * 0.336182022493
+freqs = 1214.28955078 + np.arange(nsub) * 0.336182022493
+tread = 1.0             # sec
 dt = 6.54761904761905E-05
-tstart = 128.0          # sec
-tread  = 0.5            # sec
-
-avg_chan = 10
-avg_samp = 20
-dm0 = 557.0
+dv = 0.336182022493     # MHz
+avg_chan = 10           # Channels
+avg_samp = 20           # Sample
 vmin = 6
 vmax = 7
 
+# =============================================================================
+# Plotting Parameters
+# =============================================================================
+do_plot_color = 0       # Plots color and shows single pulse candidates
+do_plot_grey = 1        # Plots grey and shows single pulse candidates
+do_plot_reverse = 0     # Plots reverse grey and shows single pulse candidates
+
+tstart = 189.0          # sec
+dm0 = 557.0
 
 # =============================================================================
 # Sifting parameters (copied mostly from PRESTO's ACCEL_sift.py):

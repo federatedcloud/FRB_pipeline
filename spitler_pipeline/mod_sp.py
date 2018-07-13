@@ -541,8 +541,8 @@ def downsample_factor(dm, max=False):
 def hist_sigma(data, blo=0, bhi=120, bstep=1):
     
     bins=range(blo, bhi+1, bstep)
-    
-    hist,hb=Num.histogram(data, bins=bins)
+   
+    hist,hb=Num.histogram(data, bins=bins, range=(min(bins),max(bins)))
     
     total=Num.sum(hist)
     
@@ -603,6 +603,8 @@ def main():
                       default=False, help="Use iterative cleaning for stats calc")
     parser.add_option("-c", "--clust", action="store_true", dest="doclust",
                       default=False, help="Also apply cluster algorithm")
+    parser.add_option("-w", "--clust_maxgap", type="float", dest="maxgap", default=0.0,
+                      help="Set the maximum gap (in seconds) for clustering")
     parser.add_option("-r", "--noflag", action="store_true", dest="noflag",
                       default=False, help="Do not do any RFI flagging")
     (opts, args) = parser.parse_args()
@@ -842,7 +844,7 @@ def main():
                                 block, stds_orig[block], means[block]))
                     #Perform cluster algorithm
                     if opts.doclust and len(hibloc) != 0:
-                        nsamp,smax,amax,smean,amean,wgp,sctr=plsr.cluster(goodchunk, hibloc)
+                        nsamp,smax,amax,smean,amean,wgp,sctr=plsr.cluster(goodchunk, hibloc, nbin=opts.maxgap)
                         amean=Num.sqrt(nsamp)*amean
                         smax += chunknum*chunklen
                         smean += chunknum*chunklen
