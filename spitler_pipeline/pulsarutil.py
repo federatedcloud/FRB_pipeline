@@ -627,7 +627,7 @@ def cluster(ts, overthr, nbin=2, mode='mean'):
                 tctr=overthr[p]+wgp/2
                 if wgp%2 == 0: tctr-=0.5     #Add half-bin offset if width event
 
-                params[i]=nsamp,smax,amax,tsum,suma,wgp,tctr
+                params[i:]=nsamp,smax,amax,tsum,suma,wgp,tctr
                 p=cl_end[i]+1
 
         return params.transpose()

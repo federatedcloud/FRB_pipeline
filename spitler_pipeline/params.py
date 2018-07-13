@@ -18,6 +18,7 @@ basename = "pipe_test5" #"waller_test_combined_0001"
 #search_dir = "/mnt/data1/pete/test/combine_mocks/search"
 search_dir = "/mnt/data1/plato/pipe_test5/"
 
+
 # =============================================================================
 # Processing steps to do
 # =============================================================================
@@ -85,8 +86,9 @@ accel_cores = 1         # number of processing cores
 # Single pulse
 max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
-cluster_width = 0.005    # maximum allowed width (seconds) between peaks for clustering
-sp_otherflags = "--noflag --fast --clust -p"   # Other flags
+sp_otherflags = ""      # Other flags
+#cluster_width = 0.005    # maximum allowed width (seconds) between peaks for clustering
+#sp_otherflags = "--noflag --fast --clust -p"   # Other flags
 
 
 # =============================================================================
