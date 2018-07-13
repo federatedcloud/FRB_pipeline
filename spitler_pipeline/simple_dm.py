@@ -94,7 +94,7 @@ def dspec_avg_time(dspec, avg_samp=1):
     Nsamp = dspec.shape[0]
     n = int(Nsamp / avg_samp)
     
-    dd_out = np.zeros( (n, dspec.shape[0]) )
+    dd_out = np.zeros( (n, dspec.shape[1]) )
 
     for ii in xrange(n):
         sl = slice(ii * avg_samp, (ii+1) * avg_samp)
