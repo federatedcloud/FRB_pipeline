@@ -1,3 +1,4 @@
+# Written by Laura Spitler
 #!/bin/env python
 
 import numpy, sys
