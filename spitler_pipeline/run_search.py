@@ -13,6 +13,7 @@ from glob import glob
 import params
 import make_plots2
 import plot_times
+from mi_filter import mi_filter1
 
 class Timer:
     def __init__(self):
@@ -600,21 +601,30 @@ def run_singlepulse_search(work_dir):
     w_max = params.max_width 
     dfac  = params.dtrend 
     flags = params.sp_otherflags
+    cl_width = params.cluster_width
+    cl_bins = int(cl_width / params.dt)
     
     print("Looking for single pulses...\n")
     t_sp_start = time.time()
     #cmd = sp_exe+' -m '+str(w_max)+' '+work_dir+'/*.dat'
     if params.sp_modified:
-        cmd = "%s -m %.6f %s %s/*.dat" %(sp_exe, w_max, flags, work_dir)
+        cmd = "%s -m %.6f -w %f %s %s/*.dat" %(sp_exe, w_max, cl_bins, flags, work_dir)
     else:
         cmd = "%s -m %.6f -d %d %s %s/*.dat" %(sp_exe, w_max, dfac, flags, work_dir)
     try_cmd(cmd)
 
-    sp_dir = work_dir+'/single_pulse/'
+    sp_dir = work_dir+'single_pulse/'
     if not os.path.exists(sp_dir):
         os.makedirs(sp_dir)
-    cmd = 'mv '+work_dir+'/*singlepulse* '+work_dir+'/single_pulse/'
+    cmd = 'mv '+work_dir+'/*singlepulse* ' +sp_dir
     try_cmd(cmd)
+    
+    cl_dir = work_dir+'/clusters/'
+    if not os.path.exists(cl_dir):
+        os.makedirs(cl_dir)
+    cmd = 'mv '+work_dir+'/*.cluster* ' +cl_dir
+    try_cmd(cmd)
+
     t_sp_end = time.time()
     dt = t_sp_end - t_sp_start
     return dt
@@ -676,20 +686,9 @@ def run_mod_index(work_dir, basename):
     dt = t_mi_end - t_mi_start
     return dt
 
-def run_mi_filter(work_dir, basename, mi_mode, flex_val):
-    """
-    Filters candidate pulses and chooses either
-        1) all candidates with modulation index less than a threshold
-        2) a specific number of candidates with the lowest modulation indices 
-    to plot
-    """
-    print "Filtering candidates by lowest modulation index...\n"
-
-    from mi_filter import mi_filter1
-    filt_cands = mi_filter1(work_dir, basename, mi_mode, flex_val)
-
 
 def search_beam(fitsname, fits_dir, work_dir):
+    ''' The main function. Runs the pipeline.'''
     tt = Timer()
     t_start = time.time()
     
@@ -758,7 +757,7 @@ def search_beam(fitsname, fits_dir, work_dir):
         if params.do_combine_mocks:
             tt.mod_index = run_maskdata(maskname, fitsname + "_0001")
         else:
-            tt.mod_index = run_maskdata(maskname, fitsname)
+            tt.mod_index = run_maskdata(maskname, fitsname + "_0001")
     
     # Calculate the modulation index
     if params.do_mod_index:
@@ -766,26 +765,23 @@ def search_beam(fitsname, fits_dir, work_dir):
     
     # Select candidates with the lowest modulation indices
     if params.do_mi_filter:
+        print "Filtering candidates by lowest modulation index...\n"
         mi_mode = params.mi_mode
         if mi_mode == "threshold":
-            run_mi_filter(work_dir, basename, mi_mode, params.mi_threshold)
+            filt_cands = mi_filter1(work_dir, basename, mi_mode, params.mi_threshold)
         else: # params.mi_mode == "quantity"
-            run_mi_filter(work_dir, basename, mi_mode, params.mi_quantity)
+            filt_cands = mi_filter1(work_dir, basename, mi_mode, params.mi_quantity)
 
     # Make plots for all MI filtered candidates
     if params.do_make_plots:
         print "Getting list of plotting start times..."
         times_list = plot_times.get_plot_times(work_dir, basename, tread=params.tread)
-        print times_list
         print "Plotting dynamic spectra..."
         for [tstart,dm] in times_list:
             make_plots2.make_avg_plot(params.filfile, work_dir, params.plot_mode, 
                 params.plot_color, tstart, params.tread, params.dt, params.freqs, 
-                params.avg_chan, params.avg_samp, dm, vmin=6, vmax=7)
+                params.avg_chan, params.avg_samp, dm, vmin=6, vmax=7) 
 
- 
-
-    # Create the plots
     '''if params.do_make_plots:
         if params.do_plot_color:
             make_plots.make_avg_plot(params.filfile, params.tstart, params.tread, params.dt, make_plots.freqs, 
