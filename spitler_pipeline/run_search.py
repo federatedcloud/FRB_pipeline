@@ -608,7 +608,7 @@ def run_singlepulse_search(work_dir):
     t_sp_start = time.time()
     #cmd = sp_exe+' -m '+str(w_max)+' '+work_dir+'/*.dat'
     if params.sp_modified:
-        cmd = "%s --noflag --clust --fast -p -m %.6f -w %d %s/*.dat" %(sp_exe, w_max, cl_bins, work_dir)
+        cmd = "%s --noflag --clust --iter -p -m %.6f -w %d %s/*.dat" %(sp_exe, w_max, cl_bins, work_dir)
     else:
         cmd = "%s -m %.6f -d %d %s %s/*.dat" %(sp_exe, w_max, dfac, flags, work_dir)
     try_cmd(cmd)
