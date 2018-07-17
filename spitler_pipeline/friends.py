@@ -1,7 +1,9 @@
 
-
-# Friends of Friends search algorithm.
-# Assume that we already have a raw, masked dynamic spectrum stored in a numpy array
+''' The module contains tools to run a Friends-of-Friends search algorithm.
+    The main function is fof(), which is found at the bottom of this file.
+    Most other functions defined in this module are called by fof(), 
+    and some may also be useful for other purposes as well.
+'''
 
 # General Imports
 import numpy as np
@@ -17,7 +19,11 @@ import params
 
 kDM = 4148.808 # MHz^2 / (pc cm^-3)
 
+
 class Cluster:
+    
+    ''' A class to store information about a cluster of pixels identified
+        using the friends-of-friends algorithm.'''
 
     def __init__(self, coords, sigs, std):
         ''' <coords> is a tuple containing two arrays (should be
@@ -41,12 +47,13 @@ class Cluster:
         argmax = np.argmax(sigs)
         self.coord_max = (self.v_co[argmax],self.t_co[argmax]) # coordinates of sample with max signal value
         
+        # Cluster SNR statistics. See Josh Burt's paper for math formula
         self.clust_SNR = ((self.sig_mean * math.sqrt(self.N)) / self.global_std) 
+
 
     def lin_fit(self,C):
         ''' Perform orthogonal linear regression on this Cluster.
-            The slope and intercept are stored as a tuple in the field <linear>'''
-        
+            The slope and intercept are stored as a tuple in the field <linear>'''        
         linear_fit = odr.Model(lin_func)
         data = odr.Data(C * self.t_co,self.v_co) # y-axis is frequency
         odr_inst = odr.ODR(data, linear_fit, beta0=[0.0,self.v_mean])
@@ -54,30 +61,25 @@ class Cluster:
         (slope,intercept) = output.beta[0],output.beta[1]
         self.linear = (C * slope,intercept)
 
+
     def DM_fit(self, tstart, v_max_index):
         ''' Perform orthogonal DM (inverse square) regression on this Cluster.
             The fitted DM value is stored in the field <DM>.'''
         # Note: frequency axis is flipped, because high freqs correspond to low array indices
-        #print self.t_co
-        #print self.v_co
         t_co = (self.t_co * params.avg_samp * params.dt) + tstart
         v_co = ((v_max_index-self.v_co) * params.avg_chan * params.dv) + params.freqs[0]
-        #print t_co
-        #print v_co
+        
         #print DM_func([560.0*kDM], v_co, t_co[0], v_co[0])
         data = odr.Data(v_co,t_co) # y-axis is time
         DM_mod = odr.Model(DM_func, extra_args=(t_co[0],v_co[0]))
+        # Note: beta0 is initial estimate of DM*kDM
         odr_inst = odr.ODR(data, DM_mod, beta0=[560.0*kDM])
         output = odr_inst.run()
         self.DM = output.beta[0] / kDM
         
-        #print "DM = " + str(self.DM)
-        #plt.plot(DM_func([self.DM],v_co,t_co[0],v_co[0]),v_co)
-        #plt.show()
-        #plt.scatter(t_co,v_co)
-        #plt.show()
 
-    def add(self, coord, sig):
+        # add() needs to be updated
+    '''def add(self, coord, sig):
         # coord is tuple, sig is the signal at that coordinate
         self.v_co = np.append(self.v_co,coord[0])
         self.t_co = np.append(self.t_co,coord[1])
@@ -98,30 +100,18 @@ class Cluster:
         self.sig_mean = (self.sig_mean * (self.N-1) + sig) / self.N
         if sig > self.sig_max:
             self.sig_max = sig       
-            self.coord_max = coord
+            self.coord_max = coord'''
 
-        #if coord[0] > self.vmax:
-        #    self.vmax = coord[0]
-        #elif coord[0] < self.vmin:
-        #    self.vmin = coord[0]
-        #if coord[1] > self.tmax:
-        #    self.tmax = coord[1]
-        #elif coord[1] < self.tmin:
-        #    self.tmin = coord[1]
-        #self.vmax = max(self.vmax,coord[0])
-        #self.vmin = min(self.vmin,coord[0])
-        #self.tmax = max(self.tmax,coord[1])
-        #self.tmin = min(self.tmin,coord[1])
 
     def statline(self):
-        '''Returns a string of the class attributes separated by tabs.'''
+        '''Return a string of the class attributes separated by tabs.'''
         return "%d\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\n" \
                %(self.N, self.clust_SNR, self.sig_mean, self.sig_max, 
                  self.SNR_mean, self.SNR_max, self.t_range[0],
                  self.t_range[1], self.v_range[0], self.v_range[1], 
                  self.linear[0], self.DM)
 
-
+# Note: Not used.
 def manhattan(x1,x2):
     '''Return the Manhattan distance between two coordinates 
        given by tuples x1 and x2'''
@@ -130,8 +120,8 @@ def manhattan(x1,x2):
 
 
 def avg_time(data, dt):
-        
-    ''' averages a dynamic spectrum in time (x axis) over every <dt> time samples'''
+    ''' Decimate a dynamic spectrum in time (x axis) by averaging together
+        sets of <dt> time samples.'''
     (vchan,tchan) = data.shape
     t_num = int(tchan / dt)
     avg_data = np.zeros([vchan,t_num])
@@ -141,8 +131,10 @@ def avg_time(data, dt):
             avg_data[v,t] = np.mean(data[v,t_index:(t_index+dt)])
     return avg_data
 
+
 def avg_freq(data, dv):
-    ''' average a dynamic spectrum in frequency (y axis) over every <dv> frequency samples'''
+    ''' Decimate a dynamic spectrum in frequency (y axis) by averaging 
+        together sets of <dv> frequency samples.'''
     (vchan,tchan) = data.shape
     v_num = int(vchan / dv)
     avg_data = np.zeros([v_num,tchan])
@@ -152,7 +144,7 @@ def avg_freq(data, dv):
             avg_data[v,t] = np.mean(data[v_index:(v_index+dv),t])
     return avg_data
 
-
+# Note: Not used.
 def mean_rms(data):
     ''' Return the mean and RMS (in a tuple) of a data array.
         Note that the variance is computed as:
@@ -190,21 +182,14 @@ def iterative_stats(data, out, thresh):
     (vchan,tchan) = data.shape
     size = data.size
     mask = np.zeros((vchan,tchan))
-    #mask = {}
-    #for v in range(vchan):
-    #    for t in range(tchan):
-    #        mask[(v,t)] = 1
 
+    # Set initial iterates.
     mean_prev = 0.0;
     std_prev = 0.0;
-
     mean = np.mean(data)
     std = np.std(data)
-    
-    #print "mean= " + str(mean)
-    #print "rms= " + str(rms)
-    #print "std= " + str(std)
 
+    # Iteratively compute the background mean and std. dev.
     while (abs(mean_prev-mean) / mean) > thresh and (abs(std-std_prev) / std) > thresh:
         mean_prev = mean
         std_prev = std    
@@ -228,9 +213,7 @@ def iterative_stats(data, out, thresh):
         std2 = ree.std()
         print "mean= " + str(mean)
         print "std= " + str(std)
-        #print "size = " + str(size)
 
-    #print mask
     return (mean,std)
 
 
@@ -252,41 +235,48 @@ def mask1(data, mean, std, thresh):
 
     return mask
 
+
+# The following two functions are required for scipy.odr regression analysis
 def lin_func(beta, x):
-    ''' simple linear funcion used for orthogonal regression'''
+    ''' Linear funcion used for orthogonal regression (scipy.odr)'''
     return (beta[0] * x) + beta[1]
 
 def DM_func(beta, v, *args):
-    ''' Inverse square function used for DM regression'''
+    ''' Inverse square function used for DM regression (scipy.odr)'''
     t1 = args[0]
     v1 = args[1]
     return (beta[0] / v**2) + t1 - (beta[0] / v1**2)
 
 
-# Parameters: (1) data -- raw dynamic spectrum   (2) m1 -- single pixel threshold, 
-#               as a fraction of standard deviation   (3) m2 -- blob RMS threshold, as frac of single pixel RMS
 
 def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
-    ''' t_gap and v_gap must be even'''
-    '''Arguments:
+    
+    ''' Perform a friends-of-friends search algorithm.
+    Arguments:
             (1) data -- raw dynamic spectrum array
             (2) m1 -- single pixel SNR threshold
             (3) m2 -- cluster SNR threshold
-            (4) tsamp -- time
-            (5) vsamp
+            (4) tsamp -- number of time samples to average together
+            (5) vsamp -- number of frequency channels to average together
             (6) t_gap -- number of empty time samples allowed...
             (7) v_gap -- number of empty freq. samples allowed... 
                  between pixels in the same cluster
     '''
+    print "Decimating the raw, high-resolution data..."
     avg_t_data = avg_time(data,tsamp)
     avg_tv_data = avg_freq(avg_t_data,vsamp)
 
+    print "Computing mean and std.dev. of background noise..."
     (mean,std) = iterative_stats(avg_tv_data, 3, 0.01)
     #print "mean= " + str(mean)
     #print "std= " + str(std)
+
+    print "Masking data with single pixel threshold..."
     mask = mask1(avg_tv_data, mean, std, m1)
     (vchan,tchan) = mask.shape
     C = float(vchan) / tchan # used in linear fitting
+    
+    print "Clustering high signal pixels..."
     # construct a structuring element:
     se = np.ones([v_gap+1,t_gap+1])
     # dilate the mask
@@ -299,16 +289,7 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
             if mask[v,t] == 0:
                  labeled_dil[v,t] = 0
 
-    #np.save("test.npy", mask)   
-    #print mask
-    #print se 
-    #print dil
-    #print labeled_dil
-    #plt.imshow(avg_tv_data, cmap='gray_r')
-    #plt.show()
-    #plt.imshow(dil)
-    #plt.show()
-
+    print "Writing Cluster statistics to text file..."
     clust_list = []
     filename = "clust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
     f = open(filename + ".txt", "w")
@@ -316,37 +297,41 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
             %(m1,m2,tsamp,vsamp,t_gap,v_gap))
     f.write("N \tclust_SNR\t\tsig_mean\tsig_max\t\tSNR_mean\tSNR_max\t\tt_min\t\tt_max\t\t\tv_min\t\tv_max\t\tslope\tDM\n")
 
-    # create cluster objects and add to <clust_list>
-    # write cluster's stats to a text file
+    # create cluster objects and add to <clust_list> and write stats to file
     for n in range(num_clusters):
         coords = np.where(labeled_dil==(n+1))
-        sigs = avg_tv_data[coords]
-        # check cluster SNR threshold
-        new = Cluster(coords,sigs,std)
+        signals = avg_tv_data[coords]
+        new = Cluster(coords,signals,std)
         clust_list.append(new)
         
         if new.clust_SNR > m2: # CLUSTER FILTER
             labeled_dil[coords] = (n+1) + num_clusters
-
-            # Do linear fit and DM fit.
+            # Compute linear fit and DM fit.
             new.lin_fit(C)
             new.DM_fit(128.00, vchan-1)
-            #print new.linear
-            #print new.DM
+            
+            # The four lines below can be uncommented to display
+            # individual clusters on the dynamic spectrum.
             ''''temp = np.zeros(labeled_dil.shape)
             temp[coords] = 1
             plt.imshow(temp)
             plt.show()'''
 
             f.write(new.statline())
-            #print new.statline()
-    f.close()
-    call(["mv", filename + ".txt", "clusters_DM"])    
- 
-    plt.imshow(labeled_dil)
-    #plt.show()
-    plt.savefig(filename + ".png")
-    call(["mv", filename + ".png", "clusters_DM"])     
     
+    f.close()
+   
+    print "Creating clusters plot..."
+        
+    for clust in clust_list:
+        coords = (clust.v_co, clust.t_co)
+        labeled_dil[coords] = clust.clust_SNR  
+
+    plt.imshow(labeled_dil)
+    plt.savefig(filename + ".png")
+    plt.show()
+    
+    call(["mv", filename + ".txt", "clusters_DM"])    
+    call(["mv", filename + ".png", "clusters_DM"])     
     print "Finished Search."
 

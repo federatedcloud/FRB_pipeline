@@ -12,11 +12,11 @@ combinefile2 = "4bit-p2030.20121102.G175.04-00.26.C.b4s1g0.00000"
 
 # Base name of fits files in FITS dir
 #basename = "waller"
-basename = "pipe_test5" #"waller_test_combined_0001"
+basename = "pipe_test6" #"waller_test_combined_0001"
 
 # Search output directory
 #search_dir = "/mnt/data1/pete/test/combine_mocks/search"
-search_dir = "/mnt/data1/plato/pipe_test5/"
+search_dir = "/mnt/data1/plato/pipe_test6/"
 
 
 # =============================================================================
@@ -27,10 +27,10 @@ do_rfifind       = 0    # Run PRESTO rfifind and generate a mask
 do_prepsub       = 0    # Run PRESTO prepsubband dedispersion
 do_fft           = 0    # FFT *dat files before accelsearch
 do_candsearch    = 0    # Run PRESTO accelsearch on the data
-do_presto_sp     = 0    # Run PRESTO singlepulse.py
-do_mod_index     = 1    # Run PALFA2 modulation index calculation
-do_mi_filter     = 1    # Filter candidates by modulation index value
-do_make_plots    = 1    # Plots and shows single pulse candidates
+do_presto_sp     = 1    # Run PRESTO singlepulse.py
+do_mod_index     = 0    # Run PALFA2 modulation index calculation
+do_mi_filter     = 0    # Filter candidates by modulation index value
+do_make_plots    = 0    # Plots and shows single pulse candidates
 do_param_cp      = 0    # copy parameter file to output directory 
 
 
@@ -87,7 +87,9 @@ accel_cores = 1         # number of processing cores
 max_width = 1.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
 sp_otherflags = ""      # Other flags
-#cluster_width = 0.005    # maximum allowed width (seconds) between peaks for clustering
+cluster_width = 0.5   # maximum allowed width (seconds) between peaks
+                        # in time series for clustering
+
 #sp_otherflags = "--noflag --fast --clust -p"   # Other flags
 
 
@@ -101,7 +103,7 @@ md_otherflags = " -o junk.dat "
 # =============================================================================
 # Modulation Index Filtering Parameters
 # =============================================================================
-work_dir = "/mnt/plato/code/pipe_test5/"
+work_dir = "/mnt/plato/code/pipe_test6/"
 mi_mode = "quantity"   # either "threshold" or "quantity"
 mi_threshold = 0.96      # maximum modulation index value
 mi_quantity = 10        # quantity of candidates to keep
