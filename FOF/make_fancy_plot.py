@@ -15,7 +15,7 @@ from matplotlib import ticker
 import make_plots
 import params
 import simple_dm
-import blob
+import friends
 
 # make connected plot of 
 #   (1) Dynamic spectrum (f vs. t)
@@ -97,16 +97,16 @@ def make_fancy_plot(tstart, tread, dm):
     plt.show()
          
     print "Averaging masked data..."
-    data_avgT = blob.avg_time(data, avg_samp)
-    data_avgTV = blob.avg_freq(data_avgT, avg_chan)
+    data_avgT = friends.avg_time(data, avg_samp)
+    data_avgTV = friends.avg_freq(data_avgT, avg_chan)
    
     #plt.imshow(data_avgTV)
     #plt.show()
    
     print "Dedispersing and averaging masked data..." 
     DD = simple_dm.dedisperse_dspec(data, dm, freqs, freqs[-1], dt)
-    DD_avgT = blob.avg_time(DD, avg_samp)
-    DD_avgTV = blob.avg_freq(DD_avgT, avg_chan)    
+    DD_avgT = friends.avg_time(DD, avg_samp)
+    DD_avgTV = friends.avg_freq(DD_avgT, avg_chan)    
 
     #plt.imshow(DD_avgTV)
     #plt.show()
@@ -116,12 +116,12 @@ def make_fancy_plot(tstart, tread, dm):
         print "something strange is happening with the frequency channels"
 
     print "Computing spectrum..."
-    spectrum = blob.avg_time(data_avgTV, data_avgTV.shape[1])
+    spectrum = friends.avg_time(data_avgTV, data_avgTV.shape[1])
     #plt.plot(spectrum)
     #plt.show()
 
     print "Computing time series..."
-    time_series = blob.avg_freq(DD_avgTV, DD_avgTV.shape[0])
+    time_series = friends.avg_freq(DD_avgTV, DD_avgTV.shape[0])
     #plt.plot(np.arange(time_series.size),time_series[0,:])
     #plt.show()
 
