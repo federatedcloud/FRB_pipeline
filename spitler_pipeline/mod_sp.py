@@ -545,7 +545,7 @@ def hist_sigma(data, blo=0, bhi=120, bstep=1):
     
     bins=range(blo, bhi+1, bstep)
    
-    hist,hb=Num.histogram(data, bins=bins, range=(min(bins),max(bins))) 
+    hist,hb=Num.histogram(data, bins=bins, range=(min(bins),max(bins)))
     
     total=Num.sum(hist)
     
