@@ -322,7 +322,7 @@ def clean_timeseries(ts, clust_len=4, nabove=10.0, debug=False):
     if debug==True: print Num.where((tstmp-ts_med) > thr*ts_sig)[0]
 
     #Loop until sufficiently clean
-    while ot_diff >= nabove and nloops<6:
+    while ot_diff >= nabove and nloops<6 and ts_sig>0.0:
         if rmszero==1: break
 
         ts_mean,ts_sig,ts_med=Num.mean(tstmp[ot]),Num.std(tstmp[ot]),Num.median(tstmp[ot])
@@ -338,6 +338,9 @@ def clean_timeseries(ts, clust_len=4, nabove=10.0, debug=False):
         ot_len=len(ot)
         if debug==True: print "Loop number ", nloops, ts_mean, ts_med, ts_sig, thr, ot_len
         nloops+=1
+    
+    if Num.round(ts_sig, decimals=1)==0.0: rmszero=1
+    else: rmszero=0
 
     if rmszero != 1:
         try:
@@ -738,8 +741,8 @@ def main():
                     means[ii]=0.0
                     stds_orig[ii] = stds[ii]
             if opts.noflag: 
-                median_stds = Num.median(stds_orig)
-                std_stds = hist_sigma(stds_orig)
+                median_stds = Num.nanmedian(stds_orig)
+                std_stds = hist_sigma(stds_orig) # stddev of stddevs of chunks
                 lo_std = max(median_stds - 3.1*std_stds, 0)
                 hi_std = median_stds + 10.0*std_stds
                 all_bad = Num.where((stds_orig <= lo_std) | (stds_orig > hi_std))[0]

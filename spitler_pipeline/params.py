@@ -16,7 +16,7 @@ basename = "pipe_test6" #"waller_test_combined_0001"
 
 # Search output directory
 #search_dir = "/mnt/data1/pete/test/combine_mocks/search"
-search_dir = "/mnt/data1/plato/pipe_test6/"
+search_dir = "/mnt/data1/plato/pipe_test6"
 
 
 # =============================================================================
@@ -84,7 +84,7 @@ zap_str = ''            # Put zap stuff here, if desired
 accel_cores = 1         # number of processing cores
 
 # Single pulse
-max_width = 1.0         # Max pulse width (seconds)
+max_width = 5.0         # Max pulse width (seconds)
 dtrend    = 1           # Detrend factor 1-32 powers of two 
 sp_otherflags = ""      # Other flags
 cluster_width = 0.5   # maximum allowed width (seconds) between peaks
