@@ -1,3 +1,4 @@
+import sys
 import configparser
 from collections import OrderedDict
 
@@ -14,7 +15,9 @@ def read_config(filename, dictionary={}):
     config.read(filename)
     
     # Check if data is the first section
-    
+    if not ('data' in config.sections()):
+        sys.exit("Error: the selected configuration file does not contain the "
+            "[data] section, which is necessary.  Quitting.\n")
     
     # Put information in the dirctionary
     for x in config.sections():
@@ -33,9 +36,10 @@ def read_config(filename, dictionary={}):
 if __name__ == "__main__":
     websters = {}
     read_config("Templates/simpleFOF.cfg", websters)
+    #read_config("Templates/default.cfg", websters)
     
-    print_config(config)
-    print("============")
+    #print_config(config)
+    #print("============")
     print(websters)
     
     
