@@ -1,6 +1,11 @@
 # python ignores
 *.pyc
 
+# vim ignores
+*.swp
+*.swo
+*~
+
 # folders to ignore
 test/
 othertest/
