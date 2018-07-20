@@ -1,16 +1,21 @@
-#import os, sys, time
+import sys
+#import os, time
 #import subprocess as sp
 import readconfig as cfg
-import combine_mocks_method as combine
-#import numpy as np
 from optparse import OptionParser
 
+# Methods
+import combine_mocks_method as combine
+#import FOF_method as FOF
+import fits2npz_method as f2n
 
 # Below copied from mod_sp.py
 #def main():
 #    parser = OptionParser(usage)
 #    parser.add_option("-f" ...
 
+
+print("=====\n Pipeline started\n")
 
 # Set up the genreal-purpose dictionary that gets passed everywhere
 hotpotato = {}
@@ -27,17 +32,21 @@ cfg.read_config("Templates/simpleFOF.cfg", hotpotato)
 # This is currently done in the above call to cfg.read_config() and the dictionary is passed in
 
 
-# Step 3 - Call each method with dictionary
-# combine_mocks
+# Step 3 - Call combine_mocks method
 combine.main(hotpotato)
 
+
+# Step 4 - 
 # TODO: create a dynamic spectra as numpy array
-# TODO: organize/use FOF method Plato made
+hotpotato = f2n.main(hotpotato)
 
 
-# Step 4 - Exit cleanly
+# Step 5 - Call FOF method
+#hotpotato = FOF.main(hotpotato)
+
+# Step 5 - Exit cleanly
 # TODO: remove combined file?
-
+sys.exit("Pipeline tasks completed\n =====")
 
 
 

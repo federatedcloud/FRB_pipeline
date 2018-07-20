@@ -1,5 +1,6 @@
 # python ignores
 *.pyc
+*.npz
 
 # vim ignores
 *.swp
