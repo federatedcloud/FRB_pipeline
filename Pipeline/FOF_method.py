@@ -15,22 +15,24 @@ def main(d):
     np_data = d['np_data'] 
     m1 = float(fix_str(d['m1']))
     m2 = float(fix_str(d['m2']))
-    tsamp = int(fix_str(d['tsamp']))
-    vsamp = int(fix_str(d['vsamp']))
     t_gap = int(fix_str(d['t_gap']))
     v_gap = int(fix_str(d['v_gap']))
     tstart = float(fix_str(d['tstart']))
+    
+    gd = {}
+    gd['tsamp'] = int(fix_str(d['tsamp']))
+    gd['vsamp'] = int(fix_str(d['vsamp']))
     #dt = float(fix_str(d['TBIN']))
-    dt = float(d['TBIN'])
+    gd['dt'] = float(d['TBIN'])
     #dv = float(fix_str(d['CHAN_BW']))
-    dv = float(d['CHAN_BW'])
+    dv = abs(float(d['CHAN_BW'])) # for some reason this was negative.
+    gd['dv'] = dv
     #vlow = float(fix_str(d['OBSFREQ'])) - dv * float(fix_str(d['NCHAN'])) / 2.0
     #vhigh = float(fix_str(d['OBSFREQ'])) + dv * float(fix_str(d['NCHAN'])) / 2.0
-    vlow = float(d['OBSFREQ']) - dv * float(d['NCHAN']) / 2.0
-    vhigh = float(d['OBSFREQ']) + dv * float(d['NCHAN']) / 2.0
-    
+    gd['vlow'] = float(d['OBSFREQ']) - dv * float(d['NCHAN']) / 2.0
+    gd['vhigh'] = float(d['OBSFREQ']) + dv * float(d['NCHAN']) / 2.0
     # run algorithm
-    fof(np_data, m1, m2, tsamp, vsamp, t_gap, v_gap, tstart, dt, dv, vlow, vhigh)
+    fof(gd, np_data, m1, m2, t_gap, v_gap, tstart)
     
     return d
 

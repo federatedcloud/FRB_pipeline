@@ -14,9 +14,7 @@ from scipy.stats import linregress
 import scipy.ndimage as ni
 from subprocess import call
 
-# Local Imports
-#import params
-
+# kDM -- Interstellar dispersion constant
 kDM = 4148.808 # MHz^2 / (pc cm^-3)
 
 
@@ -62,17 +60,12 @@ class Cluster:
         self.linear = (C * slope,intercept)
 
 
-    def DM_fit(self, tstart, v_max_index, dt, dv, tsamp, vsamp, vlow):
+    def DM_fit(self, tstart, v_max_index):
         ''' Perform orthogonal DM (inverse square) regression on this Cluster.
-            The fitted DM value is stored in the field <DM>.
-
-            d -- dictionary
-        '''
-
+            The fitted DM value is stored in the field <DM>.'''
         # Note: frequency axis is flipped, because high freqs correspond to low array indices
         t_co = (self.t_co * tsamp * dt) + tstart
         v_co = ((v_max_index-self.v_co) * vsamp * dv) + vlow
-        
         #print(DM_func([560.0*kDM], v_co, t_co[0], v_co[0]))
         data = odr.Data(v_co,t_co) # y-axis is time
         DM_mod = odr.Model(DM_func, extra_args=(t_co[0],v_co[0]))
@@ -82,7 +75,7 @@ class Cluster:
         self.DM = output.beta[0] / kDM
 
 
-    def DM_extrapolate(self, vchan, tchan, tstart, dt, dv, tsamp, vsamp, vlow, vhigh):
+    def DM_extrapolate(self, vchan, tchan, tstart):
 
         # find the max time span for a single frequency band
         v_prev = 0
@@ -98,7 +91,7 @@ class Cluster:
         #dT_width = int(dT_max / 2)
 
         mask = np.zeros((vchan,tchan))
-        v_co = np.flip((np.arange(vchan) * vsamp * dv) + vlow, 0)
+        v_co = np.flip((np.arange(vchan) * vsamp * dv) + vlow,0)
         # dispersed times, computed assuming t0 = self.t_mean, ignore tstart
         t_mean = (self.t_mean * dt * tsamp)
         v_mean = vhigh - (self.v_mean * dv * vsamp)
@@ -146,11 +139,11 @@ class Cluster:
 
         self.lin_mask = mask
 
-    def fit_extrapolate(self, vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh):
+    def fit_extrapolate(self, vchan, tchan, tstart, C):
         ''' Runs DM_fit(), lin_fit(), DM_extrapolate(), and lin_extrapolate(). '''
-        self.DM_fit(tstart, vchan-1, dt, dv, tsamp, vsamp, vlow)
+        self.DM_fit(tstart, vchan-1)
         self.lin_fit(C)
-        self.DM_extrapolate(vchan, tchan, tstart, dt, dv, tsamp, vsamp, vlow, vhigh)
+        self.DM_extrapolate(vchan, tchan, tstart)
         self.lin_extrapolate(vchan, tchan, tstart)
 
 
@@ -324,7 +317,7 @@ def DM_func(beta, v, *args):
     return (beta[0] / v**2) + t1 - (beta[0] / v1**2)
 
 
-def group_clusters(clust_list, data, std, tstart, dt, dv, tsamp, vsamp, vlow, vhigh):
+def group_clusters(clust_list, data, std, tstart=0.0):
 
     ''' Group clusters using the DM/lin extrapolation masks. 
         For each cluster in <clust_list>, form a group of other clusters
@@ -385,10 +378,11 @@ def group_clusters(clust_list, data, std, tstart, dt, dv, tsamp, vsamp, vlow, vh
         sigs = data[(group_vco, group_tco)]
         super_cluster = Cluster((group_vco, group_tco), sigs, std)
         # Fit and extrapolate the super_cluster
-        super_cluster.fit_extrapolate(vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh)
+        super_cluster.fit_extrapolate(vchan, tchan, tstart, C)
         super_clusters.append(super_cluster)
 
     return super_clusters
+
 
 def flag_rfi(clust_list, upper, lower):
     ''' Remove clusters in <clust_list> with significantly large/small slopes.
@@ -411,8 +405,24 @@ def flag_rfi(clust_list, upper, lower):
 
 
 
-def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap, tstart, dt, dv, vlow, vhigh):
-    
+def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
+  
+    global dt
+    global dv
+    global tsamp
+    global vsamp
+    global vlow
+    global vhigh
+
+    dt = gd['dt']
+    dv = gd['dv']
+    tsamp = gd['tsamp']
+    vsamp = gd['vsamp']
+    vlow = gd['vlow']
+    vhigh = gd['vhigh']
+
+    import timeit
+    start = timeit.default_timer() 
     ''' Perform a friends-of-friends search algorithm.
         Arguments:
             (1) data -- raw dynamic spectrum array
@@ -473,7 +483,7 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap, tstart, dt, dv, vlow, vhigh):
             new.lin_fit(C)
             new.DM_extrapolate(vchan, tchan, 128.0)
             new.lin_extrapolate(vchan, tchan, 128.0)'''
-            new.fit_extrapolate(vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh)
+            new.fit_extrapolate(vchan, tchan, tstart, C)
             best_clusters.append(new)
             
             # The four lines below can be uncommented to display
@@ -497,14 +507,17 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap, tstart, dt, dv, vlow, vhigh):
     plt.savefig(filename + ".png")
     plt.show()
     
-    call(["mv", filename + ".txt", "clusters_DM"])    
-    call(["mv", filename + ".png", "clusters_DM"])     
+    #call(["mv", filename + ".txt", "clusters_DM"])    
+    #call(["mv", filename + ".png", "clusters_DM"])     
     print("Finished Search.")
 
     # flag RFI
     rfi = flag_rfi(best_clusters, vchan/4.0, 10.0/tchan)
     # group high SNR clusters
-    super_clusters = group_clusters(best_clusters, avg_tv_data, std, 128.00, dt, dv, tsamp, vsamp, vlow, vhigh)
+    super_clusters = group_clusters(best_clusters, avg_tv_data, std, 128.00)
+
+    stop = timeit.default_timer()
+    print("Runtime is: " + str(stop-start))
  
     # Some plotting
     #for j in range(len(best_clusters)):
