@@ -15,7 +15,7 @@ import scipy.ndimage as ni
 from subprocess import call
 
 # Local Imports
-import params
+#import params
 
 kDM = 4148.808 # MHz^2 / (pc cm^-3)
 
@@ -62,23 +62,99 @@ class Cluster:
         self.linear = (C * slope,intercept)
 
 
-    def DM_fit(self, tstart, v_max_index):
+    def DM_fit(self, tstart, v_max_index, dt, dv, tsamp, vsamp, vlow):
         ''' Perform orthogonal DM (inverse square) regression on this Cluster.
-            The fitted DM value is stored in the field <DM>.'''
+            The fitted DM value is stored in the field <DM>.
+
+            d -- dictionary
+        '''
+
         # Note: frequency axis is flipped, because high freqs correspond to low array indices
-        t_co = (self.t_co * params.avg_samp * params.dt) + tstart
-        v_co = ((v_max_index-self.v_co) * params.avg_chan * params.dv) + params.freqs[0]
+        t_co = (self.t_co * tsamp * dt) + tstart
+        v_co = ((v_max_index-self.v_co) * vsamp * dv) + vlow
         
-        #print DM_func([560.0*kDM], v_co, t_co[0], v_co[0])
+        #print(DM_func([560.0*kDM], v_co, t_co[0], v_co[0]))
         data = odr.Data(v_co,t_co) # y-axis is time
         DM_mod = odr.Model(DM_func, extra_args=(t_co[0],v_co[0]))
         # Note: beta0 is initial estimate of DM*kDM
         odr_inst = odr.ODR(data, DM_mod, beta0=[560.0*kDM])
         output = odr_inst.run()
         self.DM = output.beta[0] / kDM
-        
 
-        # add() needs to be updated
+
+    def DM_extrapolate(self, vchan, tchan, tstart, dt, dv, tsamp, vsamp, vlow, vhigh):
+
+        # find the max time span for a single frequency band
+        v_prev = 0
+        t_seed = 0
+        dT_max = 0
+        for j in range(self.N):
+            if self.v_co[j] == v_prev:
+                dT_max = max((self.t_co[j] - t_seed), dT_max)
+            else:
+                t_seed = self.t_co[j]
+            v_prev = self.v_co[j]
+
+        #dT_width = int(dT_max / 2)
+
+        mask = np.zeros((vchan,tchan))
+        v_co = np.flip((np.arange(vchan) * vsamp * dv) + vlow, 0)
+        # dispersed times, computed assuming t0 = self.t_mean, ignore tstart
+        t_mean = (self.t_mean * dt * tsamp)
+        v_mean = vhigh - (self.v_mean * dv * vsamp)
+        delayed_Ts = DM_func([self.DM * kDM], v_co, t_mean, v_mean)
+        delayed_Tbins = (delayed_Ts / (dt * tsamp)).astype(int)
+        t0 = int(self.t_mean)
+        for v in range(vchan):
+            T = delayed_Tbins[v]
+            mask[v, (T - dT_max):(T + dT_max)] = 1
+
+        self.DM_mask = mask
+
+
+    def lin_extrapolate(self, vchan, tchan, tstart):
+
+        # find the max time span for a single frequency band
+        v_prev = 0
+        t_seed = 0
+        dT_max = 0
+        for j in range(self.N):
+            if self.v_co[j] == v_prev:
+                dT_max = max((self.t_co[j] - t_seed), dT_max)
+            else:
+                t_seed = self.t_co[j]
+            v_prev = self.v_co[j]
+
+        dT_width = int(dT_max / 2)
+
+        mask = np.zeros((vchan,tchan))
+
+        # disperse each frequency band, and mask
+        t_co = np.arange(tchan)
+        lin_v_co = lin_func(self.linear, t_co).astype(int)
+        valid_v = np.where((lin_v_co >= 0) & (lin_v_co < vchan))
+        
+        if lin_v_co[0] > lin_v_co[-1]:
+            t_min = valid_v[0][-1]
+            t_max = valid_v[0][0]
+        else:
+            t_min = valid_v[0][0]
+            t_max = valid_v[0][-1]
+
+        for t in range(t_min,t_max):
+            mask[lin_v_co[t], (t-dT_max):(t+dT_max)] = 1
+
+        self.lin_mask = mask
+
+    def fit_extrapolate(self, vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh):
+        ''' Runs DM_fit(), lin_fit(), DM_extrapolate(), and lin_extrapolate(). '''
+        self.DM_fit(tstart, vchan-1, dt, dv, tsamp, vsamp, vlow)
+        self.lin_fit(C)
+        self.DM_extrapolate(vchan, tchan, tstart, dt, dv, tsamp, vsamp, vlow, vhigh)
+        self.lin_extrapolate(vchan, tchan, tstart)
+
+
+    # add() needs to be updated
     '''def add(self, coord, sig):
         # coord is tuple, sig is the signal at that coordinate
         self.v_co = np.append(self.v_co,coord[0])
@@ -211,8 +287,8 @@ def iterative_stats(data, out, thresh):
         ree = np.ma.array(data,mask=mask)
         mean2 = ree.mean()
         std2 = ree.std()
-        print "mean= " + str(mean)
-        print "std= " + str(std)
+        print("mean= " + str(mean))
+        print("std= " + str(std))
 
     return (mean,std)
 
@@ -248,11 +324,97 @@ def DM_func(beta, v, *args):
     return (beta[0] / v**2) + t1 - (beta[0] / v1**2)
 
 
+def group_clusters(clust_list, data, std, tstart, dt, dv, tsamp, vsamp, vlow, vhigh):
 
-def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
+    ''' Group clusters using the DM/lin extrapolation masks. 
+        For each cluster in <clust_list>, form a group of other clusters
+        that lie inside that cluster's extrapolation masks.
+        For each group of clusters, construct a new "super-cluster"
+        consisting of the pixels from each cluster in the group. 
+        Return a list of the super-clusters.
+
+        Arguments:
+            clust_list -- a list of clusters to group
+            data -- working dynamic spectrum
+            std -- background RMS of the data (computed iteratively)
+            tstart -- start time for this set of data
+    '''
+
+    # stores tuples containg the indices of clusters in clust_list,
+    # so  that the second cluster lies in the first cluster's DM_extrapolate mask
+    DM_matches = []
+    # same thing but with lin_extrapolate masks
+    lin_matches = []
+
+    super_clusters = []
+
+    # FIND MATCHES USING DM/LIN EXTRAPOLATION MASKS
+    for c in range(len(clust_list)):
+        clust_current = clust_list[c]
+        for j in range(len(clust_list)):
+            if c != j:
+                clust2 = clust_list[j]
+                DM_sum = float(np.sum(clust_current.DM_mask[(clust2.v_co, clust2.t_co)]))
+                DM_match = DM_sum / clust2.N
+                lin_sum = float(np.sum(clust_current.lin_mask[(clust2.v_co, clust2.t_co)]))
+                lin_match = lin_sum / clust2.N
+
+                if DM_match > 0.5:
+                    DM_matches.append((c,j))
+                    print("DM_sum = " + str(DM_sum))
+                    print("DM_match = " + str(DM_match))
+                    print("Current DM vs. Second DM: " + str(clust_current.DM) + ", " + str(clust2.DM))
+                if lin_match > 0.5:
+                    lin_matches.append((c,j))
+
+    print("DM_matches: " + str(DM_matches))
+
+    # FORM SUPER_CLUSTERS, and PUT IN <super_clusters>
+    (vchan, tchan) = data.shape
+    C = float(vchan) / tchan
+    for c in range(len(clust_list)):
+        group_indices = [i for i,e in enumerate(DM_matches) if e[0] == c]
+        print(group_indices)
+        if len(group_indices) == 0: continue
+
+        group_tco = clust_list[c].t_co
+        group_vco = clust_list[c].v_co
+        for j in group_indices:
+            group_tco = np.append(group_tco, clust_list[DM_matches[j][1]].t_co)
+            group_vco = np.append(group_vco, clust_list[DM_matches[j][1]].v_co)
+        sigs = data[(group_vco, group_tco)]
+        super_cluster = Cluster((group_vco, group_tco), sigs, std)
+        # Fit and extrapolate the super_cluster
+        super_cluster.fit_extrapolate(vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh)
+        super_clusters.append(super_cluster)
+
+    return super_clusters
+
+def flag_rfi(clust_list, upper, lower):
+    ''' Remove clusters in <clust_list> with significantly large/small slopes.
+
+        Arguments:
+            clust_list -- list of clusters to flag
+            upper -- upper limit on allowed slopes
+            lower -- lower limit on allowed slopes
+
+        Return a list of the flagged clusters.
+    '''
+    removed = []
+    for clust in clust_list:
+        slope = clust.linear[0]
+        if abs(slope) > upper or abs(slope) < lower:
+            clust_list.remove(clust)
+            removed.append(clust)
+
+    return removed
+
+
+
+def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap, tstart, dt, dv, vlow, vhigh):
     
     ''' Perform a friends-of-friends search algorithm.
-    Arguments:
+        Arguments:
             (1) data -- raw dynamic spectrum array
             (2) m1 -- single pixel SNR threshold
             (3) m2 -- cluster SNR threshold
@@ -262,21 +424,21 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
             (7) v_gap -- number of empty freq. samples allowed... 
                  between pixels in the same cluster
     '''
-    print "Decimating the raw, high-resolution data..."
+    print("Decimating the raw, high-resolution data...")
     avg_t_data = avg_time(data,tsamp)
     avg_tv_data = avg_freq(avg_t_data,vsamp)
 
-    print "Computing mean and std.dev. of background noise..."
+    print("Computing mean and std.dev. of background noise...")
     (mean,std) = iterative_stats(avg_tv_data, 3, 0.01)
-    #print "mean= " + str(mean)
-    #print "std= " + str(std)
+    #print("mean= " + str(mean))
+    #print("std= " + str(std))
 
-    print "Masking data with single pixel threshold..."
+    print("Masking data with single pixel threshold...")
     mask = mask1(avg_tv_data, mean, std, m1)
     (vchan,tchan) = mask.shape
     C = float(vchan) / tchan # used in linear fitting
     
-    print "Clustering high signal pixels..."
+    print("Clustering high signal pixels...")
     # construct a structuring element:
     se = np.ones([v_gap+1,t_gap+1])
     # dilate the mask
@@ -289,8 +451,9 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
             if mask[v,t] == 0:
                  labeled_dil[v,t] = 0
 
-    print "Writing Cluster statistics to text file..."
+    print("Writing Cluster statistics to text file...")
     clust_list = []
+    best_clusters = []
     filename = "clust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
     f = open(filename + ".txt", "w")
     f.write("fof results, with\nm1=%.2f   m2=%.2f   tsamp=%.2f   vsamp=%.2f   t_gap=%.2f   v_gap=%.2f\n\n" \
@@ -302,13 +465,16 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
         coords = np.where(labeled_dil==(n+1))
         signals = avg_tv_data[coords]
         new = Cluster(coords,signals,std)
-        clust_list.append(new)
-        
+        clust_list.append(new)       
+ 
         if new.clust_SNR > m2: # CLUSTER FILTER
-            labeled_dil[coords] = (n+1) + num_clusters
-            # Compute linear fit and DM fit.
+            # fit and extrapolate
+            '''new.DM_fit(128.0, vchan-1)
             new.lin_fit(C)
-            new.DM_fit(128.00, vchan-1)
+            new.DM_extrapolate(vchan, tchan, 128.0)
+            new.lin_extrapolate(vchan, tchan, 128.0)'''
+            new.fit_extrapolate(vchan, tchan, tstart, C, dt, dv, tsamp, vsamp, vlow, vhigh)
+            best_clusters.append(new)
             
             # The four lines below can be uncommented to display
             # individual clusters on the dynamic spectrum.
@@ -321,7 +487,7 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
     
     f.close()
    
-    print "Creating clusters plot..."
+    print("Creating clusters plot...")
         
     for clust in clust_list:
         coords = (clust.v_co, clust.t_co)
@@ -333,5 +499,25 @@ def fof(data, m1, m2, tsamp, vsamp, t_gap, v_gap):
     
     call(["mv", filename + ".txt", "clusters_DM"])    
     call(["mv", filename + ".png", "clusters_DM"])     
-    print "Finished Search."
+    print("Finished Search.")
 
+    # flag RFI
+    rfi = flag_rfi(best_clusters, vchan/4.0, 10.0/tchan)
+    # group high SNR clusters
+    super_clusters = group_clusters(best_clusters, avg_tv_data, std, 128.00, dt, dv, tsamp, vsamp, vlow, vhigh)
+ 
+    # Some plotting
+    #for j in range(len(best_clusters)):
+    for j in range(len(super_clusters)):
+        #clust = best_clusters[j]
+        clust = super_clusters[j]
+        print(clust.statline())
+        ext_mask = 30 * clust.DM_mask
+        clust_regions = np.where(labeled_dil > 0)
+        super_regions = (clust.v_co, clust.t_co)
+        ext_mask[clust_regions] = labeled_dil[clust_regions]
+        ext_mask[super_regions] = 200
+        #unmasked = np.where(ext_mask==0)
+        #ext_mask[unmasked] = labeled_dil[unmasked]
+        plt.imshow(ext_mask)
+        plt.show()

@@ -33,20 +33,21 @@ def main(dictionary):
     dd = np.transpose(dd)
     
     # Save as .npz
-    print("Writing numpy array to disk...\n")
-    np.savez("combined_dynamic_spectra", dynamic_spectra=dd, primary_header = [primaryDictionary], subint_header = [subintDictionary]);
-    print("Write complete.")
+    #print("Writing numpy array to disk...\n")
+    #np.savez("combined_dynamic_spectra", dynamic_spectra=dd, primary_header = [primaryDictionary], subint_header = [subintDictionary]);
+    #print("Write complete.")
     
-    # Add numpy array and headers to input dictionary
-    npzfile = np.load("combined_dynamic_spectra.npz")
-    dictionary['np_data'] = npzfile
+    # Add headers to input dictionary
     dictionary.update(primaryDictionary)
     dictionary.update(subintDictionary)
     
-    #TEST
-    print("\n\n Printing dictionary: \n")
-    print(dictionary)
-    print("\n\n End of dictionary \n\n")
+    # TEST - Reduce numpy array to 1 second (at the burst) for demo
+    data_array = dd
+    dt = dictionary['TBIN']
+    data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
+    
+    # Add numpy array to input dictionary
+    dictionary['np_data'] = data_array #npzfile
     
     return dictionary
 

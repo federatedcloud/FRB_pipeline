@@ -6,7 +6,7 @@ from optparse import OptionParser
 
 # Methods
 import combine_mocks_method as combine
-#import FOF_method as FOF
+import FOF_method as FOF
 import fits2npz_method as f2n
 
 # Below copied from mod_sp.py
@@ -42,7 +42,7 @@ hotpotato = f2n.main(hotpotato)
 
 
 # Step 5 - Call FOF method
-#hotpotato = FOF.main(hotpotato)
+hotpotato = FOF.main(hotpotato)
 
 # Step 5 - Exit cleanly
 # TODO: remove combined file?
