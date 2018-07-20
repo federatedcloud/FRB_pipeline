@@ -97,6 +97,7 @@ class Cluster:
         v_mean = vhigh - (self.v_mean * dv * vsamp)
         delayed_Ts = DM_func([self.DM * kDM], v_co, t_mean, v_mean)
         delayed_Tbins = (delayed_Ts / (dt * tsamp)).astype(int)
+
         t0 = int(self.t_mean)
         for v in range(vchan):
             T = delayed_Tbins[v]
@@ -145,8 +146,8 @@ class Cluster:
         self.lin_fit(C)
         self.DM_extrapolate(vchan, tchan, tstart)
         self.lin_extrapolate(vchan, tchan, tstart)
-
-
+        
+        
     # add() needs to be updated
     '''def add(self, coord, sig):
         # coord is tuple, sig is the signal at that coordinate
@@ -404,7 +405,6 @@ def flag_rfi(clust_list, upper, lower):
     return removed
 
 
-
 def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
   
     global dt
@@ -423,6 +423,7 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
 
     import timeit
     start = timeit.default_timer() 
+
     ''' Perform a friends-of-friends search algorithm.
         Arguments:
             (1) data -- raw dynamic spectrum array
@@ -518,13 +519,14 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
 
     stop = timeit.default_timer()
     print("Runtime is: " + str(stop-start))
- 
+
     # Some plotting
     #for j in range(len(best_clusters)):
     for j in range(len(super_clusters)):
         #clust = best_clusters[j]
         clust = super_clusters[j]
         print(clust.statline())
+
         ext_mask = 30 * clust.DM_mask
         clust_regions = np.where(labeled_dil > 0)
         super_regions = (clust.v_co, clust.t_co)
