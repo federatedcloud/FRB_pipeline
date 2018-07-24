@@ -1,11 +1,5 @@
 # python ignores
 *.pyc
-*.npz
-
-# vim ignores
-*.swp
-*.swo
-*~
 
 # folders to ignore
 test/
