@@ -1,5 +1,11 @@
 # python ignores
 *.pyc
+*.npz
+
+# vim ignores
+*.swp
+*.swo
+*~
 
 # folders to ignore
 test/
@@ -8,3 +14,8 @@ othertest/
 # my testing files
 test.py
 junk.py
+
+#pipeline output files
+clust_*.png
+clust_*.txt
+
