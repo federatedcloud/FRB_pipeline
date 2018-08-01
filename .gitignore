@@ -14,3 +14,8 @@ othertest/
 # my testing files
 test.py
 junk.py
+
+#pipeline output files
+clust_*.png
+clust_*.txt
+
