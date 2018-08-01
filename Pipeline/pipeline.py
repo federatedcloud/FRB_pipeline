@@ -1,4 +1,7 @@
 import sys
+sys.path.insert(0, './Methods')
+sys.paht.insert(0, './Modules')
+
 #import os, time
 #import subprocess as sp
 import readconfig as cfg
@@ -18,21 +21,26 @@ import fits2npz_method as f2n
 print("=====\n Pipeline started\n")
 
 # Set up the genreal-purpose dictionary that gets passed everywhere
-hotpotato = {}
+#hotpotato = {}
 # TODO: default values?
 
 
 # Step 1 - Read the config file
-cfg.read_config("Templates/simpleFOF.cfg", hotpotato)
+hotpotato = cfg.read_config("Templates/simpleFOF.cfg")
 # TODO: filename should be passed in as an argument and should otherwise run a default.cfg
 # default.cfg needs to be set up.  Maybe have it list all possible methods/options?
 
 
-# Step 2 - Organize parameters for each method into a dictionary
+# Step 2 - TODO: Organize parameters for each method into a dictionary
 # This is currently done in the above call to cfg.read_config() and the dictionary is passed in
+# but it should be done here so all conversion happens here
 
 
-# Step 3 - Call combine_mocks method
+# Step 3 - TODO: import method files based on their existence as a section in cfg file
+
+
+# Step 4 - If combine_mocks method is defined, call it first
+
 combine.main(hotpotato)
 
 
@@ -58,7 +66,6 @@ sys.exit("Pipeline tasks completed\n =====")
 #  Check dependencies
 #  Basic error checking of config
 #  Error checking of methods
-#  TODO: Create a method class and have each method use it? 
 
 
 

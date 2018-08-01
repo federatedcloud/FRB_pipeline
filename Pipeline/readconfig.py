@@ -22,11 +22,12 @@ def read_config(filename, dictionary={}):
     # Put information in the dirctionary
     for x in config.sections():
         for(x, value) in config.items(x):
-            dictionary[x] = value
+            dictionary[x] = remove_comments(value)
     
     return dictionary
 
-
+def remove_comments(value):
+    return value.split(";")[0]
 
 
 ####################
@@ -38,9 +39,10 @@ if __name__ == "__main__":
     read_config("Templates/simpleFOF.cfg", websters)
     #read_config("Templates/default.cfg", websters)
     
+    # Debugging
     #print_config(config)
     #print("============")
-    print(websters)
+    #print(websters)
     
     
     #methods = config.sections()
