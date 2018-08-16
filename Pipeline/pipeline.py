@@ -7,10 +7,6 @@ sys.path.insert(0, './Modules')
 import readconfig as cfg
 from optparse import OptionParser
 
-# Methods
-import combine_mocks_method as combine
-import FOF_method as FOF
-import fits2npz_method as f2n
 
 # Below copied from mod_sp.py
 #def main():
@@ -20,9 +16,8 @@ import fits2npz_method as f2n
 
 print("=====\n Pipeline started\n")
 
-# Set up the genreal-purpose dictionary that gets passed everywhere
-#hotpotato = {}
-# TODO: default values?
+# Set up the genreal-purpose dictionary "hotpotato" that gets passed everywhere
+hotpotato = {}
 
 
 # Step 1 - Read the config file
@@ -41,15 +36,19 @@ hotpotato = cfg.read_config("Templates/simpleFOF.cfg")
 
 # Step 4 - If combine_mocks method is defined, call it first
 if hotpotato['combine']:
+    import combine_mocks_method as combine
     combine.main(hotpotato)
 
 
 # Step 5 - create a dynamic spectra as numpy array
+import fits2npz_method as f2n
 hotpotato = f2n.main(hotpotato)
 
 
 # Step 6 - Call FOF method
+import FOF_method as FOF
 hotpotato = FOF.main(hotpotato)
+
 
 # Step 7 - Exit cleanly
 # TODO: remove combined file?
