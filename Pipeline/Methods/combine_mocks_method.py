@@ -2,12 +2,12 @@
 from method import *
 
 
-def main(dictionary):
+def main(d):
     print("Combining 2 fits files")
     
-    file1full = dictionary['directory'] + '/' + dictionary['file1'] + '.fits'
-    file2full = dictionary['directory'] + '/' + dictionary['file2'] + '.fits'
-    fitsname = dictionary['directory'] + '/' + dictionary['basename']
+    file1full = d['directory'] + '/' + d['file1'] + '.fits'
+    file2full = d['directory'] + '/' + d['file2'] + '.fits'
+    fitsname = d['directory'] + '/' + d['basename']
     
     # do the actual combine
     cmd = "combine_mocks %s %s -o %s" %(file1full, file2full, fitsname)

@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, './Methods')
-sys.paht.insert(0, './Modules')
+sys.path.insert(0, './Modules')
 
 #import os, time
 #import subprocess as sp
@@ -40,21 +40,20 @@ hotpotato = cfg.read_config("Templates/simpleFOF.cfg")
 
 
 # Step 4 - If combine_mocks method is defined, call it first
+if hotpotato['combine']:
+    combine.main(hotpotato)
 
-combine.main(hotpotato)
 
-
-# Step 4 - 
-# TODO: create a dynamic spectra as numpy array
+# Step 5 - create a dynamic spectra as numpy array
 hotpotato = f2n.main(hotpotato)
 
 
-# Step 5 - Call FOF method
+# Step 6 - Call FOF method
 hotpotato = FOF.main(hotpotato)
 
-# Step 5 - Exit cleanly
+# Step 7 - Exit cleanly
 # TODO: remove combined file?
-sys.exit("Pipeline tasks completed\n =====")
+sys.exit("\n Pipeline tasks completed \n=====")
 
 
 
@@ -66,6 +65,7 @@ sys.exit("Pipeline tasks completed\n =====")
 #  Check dependencies
 #  Basic error checking of config
 #  Error checking of methods
+
 
 
 

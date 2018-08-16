@@ -1,9 +1,6 @@
-#import sys
-#sys.path.insert(0, '../MakeNPZ')
-from astropy.io import fits
 import numpy as np
-import sys
 import subprocess
+from astropy.io import fits
 
 def main(dictionary):
     print("Converting data to a numpy array")

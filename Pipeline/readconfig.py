@@ -40,11 +40,12 @@ if __name__ == "__main__":
     #read_config("Templates/default.cfg", websters)
     
     # Debugging
-    #print_config(config)
-    #print("============")
-    #print(websters)
+    print_config(config)
+    print("============")
+    print(websters)
     
     
-    #methods = config.sections()
-
+    methods = config.sections()
+    print("===========")
+    print(methods)
 
