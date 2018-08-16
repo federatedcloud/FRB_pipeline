@@ -1,1 +1,0 @@
-The purpose of this is to document the steps to run a single pulse search (using single_pulse_search.py from PRESTO) to find FRB candidates in a dataset.
