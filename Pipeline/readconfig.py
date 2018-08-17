@@ -24,6 +24,8 @@ def read_config(filename, dictionary={}):
         for(x, value) in config.items(x):
             dictionary[x] = remove_comments(value)
     
+    dictionary['methods'] = config.sections()
+    
     return dictionary
 
 def remove_comments(value):
