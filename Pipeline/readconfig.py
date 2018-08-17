@@ -11,7 +11,7 @@ def print_config(config):
             print("%s=%s"%(x,value))
         print()
 
-def read_config(filename, dictionary={}):
+def read_config(filename="Templates/default.cfg", dictionary={}):
     config.read(filename)
     
     # Check if data is the first section
@@ -38,8 +38,8 @@ def remove_comments(value):
 
 if __name__ == "__main__":
     websters = {}
-    read_config("Templates/simpleFOF.cfg", websters)
-    #read_config("Templates/default.cfg", websters)
+    #read_config("Templates/simpleFOF.cfg")
+    websters = read_config()
     
     # Debugging
     print_config(config)
