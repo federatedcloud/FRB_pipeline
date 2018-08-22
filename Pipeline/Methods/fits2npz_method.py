@@ -19,10 +19,13 @@ def main(dictionary):
     for j in subintHeader:
         subintDictionary[j] = subintHeader[j]
     
+    #TODO: do any necessary conversions here!
+    
     # Get Data from FITS FILE
     hdu = hdulist[1]
     freqs = hdu.data[0]['dat_freq']
     dat = hdu.data[:]['data']
+    #TODO: Is this splitting the data into 4-bit?  Make sure it only uses 4-bit data for Arecibo!
     piece0 = np.bitwise_and(dat >> 0x04, 0x0F)
     piece1 = np.bitwise_and(dat, 0x0F)
     dat = np.dstack([piece0, piece1]).flatten()
