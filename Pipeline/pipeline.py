@@ -4,35 +4,31 @@ import sys
 sys.path.insert(0, './Methods')
 sys.path.insert(0, './Modules')
 
-#import os, time
-#import subprocess as sp
+import argparse
 import importlib
 import readconfig as cfg
-from optparse import OptionParser
 
 
-# Below copied from mod_sp.py
-#def main():
-#    parser = OptionParser(usage)
-#    parser.add_option("-f" ...
-
+# Set up command-line parser
+cmdparser = argparse.ArgumentParser()
+cmdparser.add_argument("configpath",
+                        help="Path to configuration file (.cfg); defaults to using Templates/default.cfg",
+                        nargs='?',
+                        default="Templates/default.cfg")
+args = cmdparser.parse_args()
+if args.configpath == "Templates/default.cfg":
+    print("No configuration file was selected; using " + args.configpath)
 
 print("=====\n Pipeline started\n")
 
-# Set up the genreal-purpose dictionary "hotpotato" that gets passed everywhere
+# Genreal-purpose dictionary that gets passed everywhere
 hotpotato = {}
 
+# Read the config file
+hotpotato = cfg.read_config(args.configpath)
 
-# Step 1 - Read the config file
-hotpotato = cfg.read_config("Templates/simpleFOF.cfg")
-#hotpotato = cfg.read_config()
-
-# TODO: filename should be passed in as an argument and should otherwise run a default.cfg
-
-
-# Step 2 - TODO: Organize parameters for each method into a dictionary
-# This is currently done in the above call to cfg.read_config() and the dictionary is passed in
-# but it should be done here so all conversion happens here
+# Step 2 - TODO: Ensure proper conversion of config file parameters when added to dictionary
+# This is currently done in the method files, but all conversion should happen here
 
 
 # Step 3 - If combine_mocks method is defined, call it first
