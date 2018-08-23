@@ -1,9 +1,9 @@
 ### Table of Contents
 * [Templates](#templates)
-    * [default.cfg]()
-    * [simpleFOF.cfg]()
-    * [floodfill.cfg]()
-    * [spitler.cfg]()
+    * [default.cfg](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#defaultcfg)
+    * [simpleFOF.cfg](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#simplefofcfg)
+    * [floodfill.cfg](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#floodfillcfg)
+    * [spitler.cfg](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#spitlercfg)
 * [How to Create a New Configuration File](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#how-to-create-a-new-configuration-file)
 
 # Templates
