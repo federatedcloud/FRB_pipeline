@@ -12,6 +12,7 @@ test/
 othertest/
 
 # my testing files
+test.txt
 test.py
 junk.py
 
