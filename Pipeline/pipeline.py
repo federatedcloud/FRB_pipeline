@@ -44,7 +44,7 @@ def main():
         combine.main(hotpotato)
     
     # Create a dynamic spectra as numpy array
-    if hotpotato['use_np_array']:
+    if (hotpotato['use_np_array'] in true_values):
         import fits2npz_method as f2n
         hotpotato = f2n.main(hotpotato)
     
