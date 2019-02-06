@@ -17,7 +17,7 @@ def main():
     cmdparser.add_argument("configpath",
                             help="Path to configuration file (.cfg); defaults to using Templates/default.cfg",
                             nargs='?',
-                            default="Templates/simpleFOF.cfg")
+                            default="Templates/default.cfg")
     args = cmdparser.parse_args()
     if args.configpath == "Templates/default.cfg":
         print("No configuration file was selected; using " + args.configpath)
