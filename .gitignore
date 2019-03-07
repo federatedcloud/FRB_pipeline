@@ -8,6 +8,8 @@
 *~
 
 # folders to ignore
+Data/
+Results/
 test/
 othertest/
 

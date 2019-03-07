@@ -51,7 +51,7 @@ def main(dictionary):
     data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
     
     # Add numpy array to input dictionary
-    dictionary['np_data'] = data_array #npzfile
+    dictionary['np_data'] = data_array
     
     return dictionary
 

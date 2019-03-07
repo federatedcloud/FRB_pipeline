@@ -44,7 +44,7 @@ def main():
             #               " combine = True but file1 and file2 are not properly defined")
         
         combine = __import__('combine_mocks' + '_method')
-        combine.main(hotpotato)
+        hotpotato = combine.main(hotpotato)
     
     # Create a dynamic spectra as numpy array
     if (hotpotato['use_np_array'] == True):
@@ -56,7 +56,7 @@ def main():
         if (x == 'data' or x == 'combine_mocks'):
             continue
         temp = __import__(x + '_method')
-        temp.main(hotpotato)
+        hotpotato = temp.main(hotpotato)
     
     # Exit cleanly
     # TODO: remove combined file?
