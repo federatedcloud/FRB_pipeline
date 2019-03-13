@@ -1,3 +1,4 @@
+from method import *
 import numpy as np
 import subprocess
 from astropy.io import fits

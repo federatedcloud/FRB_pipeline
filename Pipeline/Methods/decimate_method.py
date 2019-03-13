@@ -1,7 +1,4 @@
 from method import *
-
-import sys
-sys.path.insert(0, './Modules/')
 from decimate import *
 
 def main(d):

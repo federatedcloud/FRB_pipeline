@@ -1,5 +1,3 @@
-import sys
-sys.path.insert(0, '../Modules')
 from method import *
 from friends import *
 

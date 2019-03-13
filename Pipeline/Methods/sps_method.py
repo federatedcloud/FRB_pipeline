@@ -1,4 +1,3 @@
-
 # single pulse search method
 from method import *
 
