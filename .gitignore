@@ -8,13 +8,18 @@
 *~
 
 # folders to ignore
+Data/
+Results/
 test/
 othertest/
 
 # my testing files
 test.txt
+junk.txt
 test.py
 junk.py
+test.cfg
+junk.cfg
 
 #pipeline output files
 clust_*.png

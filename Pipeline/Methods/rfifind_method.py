@@ -4,7 +4,6 @@ import sys
 import os
 import time
 from glob import glob
-#sys.path.insert(0, '../')
 
 
 def main(d):

@@ -16,3 +16,7 @@ def main(dictionary):
     # rename to basename
     cmd = "mv %s_0001.fits %s.fits" %(fitsname, fitsname)
     try_cmd(cmd)
+    
+    dictionary['fitsname'] = fitsname
+    
+    return dictionary
