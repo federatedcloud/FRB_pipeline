@@ -1,5 +1,6 @@
 import sys, time
 import subprocess as sp
+sys.path.insert(0, '../Modules')
 
 # TODO: method class
 #class method:

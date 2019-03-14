@@ -1,12 +1,9 @@
 from method import *
-
-import sys
-sys.path.insert(0, './Modules/')
 from decimate import *
 
 def main(d):
     print("Running decimation and smoothing.")
-
+    print(d)
     # Set up dictionary with data-related parameters
     gd = {}
     dt = float(d['TBIN'])
@@ -29,18 +26,18 @@ def main(d):
                          "Select either 'do_avg' or 'do_decimate.")
 
     # kernel options: gaussian2d, gaussianT, gaussianV, block2d, blockT, blockV, custom
-    sd['kernels'] = d['kernels'].split(', ')
-
+    sd['kernels'] = d['kernels'].split(',')
+    print(sd['kernels'])
     if do_avg == True:
-        sd['T_width'] = int(float(d['T_width']) / (dt*gd['tsamp']))
-        sd['V_width'] = int(float(d['V_width']) / (dv*gd['vsamp']))
-        sd['T_sigma'] = float(float(d['T_sigma']) / (dt*gd['tsamp']))
-        sd['V_sigma'] = float(float(d['V_sigma']) / (dv*gd['vsamp']))
+        sd['T_width'] = int(float(d['t_width']) / (dt*gd['tsamp']))
+        sd['V_width'] = int(float(d['v_width']) / (dv*gd['vsamp']))
+        sd['T_sigma'] = float(float(d['t_sigma']) / (dt*gd['tsamp']))
+        sd['V_sigma'] = float(float(d['v_sigma']) / (dv*gd['vsamp']))
     if do_decimate == True:
-        sd['T_width'] = int(float(d['T_width']) / dt)
-        sd['V_width'] = int(float(d['V_width']) / dv)
-        sd['T_sigma'] = float(float(d['T_sigma']) / dt)
-        sd['V_sigma'] = float(float(d['V_sigma']) / dv) 
+        sd['T_width'] = int(float(d['t_width']) / dt)
+        sd['V_width'] = int(float(d['v_width']) / dv)
+        sd['T_sigma'] = float(float(d['t_sigma']) / dt)
+        sd['V_sigma'] = float(float(d['v_sigma']) / dv) 
 
     # Run decimation and smoothing
     d['dec_data'] = decimate_and_smooth(gd, sd, d['np_data'], do_avg, do_smooth, do_decimate)

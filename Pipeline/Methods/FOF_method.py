@@ -1,5 +1,3 @@
-import sys
-sys.path.insert(0, '../Modules')
 from method import *
 from friends import *
 
@@ -8,7 +6,10 @@ def main(d):
     print("Running Friend-Of-Friends")
     
     # Set up fof-specific parameters
-    np_data = d['np_data']
+    if 'decimate' in d['methods']:
+        data= d['dec_data']
+    else:
+        data = d['np_data']
     m1 = d['m1']
     m2 = d['m2']
     t_gap = int(d['t_gap'])
@@ -26,6 +27,6 @@ def main(d):
     gd['vhigh'] = d['OBSFREQ'] + dv * d['NCHAN'] / 2.0
     
     # Run algorithm
-    fof(gd, np_data, m1, m2, t_gap, v_gap, tstart)
+    fof(gd, data, m1, m2, t_gap, v_gap, tstart)
     
     return d
