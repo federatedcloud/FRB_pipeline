@@ -522,7 +522,11 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     plt.imshow(labeled_dil[6000:8000,:])
     plt.savefig(filename + ".png")
     plt.show()
-    
+    plt.imshow(labeled_dil)
+    plt.show()
+    plt.imshow(labeled_dil[:,6000:8000])   
+
+ 
     #call(["mv", filename + ".txt", "clusters_DM"])    
     #call(["mv", filename + ".png", "clusters_DM"])     
     print("Finished Search.")
