@@ -6,8 +6,9 @@ from astropy.io import fits
 def main(dictionary):
     print("Converting data to a numpy array")
 
-    if 'rfifind' in dictionary['methods']:    
-        infile = dictionary['directory'] + '/' + dictionary['basename'] + '_rfifind.mask'
+    if 'rfifind' in dictionary['methods'] and 'maskdata' in dictionary['methods']:    
+        #infile = dictionary['directory'] + '/' + dictionary['basename'] + '_masked.fits'
+        infile= 'raw_data_with_mask.fits'
     else:
         infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
             
@@ -53,7 +54,7 @@ def main(dictionary):
     # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
     data_array = dd
     dt = dictionary['TBIN']
-    data_array = data_array[:, int(120.0/dt):int(130.0/dt)]
+    data_array = data_array[:, int(128.0/dt):int(130.0/dt)]
     
     # Add numpy array to input dictionary
     dictionary['np_data'] = data_array
