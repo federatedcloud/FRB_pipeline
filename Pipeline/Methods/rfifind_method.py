@@ -13,7 +13,7 @@ def main(d):
     
     # get/set file locations 
     fits_dir = d['directory']
-    rfi_dir = d['work_dir'] + d['rfi_dir_name']
+    rfi_dir = fits_dir
     fitsname = d['basename']
     fitslist = glob('%s/%s*.fits' %(fits_dir, fitsname))
     fitslist.sort()

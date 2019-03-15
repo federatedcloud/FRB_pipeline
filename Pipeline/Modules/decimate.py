@@ -228,13 +228,15 @@ def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=
 
     tsamp = gd['tsamp']
     vsamp = gd['vsamp']
+   
+    print(data.shape)
     
-    plt.imshow(data)
+    #plt.imshow(data)
     plt.show()
     if do_avg == True:
         print("Block averaging raw data, with:\n\ttsamp=%d\n\tvsamp=%d" %(tsamp, vsamp)) 
         data = block_avg(data, tsamp, vsamp)
-        plt.imshow(data)
+        #plt.imshow(data)
         plt.show()
     else:
         print("No averaging selected.")
@@ -242,7 +244,7 @@ def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=
     if do_smooth == True:
         print("Smoothing the block averaged data.\n\nConvolution Kernels: %s" %(str(sd['kernels'])))
         smooth_data = call_filter(sd, data) 
-        plt.imshow(smooth_data)
+        #plt.imshow(smooth_data)
         plt.show()
     else:
         print("No smoothing selected.")
@@ -252,7 +254,7 @@ def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=
         print("Decimating smoothed data.\n Time sampling period (bins): %d\n "\
               "Frequency sampling period (bins): %d" %(tsamp, vsamp))
         dec_data = decimate(smooth_data, tsamp, vsamp)
-        plt.imshow(dec_data)
+        #plt.imshow(dec_data)
         plt.show()
     else:
         print("No decimation performed.")
