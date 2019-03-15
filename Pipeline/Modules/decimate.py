@@ -196,7 +196,7 @@ def call_filter(sd, data):
                           "convolve data with zero-dimension kernel. Exiting...")
 
     for n in range(len(kernel_list)):
-        current = kernel_list[n]
+        current = kernel_list[n].split()[0]
         if current == 'gaussian2d':
             kernel = gaussian_2d(T_width, V_width, T_sigma, V_sigma)
         elif current == 'gaussianT':
