@@ -508,6 +508,11 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     
     f.close()
    
+
+
+    stop = timeit.default_timer()
+    print("Runtime is: " + str(stop-start))
+    
     print("Creating clusters plot...")
         
     for clust in clust_list:
@@ -536,10 +541,6 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     sf.write("N \tclust_SNR\t\tsig_mean\tsig_max\t\tSNR_mean\tSNR_max\t\tt_min\t\tt_max\t\t\tv_min\t\tv_max\t\tslope\tDM\n")
     for sc in super_clusters:
         sf.write(sc.statline())    
-
-
-    stop = timeit.default_timer()
-    print("Runtime is: " + str(stop-start))
 
     # Some plotting
     #for j in range(len(best_clusters)):

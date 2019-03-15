@@ -45,6 +45,11 @@ def main():
         
         combine = __import__('combine_mocks' + '_method')
         hotpotato = combine.main(hotpotato)
+
+    # QUICK FIX for RFIFIND
+    if 'rfifine' in hotpotato['methods']:
+        temp= __import__('rfifind_method')
+        hotpotato= temp.main(hotpotato)
     
     # Create a dynamic spectra as numpy array
     if (hotpotato['use_np_array'] == True):
@@ -53,7 +58,7 @@ def main():
     
     # Dynamically import and call the main function of each method defined in cfg
     for x in hotpotato['methods']:
-        if (x == 'data' or x == 'combine_mocks'):
+        if (x == 'data' or x == 'combine_mocks' or x == 'rfifind'):
             continue
         temp = __import__(x + '_method')
         hotpotato = temp.main(hotpotato)
