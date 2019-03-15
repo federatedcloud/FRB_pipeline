@@ -29,7 +29,7 @@ def read_config(filename, dictionary={}):
     return dictionary
 
 def remove_comments(value):
-    return value.split(" ")[0]
+    return value.split(";")[0]
 
 
 ####################
