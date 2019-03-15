@@ -64,7 +64,7 @@ def main():
     
     # Dynamically import and call the main function of each method defined in cfg
     for x in hotpotato['methods']:
-        if (x == 'data' or x == 'combine_mocks' or x == 'rfifind'):
+        if (x == 'data' or x == 'combine_mocks' or x == 'rfifind' or x == 'maskdata'):
             continue
         temp = __import__(x + '_method')
         hotpotato = temp.main(hotpotato)
