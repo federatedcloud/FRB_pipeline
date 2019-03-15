@@ -8,12 +8,11 @@ def main(dictionary):
 
     if 'rfifind' in dictionary['methods'] and 'maskdata' in dictionary['methods']:    
         #infile = dictionary['directory'] + '/' + dictionary['basename'] + '_masked.fits'
-        infile= 'raw_data_with_mask.fits'
+        infile= dictionary['directory'] + '/' + 'raw_data_with_mask.fits'
     else:
         infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
-            
-
-    hdulist = fits.open(infile)
+    
+    hdulist = fits.open(infile, ignore_missing_end=True)
     
     # Get Header Info and put it into a dictionary
     primaryDictionary = {}
