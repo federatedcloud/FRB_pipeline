@@ -519,7 +519,7 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
         coords = (clust.v_co, clust.t_co)
         labeled_dil[coords] = clust.clust_SNR  
 
-    plt.imshow(labeled_dil)
+    plt.imshow(labeled_dil[6000:8000,:])
     plt.savefig(filename + ".png")
     plt.show()
     

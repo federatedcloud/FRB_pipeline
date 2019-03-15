@@ -47,7 +47,7 @@ def main():
         hotpotato = combine.main(hotpotato)
 
     # QUICK FIX for RFIFIND
-    if 'rfifine' in hotpotato['methods']:
+    if 'rfifind' in hotpotato['methods']:
         temp= __import__('rfifind_method')
         hotpotato= temp.main(hotpotato)
     
