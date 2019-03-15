@@ -7,7 +7,7 @@ def main(dictionary):
     print("Converting data to a numpy array")
 
     if 'rfifind' in dictionary['methods']:    
-        infile = dictionary['directory'] + '/' + dictinoary['basename'] + '_rfifind.mask'
+        infile = dictionary['directory'] + '/' + dictionary['basename'] + '_rfifind.mask'
     else:
         infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
             
