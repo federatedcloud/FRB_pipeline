@@ -26,7 +26,6 @@ def read_config(filename, dictionary={}):
     for x in config.sections():
         for(x, value) in config.items(x):
             if (is_bool(value)):
-                print("something is a bool")
                 dictionary[x] = to_bool(remove_spaces(value))
             else:
                 dictionary[x] = remove_comments(value)
