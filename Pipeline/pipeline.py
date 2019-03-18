@@ -56,7 +56,7 @@ def main():
 
     # Create a dynamic spectra as numpy array
     if (hotpotato['use_np_array'] == True):
-        import fits2npz_method as f2n
+        import fil2npz_method as f2n
         hotpotato = f2n.main(hotpotato)
     
     # Dynamically import and call the main function of each method defined in cfg
