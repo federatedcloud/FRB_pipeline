@@ -78,6 +78,7 @@ def convolve_smooth_2d(data, fil):
     data = np.concatenate((data, np.zeros((vchan, T-tchan))), axis=1) 
     fil = np.concatenate((fil, np.zeros((V-vfil, T))), axis=0)
     data = np.concatenate((data, np.zeros((V-vchan, T))), axis=0) 
+    print("Padding finished.")
 
     # compute ffts
     data_fft = np.zeros((V, T),dtype=complex)
@@ -88,17 +89,17 @@ def convolve_smooth_2d(data, fil):
     for t in range(T):
         data_fft[:,t] = np.fft.fft(data_fft[:,t])
         fil_fft[:,t] = np.fft.fft(fil_fft[:,t])
-    
+    print("ffts computed.") 
     '''
     # built-in 2d ffts
-    data_2dfft = np.fft.fft2(data)
-    fil_2dfft = np.fft.fft2(fil)
-    print(data_fft - data_2dfft)
-    print(fil_fft - fil_2dfft)
-    '''
+    data_fft = np.fft.fft2(data)
+    fil_fft = np.fft.fft2(fil)
+    '''    
     # use convolution theorem
     prod = np.multiply(data_fft, fil_fft)
+    print("Mulitplied spectra.")
     conv = np.fft.ifft2(prod)
+    print("Finished inverse FFT.")
     conv = conv.astype(float) # convert complex entries to real entries
     
     # Note: conv has dimensions:  (vchan + vfil - 1) x (tchan + tfil - 1)
@@ -242,7 +243,7 @@ def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=
         print("No averaging selected.")
 
     if do_smooth == True:
-        print("Smoothing the block averaged data.\n\nConvolution Kernels: %s" %(str(sd['kernels'])))
+        print("Smoothing the data.\n\nConvolution Kernels: %s" %(str(sd['kernels'])))
         smooth_data = call_filter(sd, data) 
         #plt.imshow(smooth_data)
         plt.show()

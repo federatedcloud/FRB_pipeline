@@ -10,10 +10,9 @@ def load(filename):
     arr= np.load(filename)
 
 
-def main(filename):
-    arr= load(filename)
-    print(arr)
-    plt.imshow(arr[0:10,0:10])
+def basic_plot_go(arr):
+    print("Image has dimesions: " + arr.shape)
+    plt.imshow(arr)
     plt.show()
 
 def plot_range(arr, tstart, tend, vstart, vend):

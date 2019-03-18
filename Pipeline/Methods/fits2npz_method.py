@@ -53,7 +53,7 @@ def main(dictionary):
     # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
     data_array = dd
     dt = dictionary['TBIN']
-    #data_array = data_array[:, int(128.0/dt):int(130.0/dt)]
+    data_array = data_array[:, int(128.0/dt):int(133.0/dt)]
     
     # Add numpy array to input dictionary
     dictionary['np_data'] = data_array

@@ -53,10 +53,7 @@ def main():
     if 'maskdata' in hotpotato['methods']:
         temp= __import__('maskdata_method')
         hotpotato= temp.main(hotpotato)
-    else:
-        print("If rfifind was used, maskdata really should be used, for FOF!")
 
-    
     # Create a dynamic spectra as numpy array
     if (hotpotato['use_np_array'] == True):
         import fits2npz_method as f2n
