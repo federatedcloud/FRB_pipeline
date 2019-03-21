@@ -1,5 +1,6 @@
 from method import *
 import numpy as np
+import matplotlib.pyplot as plt
 import subprocess
 from astropy.io import fits
 
@@ -9,10 +10,10 @@ def main(d):
     filfile= d['directory'] + '/' + 'raw_data_with_mask.fits'
     fitsfile= d['directory'] + '/' + d['basename'] + '.fits' 
 
-    if 'rfifind' in d['methods'] and 'maskdata' in d['methods']:    
-        # possibly a print message
-    else:
-        # possibly a print message 
+    #if 'rfifind' in d['methods'] and 'maskdata' in d['methods']:    
+    #    # possibly a print message
+    #else:
+    #    # possibly a print message 
 
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     
@@ -33,7 +34,8 @@ def main(d):
     # Put the data (from the filfile) in Numpy array
     dd = np.fromfile(filfile, dtype='float32')
     print(dd.shape)
-    dd = np.reshape(dd, (-1, nchan))
+    dd = np.reshape(dd, (-1, d['NCHAN'])).T
+    dd = np.flip(dd, axis= 0)
     print(dd.shape)    
 
     if (d['output_npz_file'] == True):
@@ -42,7 +44,9 @@ def main(d):
     # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
     data_array = dd
     dt = d['TBIN']
-    data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
+    data_array = data_array[:, int(126.0/dt):int(131.0/dt)]
+    #plt.imshow(data_array, aspect=24.0)
+    #plt.show()
     
     # Add numpy array to input dictionary
     d['np_data'] = data_array

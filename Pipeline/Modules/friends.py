@@ -446,7 +446,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     avg_tv_data = avg_freq(avg_t_data,vsamp)
     '''
     avg_tv_data= data
-
+    #plt.imshow(data, aspect=24.0)
+    #plt.show()
 
 
     print("Computing mean and std.dev. of background noise...")
@@ -520,7 +521,9 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
         labeled_dil[coords] = clust.clust_SNR  
 
     plt.savefig(filename + ".png")
-    plt.imshow(labeled_dil)
+    #plt.figure(figsize=(10,8))
+    plt.imshow(labeled_dil, aspect= 24.0)
+    #plt.imshow(labeled_dil)
     plt.show()
 
  
