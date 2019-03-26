@@ -24,4 +24,6 @@ junk.cfg
 #pipeline output files
 clust_*.png
 clust_*.txt
+superclust_*.txt
+
 
