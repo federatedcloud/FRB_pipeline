@@ -1,5 +1,5 @@
 # FRB_pipeline
-Pipeline to search for FRBs
+A customizable scientific software pipeline for detecting, categorizing, and viewing single pulse candidates that may be Fast Radio Burst (FRB) sources in Radio Astronomy data.
 
 ------------------
 
