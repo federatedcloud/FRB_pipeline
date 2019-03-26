@@ -33,41 +33,14 @@ def main():
     # Ensure proper conversion of config file and header parameters in dictionary
     hotpotato = convert_values(hotpotato)
     
-    # If combine_mocks method is defined, call it first
-    if 'combine_mocks' in hotpotato['methods']:
-        # TODO: error check this
-            #if ((not cfg.config.has_option('file1')) or (not cfg.config.has_option('file2'))):
-            #    sys.exit("\n Error: Configuration file is not set up correctly:"
-            #               " combine = True but file1 and file2 are not properly defined") 
-            #elif ((hotpotato['file1'] == '') and (hotpotato['file2'] == '')):
-            #    sys.exit("\n Error: Configuration file is not set up correctly:"
-            #               " combine = True but file1 and file2 are not properly defined")
-        
-        combine = __import__('combine_mocks' + '_method')
-        hotpotato = combine.main(hotpotato)
-
-    # QUICK FIX for RFIFIND
-    if 'rfifind' in hotpotato['methods']:
-        temp= __import__('rfifind_method')
-        hotpotato= temp.main(hotpotato)
-    if 'maskdata' in hotpotato['methods']:
-        temp= __import__('maskdata_method')
-        hotpotato= temp.main(hotpotato)
-
-    # Create a dynamic spectra as numpy array
-    if (hotpotato['use_np_array'] == True):
-        import fil2npz_method as f2n
-        hotpotato = f2n.main(hotpotato)
-    
     # Dynamically import and call the main function of each method defined in cfg
     for x in hotpotato['methods']:
-        if (x == 'data' or x == 'combine_mocks' or x == 'rfifind' or x == 'maskdata'):
+        if (x == 'data'):
             continue
         temp = __import__(x + '_method')
         hotpotato = temp.main(hotpotato)
     
     # Exit cleanly
-    # TODO: remove combined file?
     sys.exit("\n Pipeline tasks completed \n=====")
     
     #===============================
