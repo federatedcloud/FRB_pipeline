@@ -4,17 +4,22 @@ import matplotlib.pyplot as plt
 import subprocess
 from astropy.io import fits
 
+# Parameters used from dictionary:
+#   directory, basename, filename_fil, output_npz_file, filename_npz, NCHAN, TBIN, and np_data
+
 def main(d):
     print("Converting data to a numpy array")
 
-    filfile= d['directory'] + '/' + 'raw_data_with_mask.fits'
     fitsfile= d['directory'] + '/' + d['basename'] + '.fits' 
-
-    #if 'rfifind' in d['methods'] and 'maskdata' in d['methods']:    
-    #    # possibly a print message
-    #else:
-    #    # possibly a print message 
-
+    
+    # Maskdata used a special file
+    if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
+        filfile= d['directory'] + '/' + d['filename_fil']
+    else:
+        filfile= d['directory'] + '/' + d['filename_fil'] + '.fil'
+    
+    print("Using %s as filterbank file to convert" %(filfile) )
+    
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     
     # Get Header Info and put it into a d
@@ -41,12 +46,13 @@ def main(d):
     if (d['output_npz_file'] == True):
         save_npz(d['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
-    # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
-    data_array = dd
-    dt = d['TBIN']
-    data_array = data_array[:, int(126.0/dt):int(131.0/dt)]
-    #plt.imshow(data_array, aspect=24.0)
-    #plt.show()
+    # For Testing ONLY: reduce the size of the data
+    if (dictionary['testing_mode'] == True):
+        data_array = dd
+        dt = d['TBIN']
+        data_array = data_array[:, int(126.0/dt):int(131.0/dt)]
+        #plt.imshow(data_array, aspect=24.0)
+        #plt.show()
     
     # Add numpy array to input dictionary
     d['np_data'] = data_array
