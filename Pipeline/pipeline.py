@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Execution of pipeline happens here
 
 import sys
