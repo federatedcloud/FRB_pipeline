@@ -5,12 +5,8 @@ from astropy.io import fits
 
 def main(dictionary):
     print("Converting data to a numpy array")
-
-    if 'rfifind' in dictionary['methods'] and 'maskdata' in dictionary['methods']:    
-        #infile = dictionary['directory'] + '/' + dictionary['basename'] + '_masked.fits'
-        infile= dictionary['directory'] + '/' + 'raw_data_with_mask.fits'
-    else:
-        infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
+    
+    infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
     
     hdulist = fits.open(infile, ignore_missing_end=True)
     
@@ -51,9 +47,10 @@ def main(dictionary):
         save_npz(dictionary['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
     # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
-    data_array = dd
-    dt = dictionary['TBIN']
-    data_array = data_array[:, int(128.0/dt):int(133.0/dt)]
+    if (dictionary['testing_mode'] == True):
+        data_array = dd
+        dt = dictionary['TBIN']
+        data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
     
     # Add numpy array to input dictionary
     dictionary['np_data'] = data_array
