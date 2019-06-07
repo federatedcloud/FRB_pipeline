@@ -1,8 +1,36 @@
 # FRB_pipeline
-A customizable scientific software pipeline for detecting, categorizing, and viewing single pulse candidates that may be Fast Radio Burst (FRB) sources in Radio Astronomy data.
+A customizable scientific software pipeline written in python3 for detecting, categorizing, and viewing single pulse candidates that may be Fast Radio Burst (FRB) sources in Radio Astronomy data.
 
 ------------------
 
+# Quick-Start Guide
+
+## How To Use The Pipeline
+
+### Basic Structure
+#### Methods
+A **[method](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods#methods)** is essentially a task for the pipeline to perform.  Each method consists of a single python file that is named to reflect what it does, followed by `_method.py`, and is stored in the [Methods directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods).  For example, the "Hello World!" method file is named [`hello_world_method.py`](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/hello_world_method.py).  There are several [existing methods](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/README.md#included-methods) to choose from, some of which call functions from underlying Modules.  In order to run a method, it must be specified in the Cofiguration File you choose when you run the pipeline.
+
+#### Configuration Files
+A configuration file (`.cfg`) is all that is needed to run the pipeline with existing methods.  This file specifies which methods you would like to perform *and* all of the necessary or desired parameters, inputs, directory locations, etc. for those methods.  A method is specified by name as a section key without the `_method` part of the name.  For example, to run the "Hello World!" method, your configuration file must include `[hello_world]`.
+
+Configuration files support comments following the `;` or `#` characters.
+
+#### Modules
+
+
+#### Data and Results
+
+
+### Running
+You can run the pipeline by issuing `./pipeline` from the [Pipeline directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline)
+
+`$ ./pipeline Templates/hello_world.cfg`
+
+## How To Add Your Own Code/Methods
+
+
+---
 ## Pipeline Components
 
 ### Configuration Files (Including [Templates](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#templates))
