@@ -47,7 +47,7 @@ def main(d):
         save_npz(d['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
     # For Testing ONLY: reduce the size of the data
-    if (dictionary['testing_mode'] == True):
+    if (d['testing_mode'] == True):
         data_array = dd
         dt = d['TBIN']
         data_array = data_array[:, int(126.0/dt):int(131.0/dt)]

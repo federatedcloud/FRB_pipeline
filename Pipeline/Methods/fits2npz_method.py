@@ -46,7 +46,7 @@ def main(dictionary):
     if (dictionary['output_npz_file'] == True):
         save_npz(dictionary['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
-    # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
+    # For Testing ONLY: reduce the size of the data
     if (dictionary['testing_mode'] == True):
         data_array = dd
         dt = dictionary['TBIN']
