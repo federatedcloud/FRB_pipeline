@@ -176,7 +176,7 @@ class Cluster:
     def statline(self):
         '''Return a string of the class attributes separated by tabs.'''
         return "%d\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\t %f\n" \
-               %(self.N, self.clust_SNR, self.sig_mean, self.sig_max, 
+                 %(self.N, self.clust_SNR, self.sig_mean, self.sig_max, 
                  self.SNR_mean, self.SNR_max, self.t_range[0],
                  self.t_range[1], self.v_range[0], self.v_range[1], 
                  self.linear[0], self.DM)
@@ -355,20 +355,20 @@ def group_clusters(clust_list, data, std, tstart=0.0):
 
                 if DM_match > 0.5:
                     DM_matches.append((c,j))
-                    print("DM_sum = " + str(DM_sum))
-                    print("DM_match = " + str(DM_match))
-                    print("Current DM vs. Second DM: " + str(clust_current.DM) + ", " + str(clust2.DM))
+                    #print("DM_sum = " + str(DM_sum))
+                    #print("DM_match = " + str(DM_match))
+                    #print("Current DM vs. Second DM: " + str(clust_current.DM) + ", " + str(clust2.DM))
                 if lin_match > 0.5:
                     lin_matches.append((c,j))
 
-    print("DM_matches: " + str(DM_matches))
+    #print("DM_matches: " + str(DM_matches))
 
     # FORM SUPER_CLUSTERS, and PUT IN <super_clusters>
     (vchan, tchan) = data.shape
     C = float(vchan) / tchan
     for c in range(len(clust_list)):
         group_indices = [i for i,e in enumerate(DM_matches) if e[0] == c]
-        print(group_indices)
+        #print(group_indices)
         if len(group_indices) == 0: continue
 
         group_tco = clust_list[c].t_co
@@ -435,9 +435,20 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
             (7) v_gap -- number of empty freq. samples allowed... 
                  between pixels in the same cluster
     '''
+    print(data.shape)
+
+
+    
+    '''
     print("Decimating the raw, high-resolution data...")
+    
     avg_t_data = avg_time(data,tsamp)
     avg_tv_data = avg_freq(avg_t_data,vsamp)
+    '''
+    avg_tv_data= data
+    #plt.imshow(data, aspect=24.0)
+    #plt.show()
+
 
     print("Computing mean and std.dev. of background noise...")
     (mean,std) = iterative_stats(avg_tv_data, 3, 0.01)
@@ -498,16 +509,24 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     
     f.close()
    
+
+
+    stop = timeit.default_timer()
+    print("Runtime is: " + str(stop-start))
+    
     print("Creating clusters plot...")
         
     for clust in clust_list:
         coords = (clust.v_co, clust.t_co)
         labeled_dil[coords] = clust.clust_SNR  
 
-    plt.imshow(labeled_dil)
     plt.savefig(filename + ".png")
+    #plt.figure(figsize=(10,8))
+    plt.imshow(labeled_dil, aspect= 24.0)
+    #plt.imshow(labeled_dil)
     plt.show()
-    
+
+ 
     #call(["mv", filename + ".txt", "clusters_DM"])    
     #call(["mv", filename + ".png", "clusters_DM"])     
     print("Finished Search.")
@@ -515,14 +534,21 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     # flag RFI
     rfi = flag_rfi(best_clusters, vchan/4.0, 10.0/tchan)
     # group high SNR clusters
+    print("Creating super clusters (clustering clusters)...")
     super_clusters = group_clusters(best_clusters, avg_tv_data, std, 128.00)
 
-    stop = timeit.default_timer()
-    print("Runtime is: " + str(stop-start))
+    # create a file containing stats about super clusters
+    super_filename = "superclust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
+    sf = open(super_filename + ".txt", "w")
+    sf.write("fof super clusters, with\nm1=%.2f   m2=%.2f   tsamp=%.2f   vsamp=%.2f   t_gap=%.2f   v_gap=%.2f\n\n" \
+            %(m1,m2,tsamp,vsamp,t_gap,v_gap))
+    sf.write("N \tclust_SNR\t\tsig_mean\tsig_max\t\tSNR_mean\tSNR_max\t\tt_min\t\tt_max\t\t\tv_min\t\tv_max\t\tslope\tDM\n")
+    for sc in super_clusters:
+        sf.write(sc.statline())    
 
     # Some plotting
     #for j in range(len(best_clusters)):
-    for j in range(len(super_clusters)):
+    '''for j in range(len(super_clusters)):
         #clust = best_clusters[j]
         clust = super_clusters[j]
         print(clust.statline())
@@ -536,3 +562,4 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
         #ext_mask[unmasked] = labeled_dil[unmasked]
         plt.imshow(ext_mask)
         plt.show()
+    '''

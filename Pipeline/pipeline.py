@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Execution of pipeline happens here
 
 import sys
@@ -30,46 +31,17 @@ def main():
     # Read the config file
     hotpotato = cfg.read_config(args.configpath)
     
-    # If combine_mocks method is defined, call it first
-    if 'combine_mocks' in hotpotato['methods']:
-        # TODO: error check this
-            #if ((not cfg.config.has_option('file1')) or (not cfg.config.has_option('file2'))):
-            #    sys.exit("\n Error: Configuration file is not set up correctly:"
-            #               " combine = True but file1 and file2 are not properly defined") 
-            #elif ((hotpotato['file1'] == '') and (hotpotato['file2'] == '')):
-            #    sys.exit("\n Error: Configuration file is not set up correctly:"
-            #               " combine = True but file1 and file2 are not properly defined")
-        
-        combine = __import__('combine_mocks' + '_method')
-        combine.main(hotpotato)
-    
-    # Create a dynamic spectra as numpy array
-    if hotpotato['use_np_array']:
-        import fits2npz_method as f2n
-        hotpotato = f2n.main(hotpotato)
-    
-    
-    #TESTING
-    #print("Before:")
-    #print(hotpotato)
-    
     # Ensure proper conversion of config file and header parameters in dictionary
     hotpotato = convert_values(hotpotato)
     
-    #TESTING
-    #print("After:")
-    #print(hotpotato)
-    
-    
     # Dynamically import and call the main function of each method defined in cfg
     for x in hotpotato['methods']:
-        if (x == 'data' or x == 'combine_mocks'):
+        if (x == 'data'):
             continue
         temp = __import__(x + '_method')
-        temp.main(hotpotato)
+        hotpotato = temp.main(hotpotato)
     
     # Exit cleanly
-    # TODO: remove combined file?
     sys.exit("\n Pipeline tasks completed \n=====")
     
     #===============================

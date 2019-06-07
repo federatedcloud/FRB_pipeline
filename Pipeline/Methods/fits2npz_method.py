@@ -1,3 +1,4 @@
+from method import *
 import numpy as np
 import subprocess
 from astropy.io import fits
@@ -7,7 +8,7 @@ def main(dictionary):
     
     infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
     
-    hdulist = fits.open(infile)
+    hdulist = fits.open(infile, ignore_missing_end=True)
     
     # Get Header Info and put it into a dictionary
     primaryDictionary = {}
@@ -22,9 +23,6 @@ def main(dictionary):
     # Add headers to input dictionary
     dictionary.update(primaryDictionary)
     dictionary.update(subintDictionary)
-    
-    #TODO: do any necessary conversions here!
-    
     
     # Get Data from FITS FILE
     hdu = hdulist[1]
@@ -45,18 +43,29 @@ def main(dictionary):
     dd = np.reshape(dat, (-1, len(freqs)))
     dd = np.transpose(dd)
     
-    # Save as .npz
-    #print("Writing numpy array to disk...\n")
-    #np.savez("combined_dynamic_spectra", dynamic_spectra=dd, primary_header = [primaryDictionary], subint_header = [subintDictionary]);
-    #print("Write complete.")
+    if (dictionary['output_npz_file'] == True):
+        save_npz(dictionary['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
-    # TODO: don't do this when done testing (reduces numpy array to 0.5 seconds at the burst)
-    data_array = dd
-    dt = dictionary['TBIN']
-    data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
+    # For Testing ONLY: reduce the size of the data
+    if (dictionary['testing_mode'] == True):
+        data_array = dd
+        dt = dictionary['TBIN']
+        data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
     
     # Add numpy array to input dictionary
-    dictionary['np_data'] = data_array #npzfile
+    dictionary['np_data'] = data_array
     
     return dictionary
+
+# Save dynamic spectra and headers as .npz file
+def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
+    print("Writing numpy array to disk...\n")
+    
+    if (npzfilename == ""):
+        npzfilename = "output_dynamic_spectra"
+    
+    np.savez(npzfilename, dynamic_spectra, primary_header, subint_header);
+    
+    print("Write complete.")
+    return
 
