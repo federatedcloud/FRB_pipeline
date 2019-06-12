@@ -11,10 +11,10 @@ def main(d):
     t_sp_start = time.time()
     # get/set file locations
     
-    work_dir = d['work_dir']
-    prep_dir = work_dir + d['prep_dir_name']
-    sp_dir = work_dir + d['sp_dir_name']
-    cl_dir = work_dir + d['cl_dir_name']
+    work_dir = d['directory']
+    prep_dir = work_dir
+    sp_dir = work_dir
+    cl_dir = work_dir
 
     # make sure prepsubband has been run
     try:

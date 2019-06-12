@@ -12,7 +12,8 @@ def main(d):
 
     # get/set file locations
     fits_dir = d['directory']
-    prep_dir = d['work_dir'] + d['prep_dir_name']
+    rfi_dir= fits_dir
+    prep_dir = fits_dir
     basename = d['basename']
     fitslist = glob('%s/%s*.fits' %(fits_dir, basename))
     fitslist.sort()
@@ -29,13 +30,12 @@ def main(d):
 
     # run prepsubband command
     print("Dedispersing with 1st batch of DMs")
-    orig_N = readhdr.get_samples(fitslist, d['filetype'])
+    orig_N = get_samples(fitslist, d['filetype'])
     numout = psr_utils.choose_N(orig_N)
     print(orig_N, numout)
 
     if prep_usemask == True:
         # make sure rfi_find has been run previously
-        rfi_dir = d['work_dir'] + d['rfi_dir_name']
         try:
             rfi_maskname = glob(rfi_dir+'/*.mask')[0]
         except IndexError:
