@@ -5,7 +5,7 @@ import subprocess
 from astropy.io import fits
 
 # Parameters used from dictionary:
-#   directory, basename, filename_fil, output_npz_file, filename_npz, NCHAN, TBIN, and np_data
+#   directory, basename, mask_dir, mask_name, output_npz_file, npz_name, NCHAN, TBIN
 
 def main(d):
     print("Converting data to a numpy array")
@@ -14,10 +14,11 @@ def main(d):
     
     # Maskdata used a special file
     if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
-        filfile= d['directory'] + '/' + d['filename_fil']
+        filfile= d['mask_dir'] + '/' + d['mask_name']
     else:
-        filfile= d['directory'] + '/' + d['filename_fil'] + '.fil'
+        filfile= d['mask_dir'] + '/' + d['mask_name'] + '.fil'
     
+    filfile= d['mask_dir'] + '/' + d['mask_name']
     print("Using %s as filterbank file to convert" %(filfile) )
     
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
@@ -42,23 +43,18 @@ def main(d):
     dd = np.reshape(dd, (-1, d['NCHAN'])).T
     dd = np.flip(dd, axis= 0)
     print(dd.shape)    
-
-    if (d['output_npz_file'] == True):
-        save_npz(d['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
     # For Testing ONLY: reduce the size of the data
     if (d['testing_mode'] == True):
-        data_array = dd
         dt = d['TBIN']
-        data_array = data_array[:, int(126.0/dt):int(131.0/dt)]
-        #plt.imshow(data_array, aspect=24.0)
-        #plt.show()
+        dd = dd[:, int(127.0/dt):int(133.0/dt)]
     
-    # Add numpy array to input dictionary
-    d['np_data'] = data_array
-    
+    if (d['output_npz_file'] == True):
+        save_npz(d['npz_name'], dd, [primaryDictionary], [subintDictionary])
+        
     return d
 
+# Don't Need this
 # Save dynamic spectra and headers as .npz file
 def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
     print("Writing numpy array to disk...\n")

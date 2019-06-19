@@ -3,8 +3,8 @@ from decimate import *
 
 def main(d):
     print("Running decimation and smoothing.")
-    print(d)
     # Set up dictionary with data-related parameters
+    dec_name= d['dec_name']
     gd = {}
     dt = float(d['TBIN'])
     dv = abs(float(d['CHAN_BW']))
@@ -40,5 +40,9 @@ def main(d):
         sd['V_sigma'] = float(float(d['v_sigma']) / dv) 
 
     # Run decimation and smoothing
-    d['dec_data'] = decimate_and_smooth(gd, sd, d['np_data'], do_avg, do_smooth, do_decimate)
+    npzfile= np.load(d['npz_name'] + '.npz')
+    print(npzfile)
+    print(npzfile.files)
+    dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate)
+    np.savez(dec_name, dec_data)
     return d

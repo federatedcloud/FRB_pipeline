@@ -436,8 +436,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
                  between pixels in the same cluster
     '''
     print(data.shape)
-
-
+    plt.imshow(data)
+    plt.show()
     
     '''
     print("Decimating the raw, high-resolution data...")
@@ -522,8 +522,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
 
     plt.savefig(filename + ".png")
     #plt.figure(figsize=(10,8))
-    plt.imshow(labeled_dil, aspect= 24.0)
-    #plt.imshow(labeled_dil)
+    #plt.imshow(labeled_dil, aspect= 24.0)
+    plt.imshow(labeled_dil)
     plt.show()
 
  

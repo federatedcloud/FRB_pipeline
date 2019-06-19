@@ -1,15 +1,21 @@
 from method import *
 from friends import *
-
+import numpy as np
 
 def main(d):
     print("Running Friend-Of-Friends")
     
     # Set up fof-specific parameters
     if 'decimate' in d['methods']:
-        data= d['dec_data']
+        dec_file= np.load(d['dec_name'] + '.npz')
+        print(dec_file.files)
+        data= dec_file[dec_file.files[0]]
     else:
-        data = d['np_data']
+        npz_file = np.load(d['npz_name'] + '.npz')
+        print(npz_file.files)
+        data= npz_file[npz_file.files[0]]
+    print('Data Shape= ' + str(data.shape))
+
     m1 = d['m1']
     m2 = d['m2']
     t_gap = int(d['t_gap'])

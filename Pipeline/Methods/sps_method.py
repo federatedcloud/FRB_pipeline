@@ -9,12 +9,12 @@ def main(d):
 
     print("Looking for single pulse...\n")
     t_sp_start = time.time()
+
     # get/set file locations
-    
     work_dir = d['directory']
-    prep_dir = work_dir
-    sp_dir = work_dir
-    cl_dir = work_dir
+    prep_dir = d['prep_dir']
+    sp_dir = d['sp_dir']
+    cl_dir = d['cl_dir']
 
     # make sure prepsubband has been run
     try:
@@ -24,13 +24,18 @@ def main(d):
 
     # single pulse search parameters
     sp_exe = d['sp_exe'] # params.singlepulse
-    w_max = d['w_max']  # params.max_width
+    sp_flags= d['flags']
     sp_otherflags = d['sp_otherflags']
-    cl_width = d['cl_width'] # params.cluster_width
-    cl_bins = int(cl_width / float(d['dt']))
+    sp_modified= d['sp_modified']
 
     # run the command
-    cmd = "%s %s -p -m %.6f -w %d %s/*.dat" %(sp_exe, sp_otherflags, w_max, cl_bins, work_dir)
+    if sp_modified == True: #use Spitler's mod_sp.py with fixed flags
+        w_max= d['w_max']
+        cl_width= d['cl_width'] # params.cluster_width
+        cl_bins= int(cl_width / float(d['TBIN']))
+        cmd = '%s %s -p -m %.6f -w %d %s/*.dat' %(sp_exe, sp_otherflags, w_max, cl_bins, work_dir)
+    else:
+        cmd = '%s %s %s %s/*.dat' %(sp_exe, sp_otherflags, sps_flags, prep_dir)
 
     try_cmd(cmd)
 

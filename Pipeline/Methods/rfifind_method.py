@@ -11,27 +11,20 @@ def main(d):
     print("Running PRESTO rfifind")
     t_rfi_start = time.time()
     
-    # get/set file locations 
-    fits_dir = d['directory']
-    rfi_dir = fits_dir
-    fitsname = d['basename']
-    fitslist = glob('%s/%s*.fits' %(fits_dir, fitsname))
+    # get/set file locations
+    directory= d['directory']
+    rfi_dir = d['rfi_dir']
+    basename = d['basename']
+    fitslist = glob('%s/%s*.fits' %(directory, basename))
     fitslist.sort()
     fitsfiles = ' '.join(fitslist)
     
     # get parameters from dictionary
-    rfi_time = int(float(d['rfi_time']))
-    tsig = float(d['tsig'])
-    fsig = float(d['fsig'])
-    chanfrac = float(d['chanfrac'])
-    intfrac = float(d['intfrac'])
+    rfi_flags = d['rfi_flags']
     rfi_otherflags = d['rfi_otherflags'] + ' '
     
     # run command    
-    cmd = 'rfifind -psrfits -o %s -time %d -timesig %f -freqsig %f '\
-          '-chanfrac %f -intfrac %f %s %s' %(fitsname, rfi_time, tsig, fsig,
-                                             chanfrac, intfrac, rfi_otherflags,
-                                             fitsfiles)
+    cmd = 'rfifind -o %s %s %s %s' %(basename, rfi_flags, rfi_otherflags, fitsfiles)
     try_cmd(cmd)
    
     # move products to rfi_products directory 

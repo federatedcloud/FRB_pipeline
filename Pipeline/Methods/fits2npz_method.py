@@ -43,20 +43,19 @@ def main(dictionary):
     dd = np.reshape(dat, (-1, len(freqs)))
     dd = np.transpose(dd)
     
-    if (dictionary['output_npz_file'] == True):
-        save_npz(dictionary['filename_npz'], dd, [primaryDictionary], [subintDictionary])
-    
     # For Testing ONLY: reduce the size of the data
     if (dictionary['testing_mode'] == True):
-        data_array = dd
         dt = dictionary['TBIN']
-        data_array = data_array[:, int(128.0/dt):int(128.5/dt)]
+        dd = dd[:, int(128.0/dt):int(128.5/dt)]
     
-    # Add numpy array to input dictionary
-    dictionary['np_data'] = data_array
+    if (dictionary['output_npz_file'] == True):
+        print("Writing numpy array to disk...\n")
+        save_npz(dictionary['npz_name'], dd, [primaryDictionary], [subintDictionary])
+        print("Write complete.")
     
     return dictionary
 
+# Don't need this
 # Save dynamic spectra and headers as .npz file
 def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
     print("Writing numpy array to disk...\n")
