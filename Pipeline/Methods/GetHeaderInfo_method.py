@@ -12,7 +12,6 @@ def main(d):
     else:
         filfile= d['mask_dir'] + '/' + d['mask_name'] + '.fil'
 
-    filfile= d['mask_dir'] + '/' + d['mask_name']
     print("Using %s as filterbank file to convert" %(filfile) ) 
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     # Get Header Info and put it into a d
