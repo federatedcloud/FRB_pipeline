@@ -6,13 +6,14 @@ def main(d):
     print("Running Friend-Of-Friends")
     
     # Set up fof-specific parameters
-    if 'decimate' in d['methods']:
-        dec_file= np.load(d['dec_name'] + '.npz')
-        print(dec_file.files)
+    try:
+        dec_name= d['dec_name']
+        print("Running Friend-Of-Friends on Decimated data.")
+        dec_file= np.load(dec_name + '.npz')
         data= dec_file[dec_file.files[0]]
-    else:
+    except:
+        print("Running Friend-Of-Friends NON-decimated data.")
         npz_file = np.load(d['npz_name'] + '.npz')
-        print(npz_file.files)
         data= npz_file[npz_file.files[0]]
     print('Data Shape= ' + str(data.shape))
 
@@ -35,4 +36,7 @@ def main(d):
     # Run algorithm
     fof(gd, data, m1, m2, t_gap, v_gap, tstart)
     
+    cmd= "mv *clust_* %s" %(d['directory'])
+    try_cmd(cmd)
+
     return d

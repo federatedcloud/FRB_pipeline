@@ -69,7 +69,7 @@ def convolve_smooth_2d(data, fil):
     vchan, tchan = data.shape
     vfil, tfil = fil.shape
 
-    plt.imshow(data)
+    #plt.imshow(data)
     plt.show()
 
     # get fft/convolution dimensions
@@ -119,9 +119,9 @@ def convolve_smooth_2d(data, fil):
     if ((V_optimal-V)%2 != 0):
         fil= np.concatenate((fil, np.zeros((1, T))), axis=0)
     
-    plt.imshow(data)
+    #plt.imshow(data)
     plt.show()
-    plt.imshow(fil)
+    #plt.imshow(fil)
     plt.show()   
     
 
@@ -146,18 +146,18 @@ def convolve_smooth_2d(data, fil):
     fil_fft = np.fft.fft2(fil)
     '''    
 
-    plt.imshow(data_fft.astype(float))
-    plt.show()
-    plt.imshow(fil_fft.astype(float))
-    plt.show()
+    #plt.imshow(data_fft.astype(float))
+    #plt.show()
+    #plt.imshow(fil_fft.astype(float))
+    #plt.show()
 
     # use convolution theorem
     prod = np.multiply(data_fft, fil_fft)
     print("Mulitplied spectra.")
     conv = np.fft.ifftshift(np.fft.ifft2(prod))
     conv = conv.astype(float) # convert complex entries to real entries
-    plt.imshow(conv)
-    plt.show()
+    #plt.imshow(conv)
+    #plt.show()
     leadV= int((V_optimal-V)/2) + vfil - 1
     leadT= int((T_optimal-T)/2) + tfil - 1
     conv= conv[leadV:leadV+vchan, leadT:leadT+tchan]

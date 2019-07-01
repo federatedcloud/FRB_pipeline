@@ -1,5 +1,6 @@
 import sys, time
 import subprocess as sp
+import numpy as np
 sys.path.insert(0, '../Modules')
 
 # TODO: method class

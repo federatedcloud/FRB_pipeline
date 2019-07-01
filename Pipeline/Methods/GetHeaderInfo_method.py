@@ -1,6 +1,11 @@
 from method import *
 from astropy.io import fits
 
+'''
+Requires the following parameters from .cfg file:
+    directory, basename, mask_dir, mask_name
+'''
+
 def main(d): 
     print("Getting Information from the Fits Header.")
 
@@ -12,6 +17,7 @@ def main(d):
     else:
         filfile= d['mask_dir'] + '/' + d['mask_name'] + '.fil'
 
+    filfile= d['mask_dir'] + '/' + d['mask_name']
     print("Using %s as filterbank file to convert" %(filfile) ) 
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     # Get Header Info and put it into a d
@@ -26,5 +32,5 @@ def main(d):
     # Add headers to input dictionary
     d.update(primaryDictionary)
     d.update(subintDictionary)
-    
+
     return d

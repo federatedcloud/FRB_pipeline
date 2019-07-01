@@ -18,7 +18,7 @@ def main(d):
     rfi_dir= d['rfi_dir']
     mask_dir= d['mask_dir']
     basename = d['basename']
-    mask_name= d['mask_name'].strip()
+    mask_name= d['filename_fil']
 
     # make sure rfifind has been run
     try:

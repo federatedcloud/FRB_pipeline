@@ -12,14 +12,18 @@ Data/
 Results/
 test/
 othertest/
+Data2/
+RFI_Dir/
+Mask_Dir/
 
-# my testing files
+# testing files
 test.txt
 junk.txt
 test.py
 junk.py
 test.cfg
 junk.cfg
+waller_test_combined_0001_MF.sp
 
 #pipeline output files
 clust_*.png

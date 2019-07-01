@@ -14,11 +14,10 @@ def main(d):
     
     # Maskdata used a special file
     if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
-        filfile= d['mask_dir'] + '/' + d['mask_name']
+        filfile= d['mask_dir'] + '/' + d['filfile_name']
     else:
-        filfile= d['mask_dir'] + '/' + d['mask_name'] + '.fil'
+        filfile= d['directory'] + '/' + d['filfile_name'] + '.fil'
     
-    filfile= d['mask_dir'] + '/' + d['mask_name']
     print("Using %s as filterbank file to convert" %(filfile) )
     
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
@@ -47,7 +46,7 @@ def main(d):
     # For Testing ONLY: reduce the size of the data
     if (d['testing_mode'] == True):
         dt = d['TBIN']
-        dd = dd[:, int(127.0/dt):int(133.0/dt)]
+        dd = dd[:, int(128.0/dt):int(129.0/dt)]
     
     if (d['output_npz_file'] == True):
         save_npz(d['npz_name'], dd, [primaryDictionary], [subintDictionary])
