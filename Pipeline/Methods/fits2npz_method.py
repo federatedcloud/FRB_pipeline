@@ -49,9 +49,7 @@ def main(dictionary):
         dd = dd[:, int(128.0/dt):int(128.5/dt)]
     
     if (dictionary['output_npz_file'] == True):
-        print("Writing numpy array to disk...\n")
-        save_npz(dictionary['npz_name'], dd, [primaryDictionary], [subintDictionary])
-        print("Write complete.")
+        save_npz(dictionary['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
     return dictionary
 

@@ -18,23 +18,24 @@ def main(d):
     
     # Move generated combined .fits file
     if (d['move_combined_file'] == True):
-        cmd = "mv %s.fits %s" %(d['fitsname'], results_dir)
+        cmd = "mv %s/%s.fits %s" %(d['directory'], d['basename'], results_dir)
         try_cmd(cmd)
     
     # Move filterbank file
     if (d['move_maskdata_file'] == True):
         cmd = "mv %s/%s %s/masked_dynamic_spectra.fil" %(data_dir, d['filename_fil'], results_dir)
         try_cmd(cmd)
-    
-    # Move generated text files
-    if (d['move_txt_files'] == True):
-        cmd = "mv *.txt %s" %(results_dir)
-        try_cmd(cmd)
-    
-    # Move generated png files
-    if (d['move_png_files'] == True):
-        cmd = "mv *.png %s" %(results_dir)
-        try_cmd(cmd)
+
+# TODO: rewrite this based on https://stackoverflow.com/questions/21804935/how-to-use-the-mv-command-in-python-with-subprocess    
+#    # Move generated text files
+#    if (d['move_txt_files'] == True):
+#        cmd = "mv *.txt %s" %(results_dir)
+#        try_cmd(cmd)
+#    
+#    # Move generated png files
+#    if (d['move_png_files'] == True):
+#        cmd = "mv *.png %s" %(results_dir)
+#        try_cmd(cmd)
     
     
     # Insert more move commands in here as needed to organize results
