@@ -7,25 +7,29 @@ A customizable scientific software pipeline written in python3 for detecting, ca
 
 ## How To Use The Pipeline
 
+### Running
+You can run the pipeline either by issuing `./pipeline.py` or with `python pipeline.py`.  Either method requires including the [configuration file](#configuration-files) as a positional argument and running from the [Pipeline directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline) (or including the path to it).  Here's a simple example:
+
+`$ ./pipeline.py Templates/hello_world.cfg`
+
+If no configuration file is included, then the [`default.cfg`](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Templates#defaultcfg) template will be used.  To get help, use `-h`.
+
 ### Basic Structure
 #### Methods
-A **[method](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods#methods)** is essentially a task for the pipeline to perform.  Each method consists of a single python file that is named to reflect what it does, followed by `_method.py`, and is stored in the [Methods directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods).  For example, the "Hello World!" method file is named [`hello_world_method.py`](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/hello_world_method.py).  There are several [existing methods](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/README.md#included-methods) to choose from, some of which call functions from underlying Modules.  In order to run a method, it must be specified in the Cofiguration File you choose when you run the pipeline.
+A **[method](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods#methods)** is essentially a task for the pipeline to perform.  Each method consists of a single python file that is named to reflect what it does, followed by `_method.py`, and is stored in the [Methods directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline/Methods).  For example, the "Hello World!" method file is named [`hello_world_method.py`](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/hello_world_method.py).  
+
+In order to run a method, it must be specified in the cofiguration file you choose when you run the pipeline.  Simple methods are self-contained, but larger or more complex methods use supporting [modules](#modules).  There are several [existing methods](https://github.com/federatedcloud/FRB_pipeline/blob/master/Pipeline/Methods/README.md#included-methods) to choose from, some of which call functions from underlying modules.
 
 #### Configuration Files
 A configuration file (`.cfg`) is all that is needed to run the pipeline with existing methods.  This file specifies which methods you would like to perform *and* all of the necessary or desired parameters, inputs, directory locations, etc. for those methods.  A method is specified by name as a section key without the `_method` part of the name.  For example, to run the "Hello World!" method, your configuration file must include `[hello_world]`.
 
-Configuration files support comments following the `;` or `#` characters.
+Configuration files support comments following the `;` or `#` characters.  When the configuration file is read by the pipeline, these comments and any trailing spaces (on the left or right side) will be removed before key-value pairs are stored in a dictionary.
 
 #### Modules
 
 
 #### Data and Results
 
-
-### Running
-You can run the pipeline by issuing `./pipeline` from the [Pipeline directory](https://github.com/federatedcloud/FRB_pipeline/tree/master/Pipeline)
-
-`$ ./pipeline Templates/hello_world.cfg`
 
 ## How To Add Your Own Code/Methods
 
