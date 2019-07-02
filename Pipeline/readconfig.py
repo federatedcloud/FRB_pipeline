@@ -36,7 +36,7 @@ def remove_comments(value):
 
 def remove_spaces(value):
     temp = value.strip()
-    return temp.split()[0]
+    return temp
 
 # convert dictionary string values to float or int if they are numbers
 def convert_values(d):
