@@ -1,10 +1,8 @@
 from method import *
 from astropy.io import fits
 
-'''
-Requires the following parameters from .cfg file:
-    directory, basename, mask_dir, mask_name
-'''
+# Required parameters to put in the configuration file are:
+#    directory, basename, filfile_name, mask_dir (if using maskdata)  
 
 def main(d): 
     print("Getting Information from the Fits Header.")
@@ -13,9 +11,9 @@ def main(d):
 
     # Maskdata used a special file
     if 'rfifind' in d['methods'] and 'maskdata' in d['methods']:
-        filfile= d['mask_dir'] + '/' + d['mask_name']
+        filfile= d['mask_dir'] + '/' + d['filfile_name']
     else:
-        filfile= d['mask_dir'] + '/' + d['mask_name'] + '.fil'
+        filfile= d['directory'] + '/' + d['filfile_name'] + '.fil'
 
     filfile= d['mask_dir'] + '/' + d['mask_name']
     print("Using %s as filterbank file to convert" %(filfile) ) 

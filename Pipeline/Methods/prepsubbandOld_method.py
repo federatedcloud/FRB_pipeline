@@ -5,32 +5,32 @@ from readhdr import get_samples
 import psr_utils
 from glob import glob
 
-def main(d):
+def main(hotpotato):
 
     print("Running PRETO prepsubband.")
     t_prep_start = time.time()
 
     # get/set file locations
-    fits_dir = d['directory']
+    fits_dir = get_value(hotpotato, 'directory')
     rfi_dir= fits_dir
     prep_dir = fits_dir
-    basename = d['basename']
+    basename = get_value(hotpotato, 'basename')
     fitslist = glob('%s/%s*.fits' %(fits_dir, basename))
     fitslist.sort()
     fitsfiles = ' '.join(fitslist)
     
     # get de-dispersion parameters
-    prep_usemask = bool(d['prep_usemask'])
-    dmlow = float(d['dmlow'])
-    ddm = float(d['ddm'])
-    ndm = int(d['dmspercall'])
-    downsample = float(d['downsample'])
-    nsub = int(d['nsub'])
-    prep_otherflags = d['prep_otherflags'] #str
+    prep_usemask = bool(get_value(hotpotato, 'prep_usemask'))
+    dmlow = float(get_value(hotpotato, 'dmlow'))
+    ddm = float(get_value(hotpotato, 'ddm'))
+    ndm = int(get_value(hotpotato, 'dmspercall'))
+    downsample = float(get_value(hotpotato, 'downsample'))
+    nsub = int(get_value(hotpotato, 'nsub'))
+    prep_otherflags = get_value(hotpotato, 'prep_otherflags') #str
 
     # run prepsubband command
     print("Dedispersing with 1st batch of DMs")
-    orig_N = get_samples(fitslist, d['filetype'])
+    orig_N = get_samples(fitslist, get_value(hotpotato, 'filetype'))
     numout = psr_utils.choose_N(orig_N)
     print(orig_N, numout)
 
@@ -67,4 +67,4 @@ def main(d):
     prep_time = (t_prep_end - t_prep_start)
     print("PRESTO prepsubband took %f seconds." %(prep_time))
 
-    return d
+    return hotpotato

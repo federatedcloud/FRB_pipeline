@@ -3,10 +3,13 @@ import subprocess as sp
 import numpy as np
 sys.path.insert(0, '../Modules')
 
-# TODO: method class
-#class method:
-#    def __init__(self):
-        
+
+def get_value(hotpotato, key):
+    return hotpotato.get(key,'')
+
+def set_value(hotpotato, key, value):
+    hotpotato[key] = value
+    return
 
 def try_cmd(cmd, stdout=None, stderr=None):
     # Run the command in the string cmd using sp.check_call()

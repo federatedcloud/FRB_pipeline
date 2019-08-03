@@ -11,29 +11,29 @@ from glob import glob
 # Required parameters to put in the configuration file are:
 #    downsample, prep_usemask, prep_flags, prep_otherflags
 
-def main(d):
+def main(hotpotato):
 
     print("Running PRETO prepsubband.")
     t_prep_start = time.time()
 
     # get/set file locations
-    work_dir= d['directory']
-    rfi_dir= d['rfi_dir']
-    prep_dir = d['prep_dir']         # can change this
-    basename = d['basename']
+    work_dir= get_value(hotpotato, 'directory')
+    rfi_dir= get_value(hotpotato, 'rfi_dir')
+    prep_dir = get_value(hotpotato, 'prep_dir')         # can change this
+    basename = get_value(hotpotato, 'basename')
     fitslist = glob('%s/%s*.fits' %(rfi_dir, basename))
     fitslist.sort()
     fitsfiles = ' '.join(fitslist)
     
     # get de-dispersion parameters
-    prep_usemask= d['prep_usemask']
-    downsample= d['downsample']
-    prep_flags= d['prep_flags']
-    prep_otherflags = d['prep_otherflags']
+    prep_usemask= get_value(hotpotato, 'prep_usemask')
+    downsample= get_value(hotpotato, 'downsample')
+    prep_flags= get_value(hotpotato, 'prep_flags')
+    prep_otherflags = get_value(hotpotato, 'prep_otherflags')
 
     # run prepsubband command
     print("Dedispersing with 1st batch of DMs")
-    orig_N = get_samples(fitslist, d['filetype'])
+    orig_N = get_samples(fitslist, get_value(hotpotato, 'filetype'))
     numout = psr_utils.choose_N(orig_N) / downsample
     print(orig_N, numout)
 
@@ -64,4 +64,4 @@ def main(d):
     prep_time = (t_prep_end - t_prep_start)
     print("PRESTO prepsubband took %f seconds." %(prep_time))
 
-    return d
+    return hotpotato

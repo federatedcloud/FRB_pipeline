@@ -1,28 +1,27 @@
 from method import *
 import numpy as np
-import matplotlib.pyplot as plt
-import subprocess
 from astropy.io import fits
 
-# Parameters used from dictionary:
-#   directory, basename, mask_dir, mask_name, output_npz_file, npz_name, NCHAN, TBIN
+# Required parameters to put in the configuration file are:
+#   directory, basename, mask_dir, filfile_name, output_npz_file, npz_name, NCHAN, TBIN
+# Note: other parameters are obtained from header files (stored in hotpotato)
 
-def main(d):
+def main(hotpotato):
     print("Converting data to a numpy array")
 
-    fitsfile= d['directory'] + '/' + d['basename'] + '.fits' 
+    fitsfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'basename') + '.fits' 
     
     # Maskdata used a special file
-    if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
-        filfile= d['mask_dir'] + '/' + d['filfile_name']
+    if 'rfifind' in get_value(hotpotato, 'methods') and 'maskdata' in get_value(hotpotato, 'methods'): 
+        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile_name')
     else:
-        filfile= d['directory'] + '/' + d['filfile_name'] + '.fil'
+        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile_name') + '.fil'
     
     print("Using %s as filterbank file to convert" %(filfile) )
     
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     
-    # Get Header Info and put it into a d
+    # Get Header Info and put it into a dictionary 
     primaryDictionary = {}
     subintDictionary = {}
     primaryHeader = hdulist[0].header
@@ -33,22 +32,23 @@ def main(d):
         subintDictionary[j] = subintHeader[j]
     
     # Add headers to input dictionary
-    d.update(primaryDictionary)
-    d.update(subintDictionary)
+    hotpotato.update(primaryDictionary)
+    hotpotato.update(subintDictionary)
     
     # Put the data (from the filfile) in Numpy array
     dd = np.fromfile(filfile, dtype='float32')
     print(dd.shape)
-    dd = np.reshape(dd, (-1, d['NCHAN'])).T
+    dd = np.reshape(dd, (-1, get_value(hotpotato, 'NCHAN'))).T
     dd = np.flip(dd, axis= 0)
-    print(dd.shape)    
+    print(dd.shape) 
     
     # For Testing ONLY: reduce the size of the data
-    if (d['testing_mode'] == True):
-        dt = d['TBIN']
+    if (get_value(hotpotato, 'testing_mode') == True):
+        dt = get_value(hotpotato, 'TBIN')
         dd = dd[:, int(128.0/dt):int(129.0/dt)]
     
-    if (d['output_npz_file'] == True):
-        save_npz(d['npz_name'], dd, [primaryDictionary], [subintDictionary])
+    if (get_value(hotpotato, 'output_npz_file') == True):
+        save_npz(get_value(hotpotato, 'npz_name'), dd, [primaryDictionary], [subintDictionary])
         
-    return d
+    return hotpotato
+
