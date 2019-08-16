@@ -6,22 +6,22 @@ import time
 from glob import glob
 
 
-def main(d):
+def main(hotpotato):
 
     print("Running PRESTO rfifind")
     t_rfi_start = time.time()
     
     # get/set file locations
-    directory= d['directory']
-    rfi_dir = d['rfi_dir']
-    basename = d['basename']
+    directory= get_value(hotpotato, 'directory')
+    rfi_dir = get_value(hotpotato, 'rfi_dir')
+    basename = get_value(hotpotato, 'basename')
     fitslist = glob('%s/%s*.fits' %(directory, basename))
     fitslist.sort()
     fitsfiles = ' '.join(fitslist)
     
     # get parameters from dictionary
-    rfi_flags = d['rfi_flags']
-    rfi_otherflags = d['rfi_otherflags'] + ' '
+    rfi_flags = get_value(hotpotato, 'rfi_flags')
+    rfi_otherflags = get_value(hotpotato, 'rfi_otherflags') + ' '
     
     # run command    
     cmd = 'rfifind -o %s %s %s %s' %(basename, rfi_flags, rfi_otherflags, fitsfiles)
@@ -38,4 +38,4 @@ def main(d):
     rfi_time = (t_rfi_end - t_rfi_start)
     print("RFI Flagging took %f seconds" %(rfi_time))
     
-    return d
+    return hotpotato

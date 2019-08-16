@@ -1,11 +1,12 @@
 from method import *
 from basic_plot import *
 
-def main(d):
+
+def main(hotpotato):
     print("Running basic plotter.")
     
-    arr= d['fof_plot']
+    arr = get_value(hotpotato, 'fof_plot')
     basic_plot_go(arr)
-    return d
+    return hotpotato
 
 

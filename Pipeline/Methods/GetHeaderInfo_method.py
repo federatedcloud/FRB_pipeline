@@ -1,17 +1,15 @@
 from method import *
 from astropy.io import fits
 
-'''
-Requires the following parameters from .cfg file:
-    directory, basename, mask_dir, mask_name
-'''
+# Required parameters to put in the configuration file are:
+#    directory, basename, filfile_name, mask_dir (if using maskdata)  
 
-def main(d): 
+def main(hotpotato): 
     print("Getting Information from the Fits Header.")
 
-    fitsfile= d['directory'] + '/' + d['basename'] + '.fits'
+    fitsfile= get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'basename') + '.fits'
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
-    # Get Header Info and put it into a d
+    # Get Header Info and put it into a dictionary
     primaryDictionary = {}
     subintDictionary = {}
     primaryHeader = hdulist[0].header
@@ -21,7 +19,7 @@ def main(d):
     for j in subintHeader:
         subintDictionary[j] = subintHeader[j]
     # Add headers to input dictionary
-    d.update(primaryDictionary)
-    d.update(subintDictionary)
+    hotpotato.update(primaryDictionary)
+    hotpotato.update(subintDictionary)
 
-    return d
+    return hotpotato

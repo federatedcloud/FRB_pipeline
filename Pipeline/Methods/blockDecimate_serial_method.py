@@ -12,28 +12,28 @@ And from FITS header:
     TBIN, CHAN_BW
 '''
 
-def main(d):
+def main(hotpotato):
     print("Running decimation and smoothing.")
     
     # Get data file location
-    split_dir= d['split_dir']
-    dec_name= d['dec_name']
+    split_dir= get_value(hotpotato, 'split_dir')
+    dec_name= get_value(hotpotato, 'dec_name')
 
     # Set up dictionary with data-related parameters
     gd = {}
-    dt = d['TBIN']
-    dv = abs(d['CHAN_BW'])
+    dt = get_value(hotpotato, 'TBIN')
+    dv = abs(get_value(hotpotato, 'CHAN_BW'))
     gd['dt'] = dt
     gd['dv'] = dv
-    gd['tsamp'] = d['tsamp']
-    gd['vsamp'] = d['vsamp']
+    gd['tsamp'] = get_value(hotpotato, 'tsamp')
+    gd['vsamp'] = get_value(hotpotato, 'vsamp')
 
     # Set up smoothing/decimation parameters
     sd = {} 
-    do_avg = d['do_avg']
-    do_smooth =d['do_smooth']
-    do_decimate = d['do_decimate']
-    testing_mode= d['dec_testing_mode']
+    do_avg = get_value(hotpotato, 'do_avg')
+    do_smooth = get_value(hotpotato, 'do_smooth')
+    do_decimate = get_value(hotpotato, 'do_decimate')
+    testing_mode= get_value(hotpotato, 'dec_testing_mode')
 
     if do_avg and do_decimate:
         print("Cannot block average AND decimate data. Select at most one of 'do_avg' "\
@@ -42,18 +42,18 @@ def main(d):
                          "Select either 'do_avg' or 'do_decimate.")
 
     # kernel options: gaussian2d, gaussianT, gaussianV, block2d, blockT, blockV, custom
-    sd['kernels'] = d['kernels'].split(',')
+    sd['kernels'] = get_value(hotpotato, 'kernels').split(',')
     print('Smoothing kernels: %s\n' %(sd['kernels']))
     if do_avg == True:
-        sd['T_width'] = int(d['t_width'] / (dt*gd['tsamp']))
-        sd['V_width'] = int(d['v_width'] / (dv*gd['vsamp']))
-        sd['T_sigma'] = float(d['t_sigma'] / (dt*gd['tsamp']))
-        sd['V_sigma'] = float(d['v_sigma'] / (dv*gd['vsamp']))
+        sd['T_width'] = int(get_value(hotpotato, 't_width') / (dt*gd['tsamp']))
+        sd['V_width'] = int(get_value(hotpotato, 'v_width') / (dv*gd['vsamp']))
+        sd['T_sigma'] = float(get_value(hotpotato, 't_sigma') / (dt*gd['tsamp']))
+        sd['V_sigma'] = float(get_value(hotpotato, 'v_sigma') / (dv*gd['vsamp']))
     if do_decimate == True:
-        sd['T_width'] = int(d['t_width'] / dt)
-        sd['V_width'] = int(d['v_width'] / dv)
-        sd['T_sigma'] = float(d['t_sigma'] / dt)
-        sd['V_sigma'] = float(d['v_sigma'] / dv) 
+        sd['T_width'] = int(get_value(hotpotato, 't_width') / dt)
+        sd['V_width'] = int(get_value(hotpotato, 'v_width') / dv)
+        sd['T_sigma'] = float(get_value(hotpotato, 't_sigma') / dt)
+        sd['V_sigma'] = float(get_value(hotpotato, 'v_sigma') / dv) 
 
     # Get list of data files
     files= os.listdir(split_dir)
@@ -94,4 +94,4 @@ def main(d):
     try_cmd(cmd)    
     print("Finished decimating blocked data.\n\n")
 
-    return d
+    return hotpotato

@@ -1,4 +1,3 @@
-
 from method import *
 import numpy as np
 import os
@@ -7,10 +6,10 @@ import os
 # Inputs: .npz file with single array
 # Ouputs: .npz file with several smaller arrays
 
-def main(d):
+def main(hotpotato):
 
     print("Loading .npz file.")
-    npzfile= np.load(d['npz_name'] + '.npz')
+    npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz')
     print(npzfile)
     npzlist= npzfile.files
     print(npzlist)
@@ -20,9 +19,9 @@ def main(d):
     ar= npzfile[npzlist[0]]
     print(ar.shape)
     DV, DT= ar.shape
-    block_size= int(d['block_size'])     # bins
-    overlap= int(d['overlap'])           # bins
-    split_dir= d['split_dir']
+    block_size= int(get_value(hotpotato, 'block_size'))     # bins
+    overlap= int(get_value(hotpotato, 'overlap'))           # bins
+    split_dir= get_value(hotpotato, 'split_dir')
     if not os.path.exists(split_dir):
         os.makedirs(split_dir)   
 
@@ -46,4 +45,4 @@ def main(d):
 
     print("Finishing splitting the array.")
 
-    return(d)
+    return hotpotato

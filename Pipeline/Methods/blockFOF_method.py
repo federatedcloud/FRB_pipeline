@@ -12,29 +12,29 @@ And from FITS header:
     TBIN, CHAN_BW, OBSFREQ, NCHAN
 '''
 
-def main(d):
+def main(hotpotato):
     print("Running Friend-Of-Friends")
     
     # Get data file location
-    split_dir= d['split_dir']
+    split_dir= get_value(hotpotato, 'split_dir')
 
     # Get parameters from hotpotato
-    m1 = d['m1']
-    m2 = d['m2']
-    t_gap = int(d['t_gap'])
-    v_gap = int(d['v_gap'])
-    tstart = d['tstart']
-    test_mode= d['fof_testing_mode']
+    m1 = get_value(hotpotato, 'm1')
+    m2 = get_value(hotpotato, 'm2')
+    t_gap = int(get_value(hotpotato, 't_gap'))
+    v_gap = int(get_value(hotpotato, 'v_gap'))
+    tstart = get_value(hotpotato, 'tstart')
+    testing_mode= get_value(hotpotato, 'fof_testing_mode')
 
     # Set up dictionary of global parameters
     gd = {} 
-    gd['tsamp'] = int(d['tsamp'])
-    gd['vsamp'] = int(d['vsamp'])
-    gd['dt'] = d['TBIN']
-    gd['dv'] = abs(d['CHAN_BW']) # for some reason this was negative
+    gd['tsamp'] = int(get_value(hotpotato, 'tsamp'))
+    gd['vsamp'] = int(get_value(hotpotato, 'vsamp'))
+    gd['dt'] = get_value(hotpotato, 'TBIN')
+    gd['dv'] = abs(get_value(hotpotato, 'CHAN_BW')) # for some reason this was negative
     dv = gd['dv']
-    gd['vlow'] = d['OBSFREQ'] - dv * d['NCHAN'] / 2.0
-    gd['vhigh'] = d['OBSFREQ'] + dv * d['NCHAN'] / 2.0
+    gd['vlow'] = get_value(hotpotato, 'OBSFREQ') - dv * get_value(hotpotato, 'NCHAN') / 2.0
+    gd['vhigh'] = get_value(hotpotato, 'OBSFREQ') + dv * get_value(hotpotato, 'NCHAN') / 2.0
     
     # Get list of data files
     files= os.listdir(split_dir)
@@ -60,16 +60,14 @@ def main(d):
         data= np.load('%s/%s' %(split_dir, block))
         print("Data Shape: " + str(data.shape))
         if data.shape[0] > 0 and data.shape[1] > 0:
-            fof(gd, data, m1, m2, t_gap, v_gap, tstart, test_mode)
+            fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode)
     
     output_files= glob.glob('*clust_*')
     for clust_file in output_files:
         cmd= 'mv %s block%s_%s' %(clust_file, n, clust_file)
         try_cmd(cmd)
 
-
     cmd= "mv *clust_* %s" %(d['directory'])
     try_cmd(cmd)
-
     
-    return d
+    return hotpotato

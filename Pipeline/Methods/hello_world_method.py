@@ -2,8 +2,8 @@
 from method import *
 
 
-def main(dictionary):
-    total = int(dictionary['print_count'])
+def main(hotpotato):
+    total = int(get_value(hotpotato, 'print_count'))
     
     if (total > 1):
         for x in range(0,total):
@@ -11,4 +11,4 @@ def main(dictionary):
     else:
         print("Hello World!\n")
     
-    return dictionary
+    return hotpotato

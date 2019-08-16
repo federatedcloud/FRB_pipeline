@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Execution of pipeline happens here
 
 import sys
 sys.path.insert(0, './Methods')
@@ -9,9 +8,12 @@ import argparse
 import importlib
 import readconfig as cfg
 
+from method import *
+
 true_values = ['True', 'true', 'TRUE', 'T', 't']
 false_values = ['False', 'false', 'FALSE', 'F', 'f']
 
+# Execution of pipeline happens here
 def main():
     # Set up command-line parser
     cmdparser = argparse.ArgumentParser()
@@ -35,7 +37,7 @@ def main():
     hotpotato = cfg.convert_values(hotpotato)
     
     # Dynamically import and call the main function of each method defined in cfg
-    for x in hotpotato['methods']:
+    for x in get_value(hotpotato, 'methods'):
         if (x == 'data'):
             continue
         temp = __import__(x + '_method')

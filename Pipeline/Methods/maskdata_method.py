@@ -5,7 +5,7 @@ import time
 from glob import glob
 
 
-def main(d):
+def main(hotpotato):
     """
     Creates a masked dynamic spectrum called raw_data_with_mask.fits, 
     which is the file needed for modulation index
@@ -14,11 +14,11 @@ def main(d):
     t_md_start = time.time()
     
     # get/set file locations
-    directory = d['directory']
-    rfi_dir= d['rfi_dir']
-    mask_dir= d['mask_dir']
-    basename = d['basename']
-    mask_name= d['filename_fil']
+    directory = get_value(hotpotato, 'directory')
+    rfi_dir= get_value(hotpotato, 'rfi_dir')
+    mask_dir= get_value(hotpotato, 'mask_dir')
+    basename = get_value(hotpotato, 'basename')
+    mask_name= get_value(hotpotato, 'filename_fil')
 
     # make sure rfifind has been run
     try:
@@ -29,9 +29,9 @@ def main(d):
 
     # set flags and run command
     #md_flags = d['md_flags']
-    #md_otherflags = d['md_otherflags']
+    #md_otherflags = get_value(hotpotato, 'md_otherflags')
     filenamestr = directory + '/' + basename + '.fits'
-    cmd = 'maskdata %s -mask %s %s %s' %(d['md_flags'], rfi_maskname, d['md_otherflags'], filenamestr)
+    cmd = 'maskdata %s -mask %s %s %s' %(get_value(hotpotato, 'md_flags'), rfi_maskname, get_value(hotpotato, 'md_otherflags'), filenamestr)
     try_cmd(cmd)
 
     # move output to maskdata directory 
@@ -53,4 +53,4 @@ def main(d):
     
     print("PRESTO maskdata took %f seconds." %(time_md))
 
-    return d
+    return hotpotato

@@ -4,14 +4,14 @@ from method import *
 import time
 
 
-def main(d):
+def main(hotpotato):
     """
     Calculates the modulation index using the Laura Spitler method.
     """
     print("Calculating modulation index...\n")
 
-    work_dir= d['dictionary']
-    basename= d['basename']    
+    work_dir= get_value(hotpotato, 'dictionary')
+    basename= get_value(hotpotato, 'basename')    
     t_mi_start = time.time()
    
     # combine_sp_files(work_dir, basename) --
@@ -31,7 +31,7 @@ def main(d):
     print("Combining .singlepulse files took %.2f seconds" %(t_awk_end-t_awk_start))
 
     # Continue with modulation index calcultion.
-    mi_exec = d['mi_exec']
+    mi_exec = get_value(hotpotato, 'mi_exec')
     combined_file = work_dir + "%s_MF.sp" %(basename)
     masked_data_file = "raw_data_with_mask.fits"
     output_file = "%s_MF.mi" %(basename)
@@ -41,4 +41,4 @@ def main(d):
    
     t_mi_end = time.time()
     print("Modulation Index calculation took %.2f seconds" %(t_mi_end-t_mi_start))
-    return d
+    return hotpotato

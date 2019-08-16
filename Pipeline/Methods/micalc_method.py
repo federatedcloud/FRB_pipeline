@@ -1,7 +1,7 @@
 from method import *
 from mi_calc import *
 
-def main(d):
+def main(hotpotato):
     """
     Calculates the modulation index using the Laura Spitler method.
 
@@ -10,10 +10,10 @@ def main(d):
     """
     print("Calculating modulation index...\n")
     
-    directory= d['directory']
-    basename= d['basename']
+    directory= get_value(hotpotato, 'directory')
+    basename= get_value(hotpotato, 'basename')
     combined_file= directory + "/single_pulse/" + "%s_MF.sp" %(basename)
-    masked_data_file= d['mask_dir'] + d['mask_name']
+    masked_data_file= get_value(hotpotato, 'mask_dir') + get_value(hotpotato, 'mask_name')
     output_file= "%s_MF.mi" %(basename)
 
     t_mi_start = time.time()
@@ -27,4 +27,4 @@ def main(d):
     dt = t_mi_end - t_mi_start
 
 
-    return d
+    return hotpotato
