@@ -4,38 +4,25 @@ import matplotlib.pyplot as plt
 import subprocess
 from astropy.io import fits
 
+# Local Import:
+import GetHeaderInfo_method
+
 # Parameters used from dictionary:
 #   directory, basename, mask_dir, mask_name, output_npz_file, npz_name, NCHAN, TBIN
 
 def main(d):
     print("Converting data to a numpy array")
-
-    fitsfile= d['directory'] + '/' + d['basename'] + '.fits' 
     
     # Maskdata used a special file
     if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
-        filfile= d['mask_dir'] + '/' + d['filfile_name']
+        filfile= d['mask_dir'] + '/' + d['filename_fil']
     else:
-        filfile= d['directory'] + '/' + d['filfile_name'] + '.fil'
+        filfile= d['directory'] + '/' + d['filename_fil'] + '.fil'
     
     print("Using %s as filterbank file to convert" %(filfile) )
-    
-    hdulist = fits.open(fitsfile, ignore_missing_end=True)
-    
-    # Get Header Info and put it into a d
-    primaryDictionary = {}
-    subintDictionary = {}
-    primaryHeader = hdulist[0].header
-    subintHeader = hdulist[1].header
-    for i in primaryHeader:
-        primaryDictionary[i] = primaryHeader[i]
-    for j in subintHeader:
-        subintDictionary[j] = subintHeader[j]
-    
-    # Add headers to input dictionary
-    d.update(primaryDictionary)
-    d.update(subintDictionary)
-    
+   
+    d= GetHeaderInfo_method.main(d)
+
     # Put the data (from the filfile) in Numpy array
     dd = np.fromfile(filfile, dtype='float32')
     print(dd.shape)

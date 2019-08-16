@@ -20,6 +20,7 @@ def try_cmd(cmd, stdout=None, stderr=None):
     except sp.CalledProcessError:
         sys.exit("%s \n The above command did not work, quitting.\n" %cmd)
 
+
 # Save dynamic spectra and headers as .npz file
 def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
     print("Writing numpy array to disk...\n")
@@ -32,3 +33,14 @@ def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
     print("Write complete.")
     return
 
+
+def read_npz(npzfilename, array_index=0):
+    '''
+    Read a .npz file into a numpy array
+    Return: numpy array
+    Return the array_index(th) array in npzfilename
+    '''
+    print("Reading .npz file into numpy array")
+    npzfile= np.load(npzfilename + '.npz')
+    files_list= npzfile.files
+    return npzfile[files_list[array_index]]

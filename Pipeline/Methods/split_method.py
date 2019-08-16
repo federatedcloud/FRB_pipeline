@@ -22,7 +22,7 @@ def main(d):
     DV, DT= ar.shape
     block_size= int(d['block_size'])     # bins
     overlap= int(d['overlap'])           # bins
-    split_dir= d['split_dir'].split()[0]
+    split_dir= d['split_dir']
     if not os.path.exists(split_dir):
         os.makedirs(split_dir)   
 

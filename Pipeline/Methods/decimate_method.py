@@ -18,6 +18,7 @@ def main(d):
     do_avg = bool(int(d['do_avg']))
     do_smooth = bool(int(d['do_smooth']))
     do_decimate = bool(int(d['do_decimate']))
+    testing_mode= d['dec_testing_mode']
 
     if do_avg and do_decimate:
         print("Cannot block average AND decimate data. Select at most one of 'do_avg' "\
@@ -43,6 +44,6 @@ def main(d):
     npzfile= np.load(d['npz_name'] + '.npz')
     print(npzfile)
     print(npzfile.files)
-    dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate)
+    dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate, testing_mode)
     np.savez(dec_name, dec_data)
     return d

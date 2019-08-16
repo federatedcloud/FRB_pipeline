@@ -3,27 +3,16 @@ import numpy as np
 import subprocess
 from astropy.io import fits
 
+# Local Import
+import GetHeaderInfo_method
+
 def main(dictionary):
     print("Converting data to a numpy array")
     
     infile = dictionary['directory'] + '/' + dictionary['basename'] + '.fits'
-    
     hdulist = fits.open(infile, ignore_missing_end=True)
-    
-    # Get Header Info and put it into a dictionary
-    primaryDictionary = {}
-    subintDictionary = {}
-    primaryHeader = hdulist[0].header
-    subintHeader = hdulist[1].header
-    for i in primaryHeader:
-        primaryDictionary[i] = primaryHeader[i]
-    for j in subintHeader:
-        subintDictionary[j] = subintHeader[j]
-    
-    # Add headers to input dictionary
-    dictionary.update(primaryDictionary)
-    dictionary.update(subintDictionary)
-    
+    dictionary= GetHeaderInfo_method.main(dictionary)
+
     # Get Data from FITS FILE
     hdu = hdulist[1]
     freqs = hdu.data[0]['dat_freq']

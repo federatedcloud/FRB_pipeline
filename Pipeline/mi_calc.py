@@ -10,40 +10,33 @@ import os
 #   define BYTES_SAMP 1
 #   define MAX_BYTES 35000000
 
-def main(combined_file, masked_data_file, output_file):
+def main(combined_file, filename_mask, filename_output):
 
-    ### fin, fraw, fout
-    # dm, snr, downfact
-    # stime, rms, dmean
-    # ii, snum, block, loc_nchan
-    # dm_prev= -1.0
-    # start_byte, num_bytes, max_dm_delay
-    # nread, nbytes2read, nscanned
-    # Ibar, Ibar2, m_I
+    # kDM is a constant
+    # right_chan, left_chan, nchan
+    # freq_lo, bw, dt
 
     # Open Files
     if not os.path.exists(combined_file):
         print("Path to combined single_pulse file does not exist or is incorrect. Quitting.")
     else:
         fin= open(combined_file, 'r')
-    if not os.path.exists(masked_data_file, 'r'):
+    if not os.path.exists(filename_mask):
         print("Path to masked_data_file does not exist or is incorrect. Quitting.")
     else:
-        fraw= open(masked_data_file, 'r')
-    if not os.path.exists(output_file):
+        masked_data_npz= np.load(filename_mask)
+        print("Found masked_data_file.")
+    if not os.path.exists(filename_output):
         print("Path to output_file does not exists. Creating new output_file."
-        fout= open(output_file, 'w+')
+        fout= open(filename_output, 'w+')
     else:
-        fout= open(output_file, 'w')
+        fout= open(filename_output, 'w')
 
-    data= np.zeros(??????)
-    delays= np.zeros(nchan)
-    spectrum= np.zeros(nchan)
-    
     # Define the number of channels including edges
     loc_nchan= right_chan - left_chan
 
     line= fin.readline()
+    dm_prev= -1.0
     while (len(line) > 0):
         
         # Read Info from SinglePulse file
@@ -64,20 +57,19 @@ def main(combined_file, masked_data_file, output_file):
     
         # Calculate channel delays
         if (dm!= dm_prev):
-            delays= calc_chandelays(dm, freq_lo, bw, nchan, tsamp)
+            delays= calc_chandelays(dm, kDM, freq_lo, bw, nchan, dt)
+            max_dm_delay= delays[0]
+            # "Tare" the spectrum
             for j in range(nchan):
                 spectrum[j]= 0.0
-                max_dm_delay= delays[0]
         
-        # Calculate byte shit
-        start_byte= nchan * (snum - int(downfact/2.)) * BYTES_SAMP
-        fraw.seek(start_byte, 0)
-        nbytes2read= nchan * (max_dm_delay + int(downfact))
-        data= fraw.read(sys.getsizeof('.') * nbytes2read)
-#        nread=fread(data, sizeof(char), nbytes2read, fraw)
-
+        # Load the appropriate Data array
+        tstart_bin= int(stime/dt)
+        tend_bin= tstart_bin + downfact + max_dm_delay
+        data= masked_data_npz[masked_data_npz.files[0]][:, tstart_bin:tend_bin]
+        
         # Calculate Spectrum
-        spectrum= dedisp_smooth(data, delays, nchan, downfact, dean)
+        spectrum= dedisp_smooth(data, delays, nchan, downfact, dmean)
         for j in range(right_chan - left_chan):
             val= spectrum[j + left_chan]
             Ibar+= val
@@ -92,23 +84,22 @@ def main(combined_file, masked_data_file, output_file):
 
     # close files
     fin.close()
-    fraw.close()
     fout.close()  
 
 
 def dedisp_smooth(data, delays, nchan, t_wid, mean):
 
     spec= np.zeros(nchan)
-    for j in range(nchan):
+    for vbin in range(nchan):
         tmp= 0.0
         for i in range(t_wid):
-            n= (nchan * delays[j]) + j + (nchan * i)
-            tmp+= data[n] - mean
-        spec[j]= tmp / t_wid
+            tbin= delays[vbin] + i
+            tmp+= data[vbin, tbin] - mean
+        spec[vbin]= tmp / t_wid
     
     return spec
 
-def calc_chandelays(dm, freq_lo, bw, nchan, tsamp):
+def calc_chandelays(dm, kDM, freq_lo, bw, nchan, dt):
 
     dnu= bw / nchan     # channel resolution
     bw_corr= bw - dnu   # bandwidth from center of top and bottom bins
@@ -117,7 +108,7 @@ def calc_chandelays(dm, freq_lo, bw, nchan, tsamp):
     
     for j in range(nchan):
         floc= freq_lo + (dnu * j)
-        tdelay= 4.15e6 * dm * (1.0/(floc**2) - 1.0/(freq_hi**2))
-        delays[j]= (tdelay / tsamp) + 0.5
+        tdelay= kDM * dm * (1.0/(floc**2) - 1.0/(freq_hi**2))
+        delays[j]= int((tdelay / dt) + 0.5)
 
     return delays

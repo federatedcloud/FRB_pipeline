@@ -22,6 +22,7 @@ def main(d):
     t_gap = int(d['t_gap'])
     v_gap = int(d['v_gap'])
     tstart = d['tstart']
+    testing_mode= d['fof_testing_mode']
     
     # set up dictionary of global parameters
     gd = {} 
@@ -34,7 +35,7 @@ def main(d):
     gd['vhigh'] = d['OBSFREQ'] + dv * d['NCHAN'] / 2.0
     
     # Run algorithm
-    fof(gd, data, m1, m2, t_gap, v_gap, tstart)
+    fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode)
     
     cmd= "mv *clust_* %s" %(d['directory'])
     try_cmd(cmd)
