@@ -18,7 +18,7 @@ def main(hotpotato):
     rfi_dir= get_value(hotpotato, 'rfi_dir')
     mask_dir= get_value(hotpotato, 'mask_dir')
     basename = get_value(hotpotato, 'basename')
-    mask_name= get_value(hotpotato, 'filename_fil')
+    mask_name= get_value(hotpotato, 'filfile')
 
     # make sure rfifind has been run
     try:
@@ -44,7 +44,7 @@ def main(hotpotato):
     file_str = cmd[o_index+3:o_end]
     
     mv_cmd1 = 'mv %s* %s' %(file_str, mask_dir)
-    mv_cmd2 = 'mv %s %s' %(mask_name, mask_dir)
+    mv_cmd2 = 'mv %s %s/%s' %(mask_name, mask_dir, mask_name)
     try_cmd(mv_cmd1)
     try_cmd(mv_cmd2)
     

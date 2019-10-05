@@ -25,7 +25,7 @@ def try_cmd(cmd, stdout=None, stderr=None):
 
 
 # Save dynamic spectra and headers as .npz file
-def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
+def save_npz(npzfilename, dynamic_spectra, primary_header=None, subint_header=None):
     print("Writing numpy array to disk...\n")
     
     if (npzfilename == ""):
