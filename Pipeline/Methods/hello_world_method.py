@@ -3,6 +3,9 @@ from method import *
 
 
 def main(hotpotato):
+
+    params_list= ['print_count']
+    print_params(params_list)
     total = int(get_value(hotpotato, 'print_count'))
     
     if (total > 1):

@@ -4,6 +4,12 @@ import numpy as np
 
 def main(hotpotato):
     print("Running Friend-Of-Friends")
+
+    params_list= ['dec_name or npz_name', 'm1', 'm2', 't_gap', 'v_gap', 'tstart', 
+               'fof_testing_mode', 'tsamp', 'vsamp', 'directory']
+    fits_params_list= ['TBIN', 'CHAN_BW', 'OBSFREQ', 'NCHAN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
     
     # Set up fof-specific parameters
     try:

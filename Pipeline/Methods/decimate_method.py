@@ -8,7 +8,15 @@ from decimate import *
 # Note: other parameters are obtained from header files (stored in hotpotato)
 
 def main(hotpotato):
-    print("Running decimation and smoothing.")
+    print("Running decimation and smoothing.\n")
+
+    params_list= ['dec_name', 'tsamp', 'vsamp', 'do_avg', 'do_smooth', 
+               'do_decimate', 'dec_testing_mode', 't_wdith', 'v_width', 't_sigma', 
+               'v_sigma', 'kernels', 'npz_name']
+    fits_params_list= ['TBIN', 'CHAN_BW']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+
     # Set up dictionary with data-related parameters
     dec_name = get_value(hotpotato, 'dec_name')
     gd = {}

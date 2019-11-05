@@ -8,6 +8,11 @@ import GetHeaderInfo_method
     
 def main(hotpotato):
     print("Converting data to a numpy array") 
+
+    params_list= ['directory', 'basename', 'testing_mode', 'output_npz_file', 'npz_name']
+    fits_params_list= ['NBITS', 'TBIN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
     
     # Get Header Info
     hotpotato = GetHeaderInfo_method.main(hotpotato)
@@ -39,7 +44,7 @@ def main(hotpotato):
         dd = dd[:, int(128.0/dt):int(128.5/dt)]
     
     if (get_value(hotpotato, 'output_npz_file') == True):
-        save_npz(get_value(hotpotato, 'filename_npz'), dd, [primaryDictionary], [subintDictionary])
+        save_npz(get_value(hotpotato, 'npz_name'), dd)
     
     return hotpotato
 

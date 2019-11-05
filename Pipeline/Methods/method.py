@@ -24,14 +24,30 @@ def try_cmd(cmd, stdout=None, stderr=None):
         sys.exit("%s \n The above command did not work, quitting.\n" %cmd)
 
 
-# Save dynamic spectra and headers as .npz file
-def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
+def print_params(param_list):
+    # Print a list of required parameters. The list is constructed in individual method files.
+    params_string= 'The following parameters must be specified in the configuration file to call this method:\n'
+    for param in param_list:
+        params_string+= param + ', '
+    print('\n' + params_string + '\n')
+
+
+def print_fits_params(param_list):
+    # Print a list of parameters that must be pulled from a FITS header.
+    params_string= 'The following parameters must be pulled from a FITS file header, or specified in the configuration file:\n'
+    for param in param_list:
+        params_string+= param + ', '
+    print('\n' + params_string + '\n')
+
+
+def save_npz(npzfilename, dynamic_spectra):
+    # Save dynamic spectra and headers as .npz file
     print("Writing numpy array to disk...\n")
     
     if (npzfilename == ""):
         npzfilename = "output_dynamic_spectra"
     
-    np.savez(npzfilename, dynamic_spectra, primary_header, subint_header);
+    np.savez(npzfilename, dynamic_spectra);
     
     print("Write complete.")
     return

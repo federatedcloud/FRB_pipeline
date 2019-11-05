@@ -10,7 +10,10 @@ def main(hotpotato):
 
     print("Running PRESTO rfifind")
     t_rfi_start = time.time()
-    
+   
+    params_list= ['directory', 'rfi_dir', 'basename', 'rfi_flags', 'rfi_otherflags']
+    print_params(params_list)
+ 
     # get/set file locations
     directory= get_value(hotpotato, 'directory')
     rfi_dir = get_value(hotpotato, 'rfi_dir')

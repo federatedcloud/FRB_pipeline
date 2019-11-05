@@ -4,8 +4,14 @@ from method import *
 
 def main(hotpotato):
     print("Organizing output files")
-    
+   
+    params_list= ['directory', 'output_directory', 'mask_dir', 'move_npz_file', 
+                  'move_combined_file', 'move_maskdata_file', 'filename_npz'
+                  'basename', 'filfile']
+    print_params(params_list)
+     
     data_dir = get_value(hotpotato, 'directory')
+    mask_dir = get_value(hotpotato, 'mask_dir')
     results_dir = get_value(hotpotato, 'output_directory')
     
     # Move generated .npz file
@@ -23,7 +29,7 @@ def main(hotpotato):
     
     # Move filterbank file
     if (get_value(hotpotato, 'move_maskdata_file') == True):
-        cmd = "mv %s/%s %s/masked_dynamic_spectra.fil" %(data_dir, get_value(hotpotato, 'filename_fil'), results_dir)
+        cmd = "mv %s/%s %s/masked_dynamic_spectra.fil" %(mask_dir, get_value(hotpotato, 'filfile'), results_dir)
         try_cmd(cmd)
 
 # TODO: rewrite this based on https://stackoverflow.com/questions/21804935/how-to-use-the-mv-command-in-python-with-subprocess    

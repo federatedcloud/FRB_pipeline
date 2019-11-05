@@ -11,6 +11,11 @@ def main(hotpotato):
     which is the file needed for modulation index
     """
     print("Creating masked dynamic spectrum...\n")
+   
+    params_list= ['directory', 'rfi_dir', 'mask_dir', 'basename', 'filename_fil', 
+                  'md_flags', 'md_otherflags']
+    print_params(params_list)
+
     t_md_start = time.time()
     
     # get/set file locations

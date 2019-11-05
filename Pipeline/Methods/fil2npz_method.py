@@ -12,14 +12,21 @@ import GetHeaderInfo_method
 def main(hotpotato):
     print("Converting data to a numpy array")
 
+    # Note: methods should always be in config file
+    params_list= ['methods', 'mask_dir', 'filename_fil', 'directory', 'testing_mode', 
+                  'output_npz_file', 'npz_name']
+    fits_params_list= ['NCHAN', 'TBIN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+
     # Get Header Info    
     hotpotato= GetHeaderInfo_method.main(hotpotato)
     
     # Maskdata used a special file
     if 'rfifind' in get_value(hotpotato, 'methods') and 'maskdata' in get_value(hotpotato, 'methods'): 
-        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile_name')
+        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filename_fil')
     else:
-        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile_name') + '.fil'
+        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filename_fil') + '.fil'
     print("Using %s as filterbank file to convert" %(filfile) )
 
     # Put the data (from the filfile) in Numpy array
@@ -33,6 +40,6 @@ def main(hotpotato):
         dd = dd[:, int(128.0/dt):int(129.0/dt)]
     
     if (get_value(hotpotato, 'output_npz_file') == True):
-        save_npz(get_value(hotpotato, 'npz_name'), dd, [primaryDictionary], [subintDictionary])
+        save_npz(get_value(hotpotato, 'npz_name'), dd)
         
     return hotpotato

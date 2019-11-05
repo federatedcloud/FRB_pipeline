@@ -9,15 +9,15 @@ import os
 def main(hotpotato):
 
     print("Loading .npz file.")
+    
+    params_list= ['npz_name', 'block_size', 'overlap', 'split_dir']
+    print_params(params_list)
+
     npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz')
-    print(npzfile)
     npzlist= npzfile.files
-    print(npzlist)
-    print(len(npzlist))
     
     # get parameters from hot potato
     ar= npzfile[npzlist[0]]
-    print(ar.shape)
     DV, DT= ar.shape
     block_size= int(get_value(hotpotato, 'block_size'))     # bins
     overlap= int(get_value(hotpotato, 'overlap'))           # bins
@@ -25,15 +25,10 @@ def main(hotpotato):
     if not os.path.exists(split_dir):
         os.makedirs(split_dir)   
 
-    print('block_size= ' + str(block_size))
-    print('overlap= ' + str(overlap)) 
-    print('DV, DT= ' + str(DV) + ', ' + str(DT))
-
     # save each block to a .npy file in split_dir
     n= 0
     counter= 0
     while n < DT:
-        print(n)
         if n + block_size < DT:
             block= ar[:,n:n+block_size]
         else:
