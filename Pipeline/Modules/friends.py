@@ -75,7 +75,7 @@ class Cluster:
         self.DM = output.beta[0] / kDM
 
 
-    def DM_extrapolate(self, vchan, tchan, tstart):
+    def DM_extrapolate(self, vchan, tchan):
 
         # find the max time span for a single frequency band
         v_prev = 0
@@ -106,7 +106,7 @@ class Cluster:
         self.DM_mask = mask
 
 
-    def lin_extrapolate(self, vchan, tchan, tstart):
+    def lin_extrapolate(self, vchan, tchan):
 
         # find the max time span for a single frequency band
         v_prev = 0
@@ -144,8 +144,8 @@ class Cluster:
         ''' Runs DM_fit(), lin_fit(), DM_extrapolate(), and lin_extrapolate(). '''
         self.DM_fit(tstart, vchan-1)
         self.lin_fit(C)
-        self.DM_extrapolate(vchan, tchan, tstart)
-        self.lin_extrapolate(vchan, tchan, tstart)
+        self.DM_extrapolate(vchan, tchan)
+        self.lin_extrapolate(vchan, tchan)
         
         
     # add() needs to be updated
@@ -405,7 +405,7 @@ def flag_rfi(clust_list, upper, lower):
     return removed
 
 
-def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
+def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
   
     global dt
     global dv
@@ -435,28 +435,18 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
             (7) v_gap -- number of empty freq. samples allowed... 
                  between pixels in the same cluster
     '''
-    print(data.shape)
-
-
-    
-    '''
-    print("Decimating the raw, high-resolution data...")
-    
-    avg_t_data = avg_time(data,tsamp)
-    avg_tv_data = avg_freq(avg_t_data,vsamp)
-    '''
-    avg_tv_data= data
-    #plt.imshow(data, aspect=24.0)
-    #plt.show()
-
+    print("Data Shape: " + str(data.shape))
+    if testing_mode == True:
+        plt.imshow(data)
+        plt.show()
+        plt.imshow(data, aspect=24.0)
+        plt.show()
 
     print("Computing mean and std.dev. of background noise...")
-    (mean,std) = iterative_stats(avg_tv_data, 3, 0.01)
-    #print("mean= " + str(mean))
-    #print("std= " + str(std))
+    (mean,std) = iterative_stats(data, 3, 0.01)
 
     print("Masking data with single pixel threshold...")
-    mask = mask1(avg_tv_data, mean, std, m1)
+    mask = mask1(data, mean, std, m1)
     (vchan,tchan) = mask.shape
     C = float(vchan) / tchan # used in linear fitting
     
@@ -485,25 +475,22 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
     # create cluster objects and add to <clust_list> and write stats to file
     for n in range(num_clusters):
         coords = np.where(labeled_dil==(n+1))
-        signals = avg_tv_data[coords]
+        signals = data[coords]
         new = Cluster(coords,signals,std)
         clust_list.append(new)       
  
         if new.clust_SNR > m2: # CLUSTER FILTER
             # fit and extrapolate
-            '''new.DM_fit(128.0, vchan-1)
-            new.lin_fit(C)
-            new.DM_extrapolate(vchan, tchan, 128.0)
-            new.lin_extrapolate(vchan, tchan, 128.0)'''
             new.fit_extrapolate(vchan, tchan, tstart, C)
             best_clusters.append(new)
             
             # The four lines below can be uncommented to display
             # individual clusters on the dynamic spectrum.
-            ''''temp = np.zeros(labeled_dil.shape)
-            temp[coords] = 1
-            plt.imshow(temp)
-            plt.show()'''
+            if testing_mode == True:
+                temp = np.zeros(labeled_dil.shape)
+                temp[coords] = 1
+                plt.imshow(temp)
+                plt.show()
 
             f.write(new.statline())
     
@@ -521,21 +508,17 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
         labeled_dil[coords] = clust.clust_SNR  
 
     plt.savefig(filename + ".png")
-    #plt.figure(figsize=(10,8))
-    plt.imshow(labeled_dil, aspect= 24.0)
-    #plt.imshow(labeled_dil)
-    plt.show()
+    if testing_mode == True:
+        plt.imshow(labeled_dil)
+        plt.show()
 
- 
-    #call(["mv", filename + ".txt", "clusters_DM"])    
-    #call(["mv", filename + ".png", "clusters_DM"])     
     print("Finished Search.")
 
     # flag RFI
     rfi = flag_rfi(best_clusters, vchan/4.0, 10.0/tchan)
     # group high SNR clusters
     print("Creating super clusters (clustering clusters)...")
-    super_clusters = group_clusters(best_clusters, avg_tv_data, std, 128.00)
+    super_clusters = group_clusters(best_clusters, data, std, 128.00)
 
     # create a file containing stats about super clusters
     super_filename = "superclust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
@@ -547,19 +530,18 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart):
         sf.write(sc.statline())    
 
     # Some plotting
-    #for j in range(len(best_clusters)):
-    '''for j in range(len(super_clusters)):
-        #clust = best_clusters[j]
-        clust = super_clusters[j]
-        print(clust.statline())
+    if testing_mode == True:
+        for j in range(len(super_clusters)):
+            #clust = best_clusters[j]
+            clust = super_clusters[j]
+            print(clust.statline())
 
-        ext_mask = 30 * clust.DM_mask
-        clust_regions = np.where(labeled_dil > 0)
-        super_regions = (clust.v_co, clust.t_co)
-        ext_mask[clust_regions] = labeled_dil[clust_regions]
-        ext_mask[super_regions] = 200
-        #unmasked = np.where(ext_mask==0)
-        #ext_mask[unmasked] = labeled_dil[unmasked]
-        plt.imshow(ext_mask)
-        plt.show()
-    '''
+            ext_mask = 30 * clust.DM_mask
+            clust_regions = np.where(labeled_dil > 0)
+            super_regions = (clust.v_co, clust.t_co)
+            ext_mask[clust_regions] = labeled_dil[clust_regions]
+            ext_mask[super_regions] = 200
+            #unmasked = np.where(ext_mask==0)
+            #ext_mask[unmasked] = labeled_dil[unmasked]
+            plt.imshow(ext_mask)
+            plt.show()

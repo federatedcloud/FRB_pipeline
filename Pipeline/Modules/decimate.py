@@ -68,25 +68,73 @@ def convolve_smooth_2d(data, fil):
     '''
     vchan, tchan = data.shape
     vfil, tfil = fil.shape
-    
+
+    #plt.imshow(data)
+    plt.show()
+
     # get fft/convolution dimensions
-    V = vchan + vfil - 1
-    T = tchan + tfil - 1
+    V = vchan + 2 * (vfil - 1)
+    T = tchan + 2 * (tfil - 1)
     
+    V_optimal= int(2 ** np.ceil(np.log2(V)))
+    T_optimal= int(2 ** np.ceil(np.log2(T)))
+
+    print("V, V_optimal= " + str(V) + ", " + str(V_optimal))
+    print("T, T_optimal= " + str(T) + ", " + str(T_optimal))
+    print("Data Shape: " + str(data.shape))
+    print("Kernel Shape: " + str(fil.shape))
     # zero pad input arrays
-    fil = np.concatenate((fil, np.zeros((vfil, T-tfil))), axis=1)
-    data = np.concatenate((data, np.zeros((vchan, T-tchan))), axis=1) 
-    fil = np.concatenate((fil, np.zeros((V-vfil, T))), axis=0)
-    data = np.concatenate((data, np.zeros((V-vchan, T))), axis=0) 
+    t_pad= np.zeros((vchan, tfil-1))
+    data = np.concatenate((t_pad, data, t_pad), axis=1) 
+    v_pad= np.zeros((vfil-1, T))
+    data = np.concatenate((v_pad, data, v_pad), axis=0) 
+    
+    fil_t_pad= np.zeros((vfil, int((T-tfil)/2)))
+    if ((T-tfil)%2 != 0):
+        fil = np.concatenate((fil_t_pad, fil, fil_t_pad, np.zeros((vfil, 1))), axis=1)
+    else:
+        fil = np.concatenate((fil_t_pad, fil, fil_t_pad), axis=1)
+
+    fil_v_pad= np.zeros((int((V-vfil)/2), T))
+    if ((V-vfil)%2 != 0):
+        fil = np.concatenate((fil_v_pad, fil, fil_v_pad, np.zeros((1, T))), axis=0)
+    else:
+        fil = np.concatenate((fil_v_pad, fil, fil_v_pad), axis=0)
+
+    print("Padded Data Shape: " + str(data.shape))
+    print("Padded Kernel Shape: " + str(fil.shape))
+
+    # Zero pad input arrays with optimal array sizes (powers of 2)
+    T_pad= np.zeros((V, int((T_optimal-T)/2))) # Array to append to each end of T-axis
+    V_pad= np.zeros((int((V_optimal-V)/2), T_optimal)) # Array to append to each end of V-axis
+    
+    # Pad the Time (x) axis
+    data= np.concatenate((T_pad, data, T_pad), axis=1)
+    fil= np.concatenate((T_pad, fil, T_pad), axis=1) 
+    if ((T_optimal-T)%2 != 0):
+        data= np.concatenate((data, np.zeros((V ,1))), axis=1)
+    if ((T_optimal-T)%2 != 0):
+        fil= np.concatenate((fil, np.zeros((V ,1))), axis=1)
+    # Pad the Frequency (y) axis
+    data= np.concatenate((V_pad, data, V_pad), axis=0)
+    fil= np.concatenate((V_pad, fil, V_pad), axis=0) 
+    if ((V_optimal-V)%2 != 0):
+        data= np.concatenate((data, np.zeros((1, T))), axis=0)
+    if ((V_optimal-V)%2 != 0):
+        fil= np.concatenate((fil, np.zeros((1, T))), axis=0)
+
+    print("Power of 2 Data Shape: " + str(data.shape))
+    print("Power of 2 Kernel Shape: " + str(fil.shape))
     print("Padding finished.")
 
     # compute ffts
-    data_fft = np.zeros((V, T),dtype=complex)
-    fil_fft = np.zeros((V, T),dtype=complex)
-    for v in range(V):
+    
+    data_fft = np.zeros((V_optimal, T_optimal),dtype=complex)
+    fil_fft = np.zeros((V_optimal, T_optimal),dtype=complex)
+    for v in range(V_optimal):
         data_fft[v,:] = np.fft.fft(data[v,:])
         fil_fft[v,:] = np.fft.fft(fil[v,:])
-    for t in range(T):
+    for t in range(T_optimal):
         data_fft[:,t] = np.fft.fft(data_fft[:,t])
         fil_fft[:,t] = np.fft.fft(fil_fft[:,t])
     print("ffts computed.") 
@@ -95,15 +143,23 @@ def convolve_smooth_2d(data, fil):
     data_fft = np.fft.fft2(data)
     fil_fft = np.fft.fft2(fil)
     '''    
+
+    #plt.imshow(data_fft.astype(float))
+    #plt.show()
+    #plt.imshow(fil_fft.astype(float))
+    #plt.show()
+
     # use convolution theorem
     prod = np.multiply(data_fft, fil_fft)
     print("Mulitplied spectra.")
-    conv = np.fft.ifft2(prod)
-    print("Finished inverse FFT.")
+    conv = np.fft.ifftshift(np.fft.ifft2(prod))
     conv = conv.astype(float) # convert complex entries to real entries
+
+    leadV= int((V_optimal-V)/2) + vfil - 1
+    leadT= int((T_optimal-T)/2) + tfil - 1
+    conv= conv[leadV:leadV+vchan, leadT:leadT+tchan]
+    print("Finished inverse FFT.")
     
-    # Note: conv has dimensions:  (vchan + vfil - 1) x (tchan + tfil - 1)
-    print(conv.shape)
     return conv
 
 
@@ -223,30 +279,34 @@ def call_filter(sd, data):
         
 
 
-def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=True):
+def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=True, testing_mode=False):
 
     # sd -- global and smoothing parameters (dictionary)
 
     tsamp = gd['tsamp']
     vsamp = gd['vsamp']
    
-    print(data.shape)
+    print("Data Shape: " + str(data.shape))
     
     #plt.imshow(data)
-    plt.show()
+    #plt.show()
     if do_avg == True:
         print("Block averaging raw data, with:\n\ttsamp=%d\n\tvsamp=%d" %(tsamp, vsamp)) 
         data = block_avg(data, tsamp, vsamp)
-        #plt.imshow(data)
-        plt.show()
+        if testing_mode == True:    
+            print("Plotting averaged data.")
+            plt.imshow(data)
+            plt.show()
     else:
         print("No averaging selected.")
 
     if do_smooth == True:
         print("Smoothing the data.\n\nConvolution Kernels: %s" %(str(sd['kernels'])))
         smooth_data = call_filter(sd, data) 
-        #plt.imshow(smooth_data)
-        plt.show()
+        if testing_mode == True:
+            print("Plotting smoothed data.")
+            plt.imshow(smooth_data)
+            plt.show()
     else:
         print("No smoothing selected.")
         smooth_data = data
@@ -255,12 +315,16 @@ def decimate_and_smooth(gd, sd, data, do_avg=False, do_smooth=True, do_decimate=
         print("Decimating smoothed data.\n Time sampling period (bins): %d\n "\
               "Frequency sampling period (bins): %d" %(tsamp, vsamp))
         dec_data = decimate(smooth_data, tsamp, vsamp)
-        #plt.imshow(dec_data)
-        plt.show()
+        if testing_mode == True:
+            print("Plotting decimated data.")
+            plt.imshow(dec_data)
+            plt.show()
     else:
         print("No decimation performed.")
         dec_data = smooth_data
 
 
     dec_data = dec_data[3:,:]
+    print("Output Shape: " + str(dec_data.shape))
+    print("Finished decimation and smoothing.\n\n")
     return dec_data

@@ -5,16 +5,16 @@ import time
 from glob import glob
 import os
 
-def main(d):
+def main(hotpotato):
 
     print("Looking for single pulse...\n")
     t_sp_start = time.time()
+
     # get/set file locations
-    
-    work_dir = d['work_dir']
-    prep_dir = work_dir + d['prep_dir_name']
-    sp_dir = work_dir + d['sp_dir_name']
-    cl_dir = work_dir + d['cl_dir_name']
+    work_dir = get_value(hotpotato, 'directory')
+    prep_dir = get_value(hotpotato, 'prep_dir')
+    sp_dir = get_value(hotpotato, 'sp_dir')
+    cl_dir = get_value(hotpotato, 'cl_dir')
 
     # make sure prepsubband has been run
     try:
@@ -23,14 +23,19 @@ def main(d):
         raise Exception("Could not access de-dispersed time-series data files. Please run PRESTO prepsubband before searching for single pulses.")
 
     # single pulse search parameters
-    sp_exe = d['sp_exe'] # params.singlepulse
-    w_max = d['w_max']  # params.max_width
-    sp_otherflags = d['sp_otherflags']
-    cl_width = d['cl_width'] # params.cluster_width
-    cl_bins = int(cl_width / float(d['dt']))
+    sp_exe = get_value(hotpotato, 'sp_exe') # params.singlepulse
+    sp_flags= get_value(hotpotato, 'flags')
+    sp_otherflags = get_value(hotpotato, 'sp_otherflags')
+    sp_modified= get_value(hotpotato, 'sp_modified')
 
     # run the command
-    cmd = "%s %s -p -m %.6f -w %d %s/*.dat" %(sp_exe, sp_otherflags, w_max, cl_bins, work_dir)
+    if sp_modified == True: #use Spitler's mod_sp.py with fixed flags
+        w_max= get_value(hotpotato, 'w_max')
+        cl_width= get_value(hotpotato, 'cl_width') # params.cluster_width
+        cl_bins= int(cl_width / float(get_value(hotpotato, 'TBIN')))
+        cmd = '%s %s -p -m %.6f -w %d %s/*.dat' %(sp_exe, sp_otherflags, w_max, cl_bins, work_dir)
+    else:
+        cmd = '%s %s %s %s/*.dat' %(sp_exe, sp_otherflags, sps_flags, prep_dir)
 
     try_cmd(cmd)
 
@@ -48,4 +53,6 @@ def main(d):
 
     t_sp_end = time.time()
     print("Single pulse searching took %.2f seconds" %(t_sp_end-t_sp_start))
+    
+    return hotpotato
 

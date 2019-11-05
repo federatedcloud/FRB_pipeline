@@ -1,73 +1,38 @@
 from method import *
 import numpy as np
-import matplotlib.pyplot as plt
-import subprocess
 from astropy.io import fits
 
-# Parameters used from dictionary:
-#   directory, basename, filename_fil, output_npz_file, filename_npz, NCHAN, TBIN, and np_data
+# Local Import:
+import GetHeaderInfo_method
 
-def main(d):
+# Required parameters to put in the configuration file are:
+#   directory, basename, mask_dir, filfile, output_npz_file, npz_name, NCHAN, TBIN
+# Note: other parameters are obtained from header files (stored in hotpotato)
+
+def main(hotpotato):
     print("Converting data to a numpy array")
 
-    fitsfile= d['directory'] + '/' + d['basename'] + '.fits' 
+    # Get Header Info    
+    hotpotato= GetHeaderInfo_method.main(hotpotato)
     
     # Maskdata used a special file
-    if 'rfifind' in d['methods'] and 'maskdata' in d['methods']: 
-        filfile= d['directory'] + '/' + d['filename_fil']
+    if 'rfifind' in get_value(hotpotato, 'methods') and 'maskdata' in get_value(hotpotato, 'methods'): 
+        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile')
     else:
-        filfile= d['directory'] + '/' + d['filename_fil'] + '.fil'
-    
+        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile') + '.fil'
     print("Using %s as filterbank file to convert" %(filfile) )
-    
-    hdulist = fits.open(fitsfile, ignore_missing_end=True)
-    
-    # Get Header Info and put it into a d
-    primaryDictionary = {}
-    subintDictionary = {}
-    primaryHeader = hdulist[0].header
-    subintHeader = hdulist[1].header
-    for i in primaryHeader:
-        primaryDictionary[i] = primaryHeader[i]
-    for j in subintHeader:
-        subintDictionary[j] = subintHeader[j]
-    
-    # Add headers to input dictionary
-    d.update(primaryDictionary)
-    d.update(subintDictionary)
-    
+
     # Put the data (from the filfile) in Numpy array
     dd = np.fromfile(filfile, dtype='float32')
-    print(dd.shape)
-    dd = np.reshape(dd, (-1, d['NCHAN'])).T
+    dd = np.reshape(dd, (-1, get_value(hotpotato, 'NCHAN'))).T
     dd = np.flip(dd, axis= 0)
-    print(dd.shape)    
-
-    if (d['output_npz_file'] == True):
-        save_npz(d['filename_npz'], dd, [primaryDictionary], [subintDictionary])
     
     # For Testing ONLY: reduce the size of the data
-    if (d['testing_mode'] == True):
-        data_array = dd
-        dt = d['TBIN']
-        data_array = data_array[:, int(126.0/dt):int(131.0/dt)]
-        #plt.imshow(data_array, aspect=24.0)
-        #plt.show()
+    if (get_value(hotpotato, 'testing_mode') == True):
+        dt = get_value(hotpotato, 'TBIN')
+        dd = dd[:, int(128.0/dt):int(129.0/dt)]
     
-    # Add numpy array to input dictionary
-    d['np_data'] = data_array
-    
-    return d
-
-# Save dynamic spectra and headers as .npz file
-def save_npz(npzfilename, dynamic_spectra, primary_header, subint_header):
-    print("Writing numpy array to disk...\n")
-    
-    if (npzfilename == ""):
-        npzfilename = "output_dynamic_spectra"
-    
-    np.savez(npzfilename, dynamic_spectra, primary_header, subint_header);
-    
-    print("Write complete.")
-    return
-
+    if (get_value(hotpotato, 'output_npz_file') == True):
+        save_npz(get_value(hotpotato, 'npz_name'), dd)
+        
+    return hotpotato
