@@ -2,7 +2,7 @@ from method import *
 from astropy.io import fits
 
 # Required parameters to put in the configuration file are:
-#    directory, basename, filfile_name, mask_dir (if using maskdata)  
+#    directory, basename, filfile, mask_dir (if using maskdata)  
 
 def main(hotpotato): 
     print("Getting Information from the Fits Header.")

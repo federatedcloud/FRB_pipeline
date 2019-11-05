@@ -29,7 +29,7 @@ def main(hotpotato):
     
     # Move filterbank file
     if (get_value(hotpotato, 'move_maskdata_file') == True):
-        cmd = "mv %s/%s %s/masked_dynamic_spectra.fil" %(mask_dir, get_value(hotpotato, 'filfile'), results_dir)
+        cmd = "mv %s/%s %s/masked_dynamic_spectra.fil" %(data_dir, get_value(hotpotato, 'filfile'), results_dir)
         try_cmd(cmd)
 
 # TODO: rewrite this based on https://stackoverflow.com/questions/21804935/how-to-use-the-mv-command-in-python-with-subprocess    

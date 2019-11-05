@@ -6,14 +6,14 @@ from astropy.io import fits
 import GetHeaderInfo_method
 
 # Required parameters to put in the configuration file are:
-#   directory, basename, mask_dir, filfile_name, output_npz_file, npz_name, NCHAN, TBIN
+#   directory, basename, mask_dir, filfile, output_npz_file, npz_name, NCHAN, TBIN
 # Note: other parameters are obtained from header files (stored in hotpotato)
 
 def main(hotpotato):
     print("Converting data to a numpy array")
 
     # Note: methods should always be in config file
-    params_list= ['methods', 'mask_dir', 'filename_fil', 'directory', 'testing_mode', 
+    params_list= ['methods', 'mask_dir', 'filfile', 'directory', 'testing_mode', 
                   'output_npz_file', 'npz_name']
     fits_params_list= ['NCHAN', 'TBIN']
     print_params(params_list)
@@ -24,9 +24,10 @@ def main(hotpotato):
     
     # Maskdata used a special file
     if 'rfifind' in get_value(hotpotato, 'methods') and 'maskdata' in get_value(hotpotato, 'methods'): 
-        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filename_fil')
+        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile')
     else:
-        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filename_fil') + '.fil'
+        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile') + '.fil'
+    
     print("Using %s as filterbank file to convert" %(filfile) )
 
     # Put the data (from the filfile) in Numpy array

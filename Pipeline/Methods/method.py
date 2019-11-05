@@ -23,7 +23,6 @@ def try_cmd(cmd, stdout=None, stderr=None):
     except sp.CalledProcessError:
         sys.exit("%s \n The above command did not work, quitting.\n" %cmd)
 
-
 def print_params(param_list):
     # Print a list of required parameters. The list is constructed in individual method files.
     params_string= 'The following parameters must be specified in the configuration file to call this method:\n'
