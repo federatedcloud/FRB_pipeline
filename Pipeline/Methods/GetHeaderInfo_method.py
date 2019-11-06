@@ -7,6 +7,9 @@ from astropy.io import fits
 def main(hotpotato): 
     print("Getting Information from the Fits Header.")
 
+    params_list= ['directory', 'basename']
+    print_params(params_list)
+
     fitsfile= get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'basename') + '.fits'
     hdulist = fits.open(fitsfile, ignore_missing_end=True)
     # Get Header Info and put it into a dictionary

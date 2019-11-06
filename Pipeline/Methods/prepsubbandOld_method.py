@@ -10,6 +10,10 @@ def main(hotpotato):
     print("Running PRETO prepsubband.")
     t_prep_start = time.time()
 
+    params_list= ['directory', 'basename', 'prep_usemask', 'dmlow', 'ddm', 
+                  'dmspercall', 'downsample', 'nsub', 'prep_otherflags', 'filetype']
+    print_params(params_list)
+
     # get/set file locations
     fits_dir = get_value(hotpotato, 'directory')
     rfi_dir= fits_dir

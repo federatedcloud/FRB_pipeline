@@ -4,8 +4,14 @@ from method import *
 
 def main(hotpotato):
     print("Organizing output files")
-    
+   
+    params_list= ['directory', 'output_directory', 'mask_dir', 'move_npz_file', 
+                  'move_combined_file', 'move_maskdata_file', 'filename_npz'
+                  'basename', 'filfile']
+    print_params(params_list)
+     
     data_dir = get_value(hotpotato, 'directory')
+    mask_dir = get_value(hotpotato, 'mask_dir')
     results_dir = get_value(hotpotato, 'output_directory')
     
     # Move generated .npz file

@@ -486,11 +486,11 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
             
             # The four lines below can be uncommented to display
             # individual clusters on the dynamic spectrum.
-            if testing_mode == True:
-                temp = np.zeros(labeled_dil.shape)
-                temp[coords] = 1
-                plt.imshow(temp)
-                plt.show()
+            #if testing_mode == True:
+            #    temp = np.zeros(labeled_dil.shape)
+            #    temp[coords] = 1
+            #    plt.imshow(temp)
+            #    plt.show()
 
             f.write(new.statline())
     
@@ -508,9 +508,9 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
         labeled_dil[coords] = clust.clust_SNR  
 
     plt.savefig(filename + ".png")
-    if testing_mode == True:
-        plt.imshow(labeled_dil)
-        plt.show()
+    #if testing_mode == True:
+    plt.imshow(labeled_dil)
+    plt.show()
 
     print("Finished Search.")
 
@@ -543,5 +543,5 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
             ext_mask[super_regions] = 200
             #unmasked = np.where(ext_mask==0)
             #ext_mask[unmasked] = labeled_dil[unmasked]
-            plt.imshow(ext_mask)
-            plt.show()
+            #plt.imshow(ext_mask)
+            #plt.show()

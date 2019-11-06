@@ -10,6 +10,12 @@ def main(hotpotato):
     print("Looking for single pulse...\n")
     t_sp_start = time.time()
 
+    params_list= ['directory', 'prep_dir', 'sp_dir', 'cl_dir', 'sp_exe', 'flags', 
+                  'sp_otherflags', 'sp_modified', 'w_max', 'cl_width']
+    fits_params_list= ['TBIN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+ 
     # get/set file locations
     work_dir = get_value(hotpotato, 'directory')
     prep_dir = get_value(hotpotato, 'prep_dir')

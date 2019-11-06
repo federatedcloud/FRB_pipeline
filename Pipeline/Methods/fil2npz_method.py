@@ -12,6 +12,13 @@ import GetHeaderInfo_method
 def main(hotpotato):
     print("Converting data to a numpy array")
 
+    # Note: methods should always be in config file
+    params_list= ['methods', 'mask_dir', 'filfile', 'directory', 'testing_mode', 
+                  'output_npz_file', 'npz_name']
+    fits_params_list= ['NCHAN', 'TBIN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+
     # Get Header Info    
     hotpotato= GetHeaderInfo_method.main(hotpotato)
     
@@ -20,6 +27,7 @@ def main(hotpotato):
         filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile')
     else:
         filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile') + '.fil'
+    
     print("Using %s as filterbank file to convert" %(filfile) )
 
     # Put the data (from the filfile) in Numpy array

@@ -13,7 +13,13 @@ And from FITS header:
 '''
 
 def main(hotpotato):
-    print("Running Friend-Of-Friends")
+    print("Running Friend-Of-Friends.\n")
+
+    params_list= ['split_dir', 'm1', 'm2', 't_gap', 'v_gap', 'tstart', 'fof_testing_mode', 
+               'tsamp', 'vsamp']
+    fits_params_list= ['TBIN', 'CHAN_BW', 'OBSFREQ', 'NCHAN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
     
     # Get data file location
     split_dir= get_value(hotpotato, 'split_dir')

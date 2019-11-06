@@ -1,6 +1,4 @@
 from method import *
-from decimate import *
-import os
 import numpy as np
 
 # Run Smoothing and Decimation on all blocks of data in 'split_dir'
@@ -13,8 +11,15 @@ And from FITS header:
 '''
 
 def main(hotpotato):
-    print("Running decimation and smoothing.")
-    
+    print("Running decimation and smoothing.\n")
+   
+    params_list= ['split_dir', 'dec_name', 'tsamp', 'vsamp', 
+               'do_avg', 'do_smooth', 'do_decimate', 'dec_testing_mode', 'kernels', 
+               't_width', 'v_width', 't_sigma', 'v_sigma']
+    fits_params_list= ['TBIN', 'CHAN_BW']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+ 
     # Get data file location
     split_dir= get_value(hotpotato, 'split_dir')
     dec_name= get_value(hotpotato, 'dec_name')
