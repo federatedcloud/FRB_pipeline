@@ -26,8 +26,11 @@ def try_cmd(cmd, stdout=None, stderr=None):
 def print_params(param_list):
     # Print a list of required parameters. The list is constructed in individual method files.
     params_string= 'The following parameters must be specified in the configuration file to call this method:\n'
-    for param in param_list:
-        params_string+= param + ', '
+    for index,param in enumerate(param_list):
+        if (index == (len(param_list)-1) ): # Do not place comma on last item
+            params_string += param
+        else:
+            params_string += param + ', '
     print('\n' + params_string + '\n')
 
 
