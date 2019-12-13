@@ -30,4 +30,6 @@ clust_*.png
 clust_*.txt
 superclust_*.txt
 
+# other
+*.DS_Store
 
