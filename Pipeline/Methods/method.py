@@ -5,6 +5,7 @@ import numpy as np
 from glob import glob
 sys.path.insert(0, '../Modules')
 
+from write_log import *
 
 def get_value(hotpotato, key):
     return hotpotato.get(key,'')
@@ -17,13 +18,14 @@ def try_cmd(cmd, stdout=None, stderr=None):
     # Run the command in the string cmd using sp.check_call()
     # If there is a problem running, a CalledProcessError will occur
     # and the program will quit.
-    print("\n\n %s \n\n" %cmd)
+    log_it("\n\n %s \n\n" %cmd)
     
     try:
         retval = sp.check_call(cmd, shell=True, stdout=stdout, stderr=stderr,
                                 executable='/bin/bash')
     except sp.CalledProcessError:
-        sys.exit("%s \n The above command did not work, quitting.\n" %cmd)
+        log_it("%s \n The above command did not work, quitting.\n" %cmd)
+        sys.exit()
 
 def print_params(param_list):
     # Print a list of required parameters. The list is constructed in individual method files.
@@ -33,7 +35,7 @@ def print_params(param_list):
             params_string += param
         else:
             params_string += param + ', '
-    print('\n' + params_string + '\n')
+    log_it('\n' + params_string + '\n')
 
 
 def print_fits_params(param_list):
@@ -41,19 +43,19 @@ def print_fits_params(param_list):
     params_string= 'The following parameters must be pulled from a FITS file header, or specified in the configuration file:\n'
     for param in param_list:
         params_string+= param + ', '
-    print('\n' + params_string + '\n')
+    log_it('\n' + params_string + '\n')
 
 
 def save_npz(npzfilename, dynamic_spectra):
     # Save dynamic spectra and headers as .npz file
-    print("Writing numpy array to disk...\n")
+    log_it("Writing numpy array to disk...\n")
     
     if (npzfilename == ""):
         npzfilename = "output_dynamic_spectra"
     
     np.savez(npzfilename, dynamic_spectra);
     
-    print("Write complete.")
+    log_it("Write complete.")
     return
 
 
@@ -63,7 +65,7 @@ def read_npz(npzfilename, array_index=0):
     Return: numpy array
     Return the array_index(th) array in npzfilename
     '''
-    print("Reading .npz file into numpy array")
+    log_it("Reading .npz file into numpy array")
     npzfile= np.load(npzfilename + '.npz')
     files_list= npzfile.files
     return npzfile[files_list[array_index]]
