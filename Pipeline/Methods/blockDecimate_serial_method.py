@@ -1,4 +1,6 @@
 from method import *
+from decimate import *
+import os
 import numpy as np
 
 # Run Smoothing and Decimation on all blocks of data in 'split_dir'
@@ -15,7 +17,7 @@ def main(hotpotato):
    
     params_list= ['split_dir', 'dec_name', 'tsamp', 'vsamp', 
                'do_avg', 'do_smooth', 'do_decimate', 'dec_testing_mode', 'kernels', 
-               't_width', 'v_width', 't_sigma', 'v_sigma']
+               't_width', 'v_width', 't_sigma', 'v_sigma', 'split_list']
     fits_params_list= ['TBIN', 'CHAN_BW']
     print_params(params_list)
     print_fits_params(fits_params_list)
@@ -60,6 +62,7 @@ def main(hotpotato):
         sd['T_sigma'] = float(get_value(hotpotato, 't_sigma') / dt)
         sd['V_sigma'] = float(get_value(hotpotato, 'v_sigma') / dv) 
 
+    '''
     # Get list of data files
     files= os.listdir(split_dir)
 
@@ -85,7 +88,7 @@ def main(hotpotato):
     
     files= sorted_files
     del sorted_files
-
+    
     # Run smoothing and decimation on all blocks of data
     for block in files:
         n= block.split('_')[1]
@@ -94,9 +97,46 @@ def main(hotpotato):
         print('Data Shape: ' + str(data.shape))
         dec_data= decimate_and_smooth(gd, sd, data, do_avg, do_smooth, do_decimate, testing_mode)
         np.save(dec_name + '_' + block, dec_data)
+    '''
+
+    block_list= get_value(hotpotato, 'split_list')
+    if block_list == '':
+        # Get list of data files
+        block_list= os.listdir(split_dir)
+
+        files_len= len(block_list) # this is dynamic
+        n= 0
+        while n < files_len:
+            block= block_list[n]
+            if block[0:5] != 'block':
+                block_list.remove(block)
+                files_len-= 1 
+            else:
+                n+= 1
+        print(block_list)
+    else:
+        pass
+
+    print(block_list)
+    dec_block_list= []
+    for block_name in block_list:
+        print(block_name)
+        print(split_dir + '/' + block_name)
+        print('%s/%s' %(split_dir, block_name))
+        try:
+            data= np.load('%s/%s' %(split_dir, block_name))
+        except:
+            print('The file -- %s -- does not exist in directory -- %s' %(block_name, split_dir))
+            continue
+        print('Data Shape: ' + str(data.shape))
+        dec_data= decimate_and_smooth(gd, sd, data, do_avg, do_smooth, do_decimate, testing_mode)
+        dec_data_name= dec_name + '_' + block_name
+        np.save(dec_data_name, dec_data)
+        dec_block_list.append(dec_data_name)
 
     cmd= 'mv %s* %s' %(dec_name, split_dir)
     try_cmd(cmd)    
     print("Finished decimating blocked data.\n\n")
 
+    hotpotato['dec_block_list']= dec_block_list
     return hotpotato

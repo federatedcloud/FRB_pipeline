@@ -15,8 +15,8 @@ def main(hotpotato):
     # Get Header Info and put it into a dictionary
     primaryDictionary = {}
     subintDictionary = {}
-    primaryHeader = hdulist[0].header
-    subintHeader = hdulist[1].header
+    primaryHeader = hdulist['PRIMARY'].header
+    subintHeader = hdulist['SUBINT'].header
     for i in primaryHeader: 
         primaryDictionary[i] = primaryHeader[i]
     for j in subintHeader:

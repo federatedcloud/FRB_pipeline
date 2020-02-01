@@ -15,8 +15,7 @@ def main(hotpotato):
     try:
         dec_name= get_value(hotpotato, 'dec_name')
         print("Running Friend-Of-Friends on Decimated data.")
-        dec_file= np.load(dec_name + '.npz')
-        data= dec_file[dec_file.files[0]]
+        data= np.load(dec_name + '.npy')
     except:
         print("Running Friend-Of-Friends NON-decimated data.")
         npz_file = np.load(get_value(hotpotato, 'npz_name') + '.npz')
@@ -34,7 +33,7 @@ def main(hotpotato):
     gd = {} 
     gd['tsamp'] = int(get_value(hotpotato, 'tsamp'))
     gd['vsamp'] = int(get_value(hotpotato, 'vsamp'))
-    gd['dt'] = get_value(hotpotato, 'TBIN')
+    gd['dt'] = get_value(hotpotato, 'tbin')
     gd['dv'] = abs(get_value(hotpotato, 'CHAN_BW')) # for some reason this was negative
     dv = gd['dv']
     gd['vlow'] = get_value(hotpotato, 'OBSFREQ') - dv * get_value(hotpotato, 'NCHAN') / 2.0
