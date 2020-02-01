@@ -20,7 +20,8 @@ def main(hotpotato):
     # Set up dictionary with data-related parameters
     dec_name = get_value(hotpotato, 'dec_name')
     gd = {}
-    dt = float(get_value(hotpotato, 'TBIN'))
+    print(hotpotato)
+    dt = float(get_value(hotpotato, 'tbin'))
     dv = abs(float(get_value(hotpotato, 'CHAN_BW')))
     gd['dt'] = dt
     gd['dv'] = dv
@@ -55,10 +56,10 @@ def main(hotpotato):
         sd['V_sigma'] = float(float(get_value(hotpotato, 'v_sigma')) / dv) 
 
     # Run decimation and smoothing
-    npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz')
+    npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz', allow_pickle=True)
     print(npzfile)
     print(npzfile.files)
     dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate, testing_mode)
-    np.savez(dec_name, dec_data)
+    np.save(dec_name, dec_data)
     return hotpotato
 
