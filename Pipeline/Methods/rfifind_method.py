@@ -1,11 +1,5 @@
 from method import *
 
-import sys
-import os
-import time
-from glob import glob
-
-
 def main(hotpotato):
 
     print("Running PRESTO rfifind")

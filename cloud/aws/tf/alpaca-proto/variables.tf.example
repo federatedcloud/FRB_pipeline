@@ -1,0 +1,40 @@
+variable "region" {
+  description = "The AWS region to create instance in."
+  default = "us-east-2"
+}
+variable "master_machine_type" {
+  description = "type of master instance to fire up"
+  default = "t2.micro" 
+}
+variable "worker_machine_type" {
+  description = "type of worker instance to fire up"
+  default = "t2.micro" 
+}
+variable "zone" {
+  description = "zone you wish to create the instance in"
+  default = "us-east-2a" 
+}
+variable "master_count" {
+  description = "number of master instances to boot up"
+  default = "1"
+}
+#variable "worker_count" {
+#  description = "number of worker instances to boot up"
+#  default = "2"
+#}
+variable "PRIVATE_KEY" {
+  description = "location of private key"
+  default = ".ssh/cluster_access_ssh_id_rsa"
+}
+variable "PUBLIC_KEY" {
+  description = "location of public key"
+  default = ".ssh/cluster_access_ssh_id_rsa.pub"
+}
+variable "USER" {
+  description = "user to set up instance"
+  default = "herdsman"
+}
+variable "SSH_PORT" {
+  description = "master and worker node ssh port"
+  default = "22"
+}

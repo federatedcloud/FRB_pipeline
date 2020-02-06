@@ -9,7 +9,9 @@ and two small worker VMs
 
 # Implementation Status
 
-Unimplemented WIP
+Master node and network pieces creation tested with public ssh access confirmed
+
+Mostly unimplemented WIP
 
 # Technologies
 Terraform, Ansible, Docker, Amazon Web Services EC2 and S3
@@ -51,6 +53,13 @@ aws_access_key_id = YOURACCESSKEYHERE
 aws_secret_access_key = youraccesskeyhere
 ```
 
+An easy way to activate AWS API credentials in your current shell environment for Terraform to automatically detect them without persisting them to disk is to export them as:
+
+```
+export ACCESS_KEY=...
+export SECRET_KEY=...
+```
+
 All the parameters for setting up the instances are provided in the variables.tf
 file. It is important to note that the private and public keys will be used to
 access all created virtual machine instances. Many tools exist for browsing S3
@@ -71,8 +80,10 @@ cd checkout_dir
 
 cd aws/tf/alpaca-proto 
 
-modify the variables.tf file to set the s3 bucket name, instance size and type,
+copy variables.tf.example to variables.tf and modify file to set the s3 bucket name, instance size and type,
 and other resource provisioning details
+
+copy ssh_configfile.tmpl.example to ssh_configfile.tmpl based on the intended placement path of the cluster access ssh key on the new master node
 
 todo : if using an existing bucket, place access credentials to reuse
 

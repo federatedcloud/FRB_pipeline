@@ -29,7 +29,16 @@ waller_test_combined_0001_MF.sp
 clust_*.png
 clust_*.txt
 superclust_*.txt
+*.dat
+*.inf
+*.log
 
 # other
 *.DS_Store
 
+
+# Terraform
+*.tfstate*
+.terraform
+variables.tf
+ssh_configfile.tmpl
