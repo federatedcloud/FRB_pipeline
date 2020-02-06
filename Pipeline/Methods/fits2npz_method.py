@@ -47,7 +47,7 @@ def main(hotpotato):
     # For Testing ONLY: reduce the size of the data
     if (get_value(hotpotato, 'testing_mode') == True):
         dt = get_value(hotpotato, 'TBIN')
-        dd = dd[:, int(128.0/dt):int(133.0/dt)]
+        dd = dd[:, int(128.0/dt):int(128.5/dt)]
     
     print("Testing Mode reduced shape: " + str(dd.shape))
     if (get_value(hotpotato, 'output_npz_file') == True):
