@@ -6,8 +6,10 @@
 '''
 
 # General Imports
-import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import math
 import scipy.odr as odr
 from scipy.stats import linregress
