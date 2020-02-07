@@ -421,8 +421,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block
     if testing_mode == True:
         plt.imshow(data)
         plt.show()
-        plt.imshow(data, aspect=24.0)
-        plt.show()
+        #plt.imshow(data, aspect=24.0)
+        #plt.show()
 
     print("Computing mean and std.dev. of background noise...")
     (mean,std) = iterative_stats(data, 3, 0.01)
@@ -492,9 +492,12 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block
         coords = (clust.v_co, clust.t_co)
         labeled_dil[coords] = clust.clust_SNR  
 
-    plt.savefig(filename + ".png")
+    if testing_mode == False:
+        plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
     if testing_mode == True:
         plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
         plt.show()
 
     print("Finished Search.")

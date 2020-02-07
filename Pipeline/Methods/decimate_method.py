@@ -21,7 +21,7 @@ def main(hotpotato):
     dec_name = get_value(hotpotato, 'dec_name')
     gd = {}
     print(hotpotato)
-    dt = float(get_value(hotpotato, 'tbin'))
+    dt = float(get_value(hotpotato, 'TBIN'))
     dv = abs(float(get_value(hotpotato, 'CHAN_BW')))
     gd['dt'] = dt
     gd['dv'] = dv
