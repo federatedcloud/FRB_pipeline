@@ -9,7 +9,7 @@ import importlib
 import readconfig as cfg
 
 from method import *
-from write_log import *
+from writelog import *
 
 true_values = ['True', 'true', 'TRUE', 'T', 't']
 false_values = ['False', 'false', 'FALSE', 'F', 'f']

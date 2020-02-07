@@ -5,7 +5,7 @@ import numpy as np
 from glob import glob
 sys.path.insert(0, '../Modules')
 
-from write_log import *
+from writelog import *
 
 def get_value(hotpotato, key):
     return hotpotato.get(key,'')
