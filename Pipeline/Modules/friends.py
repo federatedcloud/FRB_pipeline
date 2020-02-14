@@ -125,21 +125,37 @@ class Cluster:
 
         mask = np.zeros((vchan,tchan))
 
+        #print(mask.shape)
+        #print(mask)
         # disperse each frequency band, and mask
         t_co = np.arange(tchan)
         lin_v_co = lin_func(self.linear, t_co).astype(int)
         valid_v = np.where((lin_v_co >= 0) & (lin_v_co < vchan))
         
         if lin_v_co[0] > lin_v_co[-1]:
-            t_min = valid_v[0][-1]
-            t_max = valid_v[0][0]
+            try:
+                t_min = valid_v[0][-1]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][0]
+            except:
+                t_max= 0
         else:
-            t_min = valid_v[0][0]
-            t_max = valid_v[0][-1]
+            try:
+                t_min = valid_v[0][0]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][-1]
+            except:
+                t_max= 0
 
         for t in range(t_min,t_max):
             mask[lin_v_co[t], (t-dT_max):(t+dT_max)] = 1
 
+        #print(mask.shape)
+        #print(mask)
         self.lin_mask = mask
 
     def fit_extrapolate(self, vchan, tchan, tstart, C):

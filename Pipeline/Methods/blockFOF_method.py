@@ -71,7 +71,7 @@ def main(hotpotato):
     # Run FOF on each block
     fof_block_list= []
     for dec_block_name in dec_block_list:
-        n= int(dec_block_name.split('_')[1][-1])
+        n= int(dec_block_name.split('_')[1][5:])
         print('Block: %d' %(n))
         try:
             print('%s/%s' %(split_dir, dec_block_name))

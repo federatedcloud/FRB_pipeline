@@ -57,8 +57,6 @@ def main(hotpotato):
 
     # Run decimation and smoothing
     npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz', allow_pickle=True)
-    print(npzfile)
-    print(npzfile.files)
     dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate, testing_mode)
     np.save(dec_name, dec_data)
     return hotpotato
