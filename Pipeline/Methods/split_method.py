@@ -30,7 +30,7 @@ def main(hotpotato):
         filelist= glob('%s*.npy' %(bandpass_name))
         # Note that each bandpass-corrected segment has the same time dimension
     else:
-        filelist.append(npz_name + '.npz')
+        filelist= [npz_name + '.npz']
     
     print(filelist)
     # save each block to a .npy file in split_dir, and

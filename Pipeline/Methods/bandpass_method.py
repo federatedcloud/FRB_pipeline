@@ -36,6 +36,7 @@ def main(hotpotato):
     start= 0
     prev= 0
     for j in range(Nv):
+        print(np.any(np.isnan(dd[j,:])))
         if np.any(np.isnan(dd[j,:])) == True:
             nan_chans[j]= 0
             if prev == 1 and (j - start > min_chans):
@@ -45,13 +46,15 @@ def main(hotpotato):
             if prev == 0:
                 start= j
             if j == Nv-1 and (j - start > min_chans):
-                data_range.append(start, j)
+                data_ranges.append((start, j))
             prev= 1
 
+    print('data ranges: ' + str(data_ranges))
     print(data_ranges)
 
     print('Saving band-pass-corrected DS, avoiding nans as .npy')
     for pair in data_ranges:
+        print(dd[pari[0]:pair[1]+1,:].shape)
         np.save(bandpass_name + '_chans%dto%d.npy' %(pair[0], pair[1]), dd[pair[0]:pair[1]+1,:])
     
     return hotpotato
