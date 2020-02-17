@@ -274,8 +274,6 @@ def iterative_stats(data, out, thresh):
         ree = np.ma.array(data,mask=mask)
         mean2 = ree.mean()
         std2 = ree.std()
-        print("mean= " + str(mean))
-        print("std= " + str(std))
 
     return (mean,std)
 
@@ -398,7 +396,7 @@ def flag_rfi(clust_list, upper, lower):
     return removed
 
 
-def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block):
+def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block):
   
     global dt
     global dv

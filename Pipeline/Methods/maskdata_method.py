@@ -1,5 +1,5 @@
 from method import *
-
+import sys
 import os
 import time
 from glob import glob
@@ -12,7 +12,7 @@ def main(hotpotato):
     """
     print("Creating masked dynamic spectrum...\n")
    
-    params_list= ['directory', 'rfi_dir', 'mask_dir', 'basename', 'filename_fil', 
+    params_list= ['directory', 'rfi_dir', 'mask_dir', 'basename', 'filname_withhdr', 
                   'md_flags', 'md_otherflags']
     print_params(params_list)
 
@@ -20,6 +20,8 @@ def main(hotpotato):
     
     # get/set file locations
     directory = get_value(hotpotato, 'directory')
+    filetype= get_value(hotpotato, 'filetype')
+    filname_withhdr= get_value(hotpotato, 'filname_withhdr')
     rfi_dir= get_value(hotpotato, 'rfi_dir')
     mask_dir= get_value(hotpotato, 'mask_dir')
     basename = get_value(hotpotato, 'basename')
@@ -33,9 +35,14 @@ def main(hotpotato):
                        "before generating masked dynamic spectrum.")
 
     # set flags and run command
-    #md_flags = d['md_flags']
-    #md_otherflags = get_value(hotpotato, 'md_otherflags')
-    filenamestr = directory + '/' + basename + '.fits'
+    if filetype == 'psrfits':
+        filenamestr = directory + '/' + basename + '.fits'
+    elif filetype == 'filterbank':
+        filenamestr= directory + '/' + filname_withhdr
+    else:
+        print('Filetype not recognized. Quitting...')
+        sys.exit()
+
     cmd = 'maskdata %s -mask %s %s %s' %(get_value(hotpotato, 'md_flags'), rfi_maskname, get_value(hotpotato, 'md_otherflags'), filenamestr)
     try_cmd(cmd)
 
