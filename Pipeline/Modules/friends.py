@@ -6,8 +6,10 @@
 '''
 
 # General Imports
-import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import math
 import scipy.odr as odr
 from scipy.stats import linregress
@@ -123,21 +125,37 @@ class Cluster:
 
         mask = np.zeros((vchan,tchan))
 
+        #print(mask.shape)
+        #print(mask)
         # disperse each frequency band, and mask
         t_co = np.arange(tchan)
         lin_v_co = lin_func(self.linear, t_co).astype(int)
         valid_v = np.where((lin_v_co >= 0) & (lin_v_co < vchan))
         
         if lin_v_co[0] > lin_v_co[-1]:
-            t_min = valid_v[0][-1]
-            t_max = valid_v[0][0]
+            try:
+                t_min = valid_v[0][-1]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][0]
+            except:
+                t_max= 0
         else:
-            t_min = valid_v[0][0]
-            t_max = valid_v[0][-1]
+            try:
+                t_min = valid_v[0][0]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][-1]
+            except:
+                t_max= 0
 
         for t in range(t_min,t_max):
             mask[lin_v_co[t], (t-dT_max):(t+dT_max)] = 1
 
+        #print(mask.shape)
+        #print(mask)
         self.lin_mask = mask
 
     def fit_extrapolate(self, vchan, tchan, tstart, C):
@@ -256,8 +274,6 @@ def iterative_stats(data, out, thresh):
         ree = np.ma.array(data,mask=mask)
         mean2 = ree.mean()
         std2 = ree.std()
-        print("mean= " + str(mean))
-        print("std= " + str(std))
 
     return (mean,std)
 
@@ -380,7 +396,7 @@ def flag_rfi(clust_list, upper, lower):
     return removed
 
 
-def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block):
+def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block):
   
     global dt
     global dv
@@ -419,8 +435,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block
     if testing_mode == True:
         plt.imshow(data)
         plt.show()
-        plt.imshow(data, aspect=24.0)
-        plt.show()
+        #plt.imshow(data, aspect=24.0)
+        #plt.show()
 
     print("Computing mean and std.dev. of background noise...")
     (mean,std) = iterative_stats(data, 3, 0.01)
@@ -490,9 +506,12 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode , block
         coords = (clust.v_co, clust.t_co)
         labeled_dil[coords] = clust.clust_SNR  
 
-    plt.savefig(filename + ".png")
+    if testing_mode == False:
+        plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
     if testing_mode == True:
         plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
         plt.show()
 
     print("Finished Search.")

@@ -2,6 +2,7 @@ from method import *
 from decimate import *
 import os
 import numpy as np
+import sys
 
 # Run Smoothing and Decimation on all blocks of data in 'split_dir'
 '''
@@ -15,25 +16,39 @@ And from FITS header:
 def main(hotpotato):
     print("Running decimation and smoothing.\n")
    
-    params_list= ['split_dir', 'dec_name', 'tsamp', 'vsamp', 
+    params_list= ['split_dir', 'filetype', 'dec_name', 'tsamp / tcombine', 'vsamp / vcombine', 
                'do_avg', 'do_smooth', 'do_decimate', 'dec_testing_mode', 'kernels', 
                't_width', 'v_width', 't_sigma', 'v_sigma', 'split_list']
     fits_params_list= ['TBIN', 'CHAN_BW']
+    fil_params_list= ['tsamp', 'foff']
     print_params(params_list)
     print_fits_params(fits_params_list)
- 
+    print_fil_params(fil_params_list)
+
     # Get data file location
     split_dir= get_value(hotpotato, 'split_dir')
+    filetype= get_value(hotpotato, 'filetype')
     dec_name= get_value(hotpotato, 'dec_name')
 
     # Set up dictionary with data-related parameters
     gd = {}
-    dt = get_value(hotpotato, 'TBIN')
-    dv = abs(get_value(hotpotato, 'CHAN_BW'))
+    if filetype == 'psrfits':
+        dt= get_value(hotpotato, 'TBIN')
+        dv= abs(get_value(hotpotato, 'CHAN_BW'))
+        gd['tsamp'] = get_value(hotpotato, 'tsamp')
+        gd['vsamp'] = get_value(hotpotato, 'vsamp')
+    elif filetype == 'filterbank':
+        dt= get_value(hotpotato, 'tsamp')
+        dv= abs(get_value(hotpotato, 'foff'))
+        # Note the naming convention change:
+        gd['tsamp'] = get_value(hotpotato, 'tcombine')
+        gd['vsamp'] = get_value(hotpotato, 'vcombine')
+    else:
+        print('Filetype not recognized. Quitting... ')
+        sys.exit()
+
     gd['dt'] = dt
     gd['dv'] = dv
-    gd['tsamp'] = get_value(hotpotato, 'tsamp')
-    gd['vsamp'] = get_value(hotpotato, 'vsamp')
 
     # Set up smoothing/decimation parameters
     sd = {} 
@@ -62,42 +77,6 @@ def main(hotpotato):
         sd['T_sigma'] = float(get_value(hotpotato, 't_sigma') / dt)
         sd['V_sigma'] = float(get_value(hotpotato, 'v_sigma') / dv) 
 
-    '''
-    # Get list of data files
-    files= os.listdir(split_dir)
-
-    files_dict= {}
-    files_len= len(files) # this is dynamic
-    n= 0
-    while n < files_len:
-        print(n)
-        block= files[n]
-        if block.split('_')[0] != 'block':
-            files.remove(block)
-            files_len-= 1 
-        else:
-            files_dict[int(block.split('_')[1])]= block
-            n+= 1
-    
-    # Sort the blocks
-    sorted_files= []
-    for n in range(len(files)):
-        sorted_files.append(files_dict[n])
-    print("Files: " +str(files))
-    print("Sorted Files: " + str(sorted_files))
-    
-    files= sorted_files
-    del sorted_files
-    
-    # Run smoothing and decimation on all blocks of data
-    for block in files:
-        n= block.split('_')[1]
-        print('Block: %s' %(n))
-        data= np.load('%s/%s' %(split_dir, block))
-        print('Data Shape: ' + str(data.shape))
-        dec_data= decimate_and_smooth(gd, sd, data, do_avg, do_smooth, do_decimate, testing_mode)
-        np.save(dec_name + '_' + block, dec_data)
-    '''
 
     block_list= get_value(hotpotato, 'split_list')
     if block_list == '':

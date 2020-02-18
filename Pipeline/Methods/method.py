@@ -5,7 +5,7 @@ import numpy as np
 from glob import glob
 sys.path.insert(0, '../Modules')
 
-from write_log import *
+from writelog import *
 
 def get_value(hotpotato, key):
     return hotpotato.get(key,'')
@@ -37,7 +37,6 @@ def print_params(param_list):
             params_string += param + ', '
     log_it('\n' + params_string + '\n')
 
-
 def print_fits_params(param_list):
     # Print a list of parameters that must be pulled from a FITS header.
     params_string= 'The following parameters must be pulled from a FITS file header, or specified in the configuration file:\n'
@@ -45,6 +44,12 @@ def print_fits_params(param_list):
         params_string+= param + ', '
     log_it('\n' + params_string + '\n')
 
+def print_fil_params(param_list):
+    # Print a list of parameters that must be pulled from a FITS header.
+    params_string= 'The following parameters must be pulled from a Filterbank file header, or specified in the configuration file:\n'
+    for param in param_list:
+        params_string+= param + ', '
+    log_it('\n' + params_string + '\n')
 
 def save_npz(npzfilename, dynamic_spectra):
     # Save dynamic spectra and headers as .npz file

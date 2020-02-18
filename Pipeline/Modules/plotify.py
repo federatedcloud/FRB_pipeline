@@ -52,25 +52,19 @@ def aggregate_results(rel_path, filelist, sort_stat, block_size, overlap):
             num_blocks (int)
 
     '''
-    print('rel_path: ' + rel_path)
-    print('filelist: ' + str(filelist))
-    print('sortstat: ' + sort_stat)
-    print('block_size: ' + str(block_size))
-    print('overlap: ' + str(overlap))
     
     all_stat_lists= []
     for block in filelist:
         (params, stat_names, stat_lists)= open_results(rel_path + '/' + block)
         n= int(block[5:].split('_')[0])
-        print('Block ' + str(n))
         #convert to numpy array to shift
         stat_array= np.array(stat_lists)
-        print('stat_array shape: ' + str(stat_array.shape))
+        #print('stat_array shape: ' + str(stat_array.shape))
         # shift t_min, t_max, v_min, v_max appropriately
-        print('First row before shifting: ' + str(stat_array[0,:]))
+        #print('First row before shifting: ' + str(stat_array[0,:]))
         stat_array[:,6]+= n * (block_size - overlap)
         stat_array[:,7]+= n * (block_size - overlap)
-        print('First row after shifting: ' + str(stat_array[0,:]))
+        #print('First row after shifting: ' + str(stat_array[0,:]))
 
         # convert back to lists for sorting
         shifted_stat_lists= stat_array.tolist()

@@ -1,9 +1,8 @@
 from method import *
+from read_fil import *
 import numpy as np
-from astropy.io import fits
-
-# Local Import:
-import GetHeaderInfo_method
+from blimpy import Waterfall
+from blimpy.io.sigproc import len_header
 
 # Required parameters to put in the configuration file are:
 #   directory, basename, mask_dir, filfile, output_npz_file, npz_name, NCHAN, TBIN
@@ -13,33 +12,43 @@ def main(hotpotato):
     print("Converting data to a numpy array")
 
     # Note: methods should always be in config file
-    params_list= ['methods', 'mask_dir', 'filfile', 'directory', 'testing_mode', 
-                  'output_npz_file', 'npz_name']
-    fits_params_list= ['NCHAN', 'TBIN']
+    params_list= ['methods', 'filname', 'directory', 
+                  'output_npz_file', 't_start', 't_stop', 'npz_name']
+    fil_params_list= ['nifs', 'nbits', 'nchans', 'hdr_size']
+     
     print_params(params_list)
-    print_fits_params(fits_params_list)
+    print_fil_params(fil_params_list)
 
-    # Get Header Info    
-    hotpotato= GetHeaderInfo_method.main(hotpotato)
-    
-    # Maskdata used a special file
-    if 'rfifind' in get_value(hotpotato, 'methods') and 'maskdata' in get_value(hotpotato, 'methods'): 
-        filfile = get_value(hotpotato, 'mask_dir') + '/' + get_value(hotpotato, 'filfile')
-    else:
-        filfile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'filfile') + '.fil'
-    
-    print("Using %s as filterbank file to convert" %(filfile) )
+    filname= get_value(hotpotato, 'filname')
+    directory= get_value(hotpotato, 'directory') 
+    t_start= get_value(hotpotato, 't_start')
+    t_stop= get_value(hotpotato, 't_stop')
 
-    # Put the data (from the filfile) in Numpy array
-    dd = np.fromfile(filfile, dtype='float32')
-    dd = np.reshape(dd, (-1, get_value(hotpotato, 'NCHAN'))).T
-    dd = np.flip(dd, axis= 0)
+    filfile= directory + '/' + filname
+    # Get Header Info from filterbank file
+
+    #wat= Waterfall(filfile, load_data= False)
+    #header= wat.header
+    #n_ifs= header[b'nifs']
+    #n_bytes= header[b'nbits'] / 8
+    #nchans= header[b'nchans']
+    #hdr_size= len_header(filfile)
+
+    n_ifs= get_value(hotpotato, 'nifs')
+    n_bytes= get_value(hotpotato, 'nbits') / 8
+    nchans= get_value(hotpotato, 'nchans')
+    hdr_size= get_value(hotpotato, 'hdr_size')
+    f= open(filfile, 'rb')
     
-    # For Testing ONLY: reduce the size of the data
-    if (get_value(hotpotato, 'testing_mode') == True):
-        dt = get_value(hotpotato, 'TBIN')
-        dd = dd[:, int(128.0/dt):int(129.0/dt)]
-    
+    print('f: ' + str(f))
+    print('hdr_size: ' + str(hdr_size))
+    print('t_start: ' + str(t_start))
+
+    dd= load_fil_data(filname, directory, t_start, t_stop, n_ifs, nchans, n_bytes, f, hdr_size, pol=[0], current_cursor_position=0)
+
+    print(dd.shape)
+    dd= dd[0]
+    print(dd.shape) 
     if (get_value(hotpotato, 'output_npz_file') == True):
         save_npz(get_value(hotpotato, 'npz_name'), dd)
         
