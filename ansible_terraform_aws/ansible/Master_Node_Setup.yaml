@@ -1,0 +1,72 @@
+---
+- name: install docker ce and compose
+# install as per https://docs.docker.com/install/linux/docker-ce/centos/
+  hosts: all
+  become: true
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: install packages for docker ce
+      yum:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - yum-utils
+        - git
+        - device-mapper-persistent-data
+        - lvm2
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+    - name: Install Docker CE
+      package:
+        name: docker-ce
+        state: latest
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: Add user to docker group
+      user:
+        name: centos
+        groups: docker
+        append: yes
+    - name: Install Extra Package for Enterprise Linux
+      yum:
+        name: epel-release
+        state: latest
+    - name: Install python-pip
+      yum:
+        name: python-pip
+        state: latest
+    - name: Install Docker Compose
+      yum:
+        name: docker-compose
+        state: latest
+- name: install pip and aws cli
+  hosts: all 
+  become: true
+  become_method: sudo
+  become_user: root
+  tasks: 
+    - name: create .aws 
+      file: 
+        path: /home/centos/.aws
+        state: directory
+        owner: centos
+        group: centos
+        mode: 0775
+    - name: update pip
+      pip: 
+        name: pip
+        state: latest
+    - name: install awscli 
+      pip:
+        name: awscli 
+    - name: copy aws credential 
+      copy:
+        src: ~/.aws/credentials
+        dest: /home/centos/.aws/credentials
+...
