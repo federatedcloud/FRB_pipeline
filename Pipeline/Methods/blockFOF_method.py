@@ -41,8 +41,10 @@ def main(hotpotato):
     if filetype == 'psrfits':
         dt= get_value(hotpotato, 'TBIN')
         dv= abs(get_value(hotpotato, 'CHAN_BW'))
-        gd['tsamp']= int(get_value(hotpotato, 'tsamp'))
-        gd['vsamp']= int(get_value(hotpotato, 'vsamp'))
+        tsamp= int(get_value(hotpotato, 'tsamp'))
+        vsamp= int(get_value(hotpotato, 'vsamp'))
+        gd['tsamp']= tsamp
+        gd['vsamp']= vsamp
         gd['vlow'] = get_value(hotpotato, 'OBSFREQ') - dv * get_value(hotpotato, 'NCHAN') / 2.0
         gd['vhigh'] = get_value(hotpotato, 'OBSFREQ') + dv * get_value(hotpotato, 'NCHAN') / 2.0
     elif filetype == 'filterbank':
