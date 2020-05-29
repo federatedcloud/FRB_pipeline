@@ -171,3 +171,5 @@ RUN chown -R dev /home/dev
 USER dev
 WORKDIR /home/dev
 
+EXPOSE 22
+
