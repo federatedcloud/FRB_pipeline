@@ -36,6 +36,8 @@ superclust_*.txt
 # other
 *.DS_Store
 
+# Docker
+build_output.txt
 
 # Terraform
 *.tfstate*
