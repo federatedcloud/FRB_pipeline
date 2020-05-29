@@ -9,6 +9,9 @@ def main(hotpotato):
         directory, basename, mask_dir, mask_name
     """
     print("Calculating modulation index...\n")
+
+    params_list= ['directory', 'basename', 'mask_dir', 'mask_name']
+    print_params(params_list)
     
     directory= get_value(hotpotato, 'directory')
     basename= get_value(hotpotato, 'basename')

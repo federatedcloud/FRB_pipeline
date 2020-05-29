@@ -9,7 +9,12 @@ import numpy as np
 def main(hotpotato):
     print("Making Plots.")
 
-    ds_name = get_value(hotpotato, 'ds_name')             # file location
+    params_list= ['ds_name', 'tstart', 't0', 'tread', 'tsamp', 'vsamp', 'dm']
+    fits_params_list= ['TBIN', 'CHAN_BW', 'OBSFREQ', 'NCHAN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+    
+    ds_name = get_value(hotpotato, 'ds_name')
     tstart = get_value(hotpotato, 'tstart')
     t0 = get_value(hotpotato, 't0')
     tread = get_value(hotpotato, 'tread')

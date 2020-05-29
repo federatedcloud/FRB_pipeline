@@ -1,8 +1,11 @@
+import os
 import sys, time
 import subprocess as sp
 import numpy as np
+from glob import glob
 sys.path.insert(0, '../Modules')
 
+from writelog import *
 
 def get_value(hotpotato, key):
     return hotpotato.get(key,'')
@@ -15,25 +18,49 @@ def try_cmd(cmd, stdout=None, stderr=None):
     # Run the command in the string cmd using sp.check_call()
     # If there is a problem running, a CalledProcessError will occur
     # and the program will quit.
-    print("\n\n %s \n\n" %cmd)
+    log_it("\n\n %s \n\n" %cmd)
     
     try:
         retval = sp.check_call(cmd, shell=True, stdout=stdout, stderr=stderr,
                                 executable='/bin/bash')
     except sp.CalledProcessError:
-        sys.exit("%s \n The above command did not work, quitting.\n" %cmd)
+        log_it("%s \n The above command did not work, quitting.\n" %cmd)
+        sys.exit()
 
+def print_params(param_list):
+    # Print a list of required parameters. The list is constructed in individual method files.
+    params_string= 'The following parameters must be specified in the configuration file to call this method:\n'
+    for index,param in enumerate(param_list):
+        if (index == (len(param_list)-1) ): # Do not place comma on last item
+            params_string += param
+        else:
+            params_string += param + ', '
+    log_it('\n' + params_string + '\n')
 
-# Save dynamic spectra and headers as .npz file
-def save_npz(npzfilename, dynamic_spectra, primary_header=None, subint_header=None):
-    print("Writing numpy array to disk...\n")
+def print_fits_params(param_list):
+    # Print a list of parameters that must be pulled from a FITS header.
+    params_string= 'The following parameters must be pulled from a FITS file header, or specified in the configuration file:\n'
+    for param in param_list:
+        params_string+= param + ', '
+    log_it('\n' + params_string + '\n')
+
+def print_fil_params(param_list):
+    # Print a list of parameters that must be pulled from a FITS header.
+    params_string= 'The following parameters must be pulled from a Filterbank file header, or specified in the configuration file:\n'
+    for param in param_list:
+        params_string+= param + ', '
+    log_it('\n' + params_string + '\n')
+
+def save_npz(npzfilename, dynamic_spectra):
+    # Save dynamic spectra and headers as .npz file
+    log_it("Writing numpy array to disk...\n")
     
     if (npzfilename == ""):
         npzfilename = "output_dynamic_spectra"
     
-    np.savez(npzfilename, dynamic_spectra, primary_header, subint_header);
+    np.savez(npzfilename, dynamic_spectra);
     
-    print("Write complete.")
+    log_it("Write complete.")
     return
 
 
@@ -43,7 +70,7 @@ def read_npz(npzfilename, array_index=0):
     Return: numpy array
     Return the array_index(th) array in npzfilename
     '''
-    print("Reading .npz file into numpy array")
+    log_it("Reading .npz file into numpy array")
     npzfile= np.load(npzfilename + '.npz')
     files_list= npzfile.files
     return npzfile[files_list[array_index]]

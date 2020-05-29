@@ -4,13 +4,18 @@ import numpy as np
 
 def main(hotpotato):
     print("Running Friend-Of-Friends")
+
+    params_list= ['dec_name or npz_name', 'm1', 'm2', 't_gap', 'v_gap', 'tstart', 
+               'fof_testing_mode', 'tsamp', 'vsamp', 'directory']
+    fits_params_list= ['TBIN', 'CHAN_BW', 'OBSFREQ', 'NCHAN']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
     
     # Set up fof-specific parameters
     try:
         dec_name= get_value(hotpotato, 'dec_name')
+        data= np.load(dec_name + '.npy')
         print("Running Friend-Of-Friends on Decimated data.")
-        dec_file= np.load(dec_name + '.npz')
-        data= dec_file[dec_file.files[0]]
     except:
         print("Running Friend-Of-Friends NON-decimated data.")
         npz_file = np.load(get_value(hotpotato, 'npz_name') + '.npz')
@@ -35,7 +40,7 @@ def main(hotpotato):
     gd['vhigh'] = get_value(hotpotato, 'OBSFREQ') + dv * get_value(hotpotato, 'NCHAN') / 2.0
     
     # Run algorithm
-    fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode)
+    fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, False, 0)
     
     cmd= "mv *clust_* %s" %(get_value(hotpotato, 'directory'))
     try_cmd(cmd)

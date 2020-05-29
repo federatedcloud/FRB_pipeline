@@ -1,0 +1,9 @@
+StrictHostKeyChecking no
+PasswordAuthentication no
+%{ for addr in split(",", ip_addrs) ~}
+Host c${index(split(",", ip_addrs), addr)+1} 
+    Hostname ${addr}
+    Port ${port}
+    User ${user}
+    IdentityFile /home/${user}/.ssh/cluster_access_ssh_id_rsa
+%{ endfor ~}

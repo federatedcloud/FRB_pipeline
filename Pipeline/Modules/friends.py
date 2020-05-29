@@ -6,8 +6,10 @@
 '''
 
 # General Imports
-import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import math
 import scipy.odr as odr
 from scipy.stats import linregress
@@ -123,21 +125,37 @@ class Cluster:
 
         mask = np.zeros((vchan,tchan))
 
+        #print(mask.shape)
+        #print(mask)
         # disperse each frequency band, and mask
         t_co = np.arange(tchan)
         lin_v_co = lin_func(self.linear, t_co).astype(int)
         valid_v = np.where((lin_v_co >= 0) & (lin_v_co < vchan))
         
         if lin_v_co[0] > lin_v_co[-1]:
-            t_min = valid_v[0][-1]
-            t_max = valid_v[0][0]
+            try:
+                t_min = valid_v[0][-1]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][0]
+            except:
+                t_max= 0
         else:
-            t_min = valid_v[0][0]
-            t_max = valid_v[0][-1]
+            try:
+                t_min = valid_v[0][0]
+            except:
+                t_min= 0
+            try:
+                t_max = valid_v[0][-1]
+            except:
+                t_max= 0
 
         for t in range(t_min,t_max):
             mask[lin_v_co[t], (t-dT_max):(t+dT_max)] = 1
 
+        #print(mask.shape)
+        #print(mask)
         self.lin_mask = mask
 
     def fit_extrapolate(self, vchan, tchan, tstart, C):
@@ -147,31 +165,6 @@ class Cluster:
         self.DM_extrapolate(vchan, tchan)
         self.lin_extrapolate(vchan, tchan)
         
-        
-    # add() needs to be updated
-    '''def add(self, coord, sig):
-        # coord is tuple, sig is the signal at that coordinate
-        self.v_co = np.append(self.v_co,coord[0])
-        self.t_co = np.append(self.t_co,coord[1])
-        self.sigs = np.append(self.sigs,sig)
-         
-        self.N += 1
-        self.t_mean = (self.t_mean * (self.N-1) + coord[1]) / self.N
-        self.v_mean = (self.v_mean * (self.N-1) + coord[0]) / self.N
-        if coord[0] > self.v_range[1]:
-            self.v_range = (self.v_range[0],coord[0])
-        elif coord[0] < self.v_range[0]:
-            self.v_range = (coord[0],self.v_range[1])
-        if coord[1] > self.t_range[1]:
-            self.t_range = (self.t_range[0],coord[1]) 
-        elif coord[1] < self.t_range[0]:
-            self.t_range = (coord[1],self.t_range[1])
-
-        self.sig_mean = (self.sig_mean * (self.N-1) + sig) / self.N
-        if sig > self.sig_max:
-            self.sig_max = sig       
-            self.coord_max = coord'''
-
 
     def statline(self):
         '''Return a string of the class attributes separated by tabs.'''
@@ -281,8 +274,6 @@ def iterative_stats(data, out, thresh):
         ree = np.ma.array(data,mask=mask)
         mean2 = ree.mean()
         std2 = ree.std()
-        print("mean= " + str(mean))
-        print("std= " + str(std))
 
     return (mean,std)
 
@@ -405,7 +396,7 @@ def flag_rfi(clust_list, upper, lower):
     return removed
 
 
-def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
+def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block):
   
     global dt
     global dv
@@ -426,6 +417,7 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
 
     ''' Perform a friends-of-friends search algorithm.
         Arguments:
+            (0) gd --
             (1) data -- raw dynamic spectrum array
             (2) m1 -- single pixel SNR threshold
             (3) m2 -- cluster SNR threshold
@@ -434,13 +426,17 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
             (6) t_gap -- number of empty time samples allowed...
             (7) v_gap -- number of empty freq. samples allowed... 
                  between pixels in the same cluster
+            (8) tstart --
+            (9) testing_mode -- 
+            (10) block_mode --
+            (11) block
     '''
     print("Data Shape: " + str(data.shape))
     if testing_mode == True:
         plt.imshow(data)
         plt.show()
-        plt.imshow(data, aspect=24.0)
-        plt.show()
+        #plt.imshow(data, aspect=24.0)
+        #plt.show()
 
     print("Computing mean and std.dev. of background noise...")
     (mean,std) = iterative_stats(data, 3, 0.01)
@@ -466,7 +462,11 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
     print("Writing Cluster statistics to text file...")
     clust_list = []
     best_clusters = []
-    filename = "clust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
+    
+    if block_mode == True:
+        filename= "block%d_clust_%.1f_%d_%d_%d_%d_%d" %(block,m1,m2,tsamp,vsamp,t_gap,v_gap)
+    else:
+        filename= "clust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
     f = open(filename + ".txt", "w")
     f.write("fof results, with\nm1=%.2f   m2=%.2f   tsamp=%.2f   vsamp=%.2f   t_gap=%.2f   v_gap=%.2f\n\n" \
             %(m1,m2,tsamp,vsamp,t_gap,v_gap))
@@ -486,16 +486,15 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
             
             # The four lines below can be uncommented to display
             # individual clusters on the dynamic spectrum.
-            if testing_mode == True:
-                temp = np.zeros(labeled_dil.shape)
-                temp[coords] = 1
-                plt.imshow(temp)
-                plt.show()
+            #if testing_mode == True:
+            #    temp = np.zeros(labeled_dil.shape)
+            #    temp[coords] = 1
+            #    plt.imshow(temp)
+            #    plt.show()
 
             f.write(new.statline())
     
     f.close()
-   
 
 
     stop = timeit.default_timer()
@@ -507,9 +506,12 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
         coords = (clust.v_co, clust.t_co)
         labeled_dil[coords] = clust.clust_SNR  
 
-    plt.savefig(filename + ".png")
+    if testing_mode == False:
+        plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
     if testing_mode == True:
         plt.imshow(labeled_dil)
+        plt.savefig(filename + ".png")
         plt.show()
 
     print("Finished Search.")
@@ -521,7 +523,11 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
     super_clusters = group_clusters(best_clusters, data, std, 128.00)
 
     # create a file containing stats about super clusters
-    super_filename = "superclust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
+    if block_mode == True:
+        super_filename = "block%d_superclust_%.1f_%d_%d_%d_%d_%d" %(block,m1,m2,tsamp,vsamp,t_gap,v_gap)
+    else:
+        super_filename = "superclust_%.1f_%d_%d_%d_%d_%d" %(m1,m2,tsamp,vsamp,t_gap,v_gap)
+
     sf = open(super_filename + ".txt", "w")
     sf.write("fof super clusters, with\nm1=%.2f   m2=%.2f   tsamp=%.2f   vsamp=%.2f   t_gap=%.2f   v_gap=%.2f\n\n" \
             %(m1,m2,tsamp,vsamp,t_gap,v_gap))
@@ -543,5 +549,59 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode):
             ext_mask[super_regions] = 200
             #unmasked = np.where(ext_mask==0)
             #ext_mask[unmasked] = labeled_dil[unmasked]
-            plt.imshow(ext_mask)
-            plt.show()
+            #plt.imshow(ext_mask)
+            #plt.show()
+
+
+'''
+    SORTING FUNCTIONS ---
+'''
+
+def open_results(filename):
+
+    f= open(filename)
+    lines_list= f.readlines()
+
+    params= lines_list[1]
+    stat_names= lines_list[3].split()
+    stat_lists= lines_list[4:]
+    
+    N= len(stat_lists)
+    for j in range(N):
+        stat_lists[j]= list(map(float, stat_lists[j].split()))
+
+    return (params, stat_names, stat_lists)
+
+
+def sort_results(stat_lists, stat_names, sort_stat):
+    '''
+        Sorts the stat_lists according to the statistic specified by sort_stat.
+        Returns: sorted stat_lists
+        Parameters:
+            stat_lists: a list of sublists, each sublist is a line of statistics from
+                       a cluster text  file
+            stat_names: a list containing the names of statistics, in order
+            sort_stat: the name of the statistic to sort by
+
+    '''
+    sort_index= stat_names.index(sort_stat)
+    stat_lists.sort(reverse= True, key=lambda x:x[sort_index])
+
+
+def write_sorted(filename, sort_stat):
+    '''
+        Write a new cluster text file, identical to <filename>, but sorted
+        (from high to low) by <sort_stat>
+    '''
+    (params, stat_names, stat_lists)= open_results(filename)
+    sort_results(stat_lists, stat_names, sort_stat)
+    
+    f = open(filename + "_sorted_%s.txt" %(sort_stat), "w")
+    f.write("fof results, with\nm1=%.2f   m2=%.2f   tsamp=%.2f   vsamp=%.2f   t_gap=%.2f   v_gap=%.2f\n\n" \
+            %(m1,m2,tsamp,vsamp,t_gap,v_gap))
+    f.write("N \tclust_SNR\t\tsig_mean\tsig_max\t\tSNR_mean\tSNR_max\t\tt_min\t\tt_max\t\t\tv_min\t\tv_max\t\tslope\tDM\n")
+    for k in range(len(stat_lists)):
+        f.write(stat_lists[k])
+
+
+

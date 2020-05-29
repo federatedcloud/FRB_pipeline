@@ -9,12 +9,16 @@ import importlib
 import readconfig as cfg
 
 from method import *
+from writelog import *
 
 true_values = ['True', 'true', 'TRUE', 'T', 't']
 false_values = ['False', 'false', 'FALSE', 'F', 'f']
 
 # Execution of pipeline happens here
 def main():
+    # Start logging
+    start_log()
+    
     # Set up command-line parser
     cmdparser = argparse.ArgumentParser()
     cmdparser.add_argument("configpath",
@@ -23,9 +27,9 @@ def main():
                             default="Templates/default.cfg")
     args = cmdparser.parse_args()
     if args.configpath == "Templates/default.cfg":
-        print("No configuration file was selected; using " + args.configpath)
+        log_it("No configuration file was selected; using " + args.configpath)
     
-    print("=====\n Pipeline started\n")
+    log_it("=====\n Pipeline started\n")
     
     # Genreal-purpose dictionary that gets passed everywhere
     hotpotato = {}
@@ -44,7 +48,8 @@ def main():
         hotpotato = temp.main(hotpotato)
     
     # Exit cleanly
-    sys.exit("\n Pipeline tasks completed \n=====")
+    log_it("\n Pipeline tasks completed \n=====")
+    sys.exit()
     
     #===============================
     # Optional Steps
@@ -53,7 +58,6 @@ def main():
     #  Basic error checking of config
     #  Error checking of methods
     #===============================
-
 
 
 ####################

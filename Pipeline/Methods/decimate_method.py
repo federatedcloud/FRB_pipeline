@@ -8,10 +8,19 @@ from decimate import *
 # Note: other parameters are obtained from header files (stored in hotpotato)
 
 def main(hotpotato):
-    print("Running decimation and smoothing.")
+    print("Running decimation and smoothing.\n")
+
+    params_list= ['dec_name', 'tsamp', 'vsamp', 'do_avg', 'do_smooth', 
+               'do_decimate', 'dec_testing_mode', 't_wdith', 'v_width', 't_sigma', 
+               'v_sigma', 'kernels', 'npz_name']
+    fits_params_list= ['TBIN', 'CHAN_BW']
+    print_params(params_list)
+    print_fits_params(fits_params_list)
+
     # Set up dictionary with data-related parameters
     dec_name = get_value(hotpotato, 'dec_name')
     gd = {}
+    print(hotpotato)
     dt = float(get_value(hotpotato, 'TBIN'))
     dv = abs(float(get_value(hotpotato, 'CHAN_BW')))
     gd['dt'] = dt
@@ -47,10 +56,8 @@ def main(hotpotato):
         sd['V_sigma'] = float(float(get_value(hotpotato, 'v_sigma')) / dv) 
 
     # Run decimation and smoothing
-    npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz')
-    print(npzfile)
-    print(npzfile.files)
+    npzfile= np.load(get_value(hotpotato, 'npz_name') + '.npz', allow_pickle=True)
     dec_data= decimate_and_smooth(gd, sd, npzfile[npzfile.files[0]], do_avg, do_smooth, do_decimate, testing_mode)
-    np.savez(dec_name, dec_data)
+    np.save(dec_name, dec_data)
     return hotpotato
 
