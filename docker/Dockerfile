@@ -163,11 +163,6 @@ ENV PATH=/opt/pulsar/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/pulsar/lib:$LD_LIBRARY_PATH
 
 RUN chown -R dev /home/dev
-#ENV GRANT_SUDO=1
-
-#RUN groupadd -g 999 docker
-#RUN usermod -aG docker dev
 
 USER dev
-WORKDIR /home/dev
 
