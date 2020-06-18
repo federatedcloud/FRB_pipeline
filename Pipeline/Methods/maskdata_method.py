@@ -25,7 +25,7 @@ def main(hotpotato):
     rfi_dir= get_value(hotpotato, 'rfi_dir')
     mask_dir= get_value(hotpotato, 'mask_dir')
     basename = get_value(hotpotato, 'basename')
-    mask_name= get_value(hotpotato, 'filfile')
+    mask_name= get_value(hotpotato, 'filname')
 
     # make sure rfifind has been run
     try:
