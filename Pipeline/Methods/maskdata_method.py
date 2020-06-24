@@ -56,13 +56,18 @@ def main(hotpotato):
     file_str = cmd[o_index+3:o_end]
     
     mv_cmd1 = 'mv %s* %s' %(file_str, mask_dir)
-    mv_cmd2 = 'mv %s %s/%s' %(mask_name, mask_dir, mask_name)
+    mv_cmd2 = 'mv %s %s/%s' %(mask_name, directory, mask_name)
     try_cmd(mv_cmd1)
     try_cmd(mv_cmd2)
     
     t_md_end = time.time()
     time_md = t_md_end - t_md_start
     
+    set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL')
+    set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS')
+    set_value(hotpotato, 'nchans', get_value(hotpotato, 'NCHAN')
+    set_value(hotpotato, 'hdr_size', 0)
+
     print("PRESTO maskdata took %f seconds." %(time_md))
 
     return hotpotato
