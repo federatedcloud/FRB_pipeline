@@ -62,10 +62,11 @@ def main(hotpotato):
     
     t_md_end = time.time()
     time_md = t_md_end - t_md_start
-    
-    set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL')
-    set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS')
-    set_value(hotpotato, 'nchans', get_value(hotpotato, 'NCHAN')
+
+    # allows use of fil2npz when working with a fits header
+    set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL'))
+    set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS'))
+    set_value(hotpotato, 'nchans', get_value(hotpotato, 'NCHAN'))
     set_value(hotpotato, 'hdr_size', 0)
 
     print("PRESTO maskdata took %f seconds." %(time_md))
