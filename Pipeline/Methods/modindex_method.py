@@ -9,9 +9,10 @@ def main(hotpotato):
     Calculates the modulation index using the Laura Spitler method.
     """
     print("Calculating modulation index...\n")
-
+    
+    data_dir = get_value(hotpotato, 'directory')
     work_dir= get_value(hotpotato, 'dictionary')
-    basename= get_value(hotpotato, 'basename')    
+    basename= get_value(hotpotato, 'basename')
     t_mi_start = time.time()
    
     # combine_sp_files(work_dir, basename) --
@@ -33,7 +34,8 @@ def main(hotpotato):
     # Continue with modulation index calcultion.
     mi_exec = get_value(hotpotato, 'mi_exec')
     combined_file = work_dir + "%s_MF.sp" %(basename)
-    masked_data_file = "raw_data_with_mask.fits"
+    maskname = 'raw_data_with_mask'
+    masked_data_file = data_dir + "/%s.fits" %(maskname)
     output_file = "%s_MF.mi" %(basename)
     
     cmd = "%s %s %s %s" %(mi_exec, combined_file, masked_data_file, output_file)
