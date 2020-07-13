@@ -16,7 +16,8 @@ def main(hotpotato):
     directory= get_value(hotpotato, 'directory')
     basename= get_value(hotpotato, 'basename')
     combined_file= directory + "/single_pulse/" + "%s_MF.sp" %(basename)
-    masked_data_file= get_value(hotpotato, 'mask_dir') + get_value(hotpotato, 'mask_name')
+    #masked_data_file= get_value(hotpotato, 'mask_dir') + get_value(hotpotato, 'mask_name')
+    masked_data_file = directory + "%s.fits" %(mask_name)  
     output_file= "%s_MF.mi" %(basename)
 
     t_mi_start = time.time()

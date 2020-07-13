@@ -165,7 +165,7 @@ def prune_related3(ts, overthr, nbin=2):
         #Make local copies
         tstmp=Num.copy(ts)
         overthr=Num.array(overthr)
-    overthr=Num.cast['int'](overthr)
+        overthr=Num.cast['int'](overthr)
 
         #Define clusters
         #Calculate index where each cluster ends

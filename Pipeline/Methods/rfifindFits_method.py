@@ -11,8 +11,8 @@ def main(hotpotato):
     # get/set file locations
     directory= get_value(hotpotato, 'directory')
     rfi_dir = get_value(hotpotato, 'rfi_dir')
-    basename = get_value(hotpotato, 'basename')
-    datafile = get_value(hotpotato, 'datafile')
+    basename = get_value(hotpotato, 'output')
+    datafile = get_value(hotpotato, 'basename')+'.fits'
     fitsfile= directory + '/' + datafile 
 
     # get parameters from dictionary

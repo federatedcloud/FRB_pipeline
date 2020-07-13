@@ -17,7 +17,7 @@ false_values = ['False', 'false', 'FALSE', 'F', 'f']
 # Execution of pipeline happens here
 def main():
     # Start logging
-    start_log()
+    #start_log()
     
     # Set up command-line parser
     cmdparser = argparse.ArgumentParser()

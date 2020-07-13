@@ -39,6 +39,6 @@ def setup_dtype(n_bytes):
     elif n_bytes == 1:
         return b'uint8'
     else:
-        logger.warning('Having trouble setting dtype, assuming float32.')
+        #logger.warning('Having trouble setting dtype, assuming float32.')
         return b'float32'
 ##############################################################
