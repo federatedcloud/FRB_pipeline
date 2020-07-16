@@ -40,6 +40,12 @@ def main(hotpotato):
     hdr_size= get_value(hotpotato, 'hdr_size')
     f= open(filfile, 'rb')
     
+    # For Testing ONLY: reduce the size of the data
+    if (get_value(hotpotato, 'testing_mode') == True):
+        dt = get_value(hotpotato, 'TBIN')
+        t_start = int(128.0/dt)
+        t_stop = int(128.5/dt)
+    
     print('f: ' + str(f))
     print('hdr_size: ' + str(hdr_size))
     print('t_start: ' + str(t_start))
