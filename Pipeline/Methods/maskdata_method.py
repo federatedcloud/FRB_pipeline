@@ -60,14 +60,19 @@ def main(hotpotato):
     try_cmd(mv_cmd1)
     try_cmd(mv_cmd2)
     
-    t_md_end = time.time()
-    time_md = t_md_end - t_md_start
-
     # allows use of fil2npz when working with a fits header
     set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL'))
     set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS'))
     set_value(hotpotato, 'nchans', get_value(hotpotato, 'NCHAN'))
     set_value(hotpotato, 'hdr_size', 0)
+    
+    # Output a masked dynamic spectra in the form of an npz file
+    print("NOTE: fil2npz_method is being used to output a masked dynamic spectra as an npz file.\n")
+    temp = __import__('fil2npz_method')
+    hotpotato = temp.main(hotpotato)
+    
+    t_md_end = time.time()
+    time_md = t_md_end - t_md_start
 
     print("PRESTO maskdata took %f seconds." %(time_md))
 
