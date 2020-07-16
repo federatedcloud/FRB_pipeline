@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from scipy import *
 
-
-threshold = 5.0
-
+# Candidate class for storing information about a certain pulse from its .singlepulse file
 class candidate:
     def __init__(self, DM, sigma, time, bin, downfact, block, sig, mean):
         self.DM = DM
@@ -26,7 +24,7 @@ class candidate:
     # Sort by time (i.e. bin) by default)
         return cmp(self.bin, other.bin)
 
-
+# Function that reads the singlepulse files and creates a list of candidate objects 
 def read_singlepulse_files(infiles, threshold, T_start, T_end):
     info0 = None
     DMs = []
@@ -62,7 +60,13 @@ def read_singlepulse_files(infiles, threshold, T_start, T_end):
     DMs.sort()
     return info0, DMs, candlist, num_v_DMstr
 
-def make_singlepulse_plot(sp_directory):
+def make_singlepulse_plot(sp_directory, threshold):
+        """
+        Creates an SNR histogram, a DM histogram, a SNR vs. DM graph, and a DM vs. time bubble
+        plot with SNR as the 3rd dimension.
+        Inputs:
+        sp_directory = the directory where the .singlepulse files are located
+        """
         args = glob.glob(sp_directory + '/*.singlepulse')
         info, DMs, candlist, num_v_DMstr = \
                       read_singlepulse_files(args, threshold, 0, 1e9)
@@ -97,7 +101,6 @@ def make_singlepulse_plot(sp_directory):
              log = True, histtype = 'step')
         ax1.set(xlabel = 'Signal-to-noise ratio', ylabel = 'Number of Pulses')
         ax1.xaxis.set_minor_locator(AutoMinorLocator())
-        #ax1.set_xticks(np.arange(min(snrs), max(snrs)+1, 1.0), minor = True)
         ax1.tick_params(axis = "both", direction = "in", which = 'both',  top = True, right = True, bottom =True)
         ax1.margins(x=0) 
 
@@ -127,10 +130,6 @@ def make_singlepulse_plot(sp_directory):
         cand_symbols = (cand_SNRs-threshold)/snr_range * 6.0 + 20.5
         cand_symbols = cand_symbols.astype(np.int32)
         cand_symbols[cand_symbols>26] = 500
-        #for ii in [26, 25, 24, 23, 22, 21, 20]:
-         #   inds = np.nonzero(cand_symbols==ii)[0]
-          #  ax4.scatter(cand_ts[inds], cand_DMs[inds], s = ii, color='none', edgecolor='black')
-
 
         ax4.scatter(cand_ts, cand_DMs, cand_SNRs, color='none', edgecolor='black')
         ax4.set(xlabel = 'Time (s)', ylabel = 'DM (cm$^{-3}$ pc)')

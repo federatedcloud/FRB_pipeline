@@ -7,16 +7,17 @@ from scipy import *
 from singlepulse_plot import *
 
 #Required parameters to put in the configuration file are:
-#  sp_directory
+#  sp_directory, threshold
 #Note: other parameters are obtained from header files (stored in hotpotato)
 
 def main(hotpotato):
-    print("Making singlepulse plots")
-
-    params_list= ['sp_directory']
+    params_list= ['sp_directory, threshold']
     print_params(params_list)
 
+    print("Making singlepulse plots")
+
     sp_directory= get_value(hotpotato, 'sp_directory')
-    make_singlepulse_plot(sp_directory)
+    threshold= get_value(hotpotato, 'threshold')
+    make_singlepulse_plot(sp_directory, threshold)
 
     return hotpotato 
