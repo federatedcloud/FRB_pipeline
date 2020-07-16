@@ -1,3 +1,7 @@
+# Data
+*.fits
+*.fil
+
 # python ignores
 *.pyc
 *.npz
