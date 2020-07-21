@@ -434,7 +434,8 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
     print("Data Shape: " + str(data.shape))
     if testing_mode == True:
         plt.imshow(data)
-        plt.show()
+        plt.savefig('figure1.png')
+        #plt.show()
         #plt.imshow(data, aspect=24.0)
         #plt.show()
 
@@ -486,11 +487,12 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
             
             # The four lines below can be uncommented to display
             # individual clusters on the dynamic spectrum.
-            #if testing_mode == True:
-            #    temp = np.zeros(labeled_dil.shape)
-            #    temp[coords] = 1
-            #    plt.imshow(temp)
-            #    plt.show()
+            if testing_mode == True:
+                temp = np.zeros(labeled_dil.shape)
+                temp[coords] = 1
+                plt.imshow(temp)
+                plt.show()
+                plt.savefig('dynspec' + str(n) + '.png')
 
             f.write(new.statline())
     
@@ -508,10 +510,13 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
 
     if testing_mode == False:
         plt.imshow(labeled_dil)
-        plt.savefig(filename + ".png")
+        plt.xlabel('Time samples (#)')
+        plt.ylabel('Frequency samples (#)')
+        plt.savefig('matt' + ".png")
+       #plt.savefig(filename + ".png")
     if testing_mode == True:
         plt.imshow(labeled_dil)
-        plt.savefig(filename + ".png")
+        plt.savefig('matt' + ".png")
         plt.show()
 
     print("Finished Search.")
