@@ -18,7 +18,14 @@ def main(hotpotato):
      
     print_params(params_list)
     print_fil_params(fil_params_list)
-
+    
+    filetype= get_value(hotpotato, 'filetype')
+    if filetype=='psrfits':
+        set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL'))
+        set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS'))
+        set_value(hotpotato, 'nchans', get_value(hotpotato, 'NCHAN'))
+        set_value(hotpotato, 'hdr_size', 0)
+ 
     filname= get_value(hotpotato, 'filname')
     directory= get_value(hotpotato, 'directory') 
     t_start= get_value(hotpotato, 't_start')
