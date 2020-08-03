@@ -11,7 +11,7 @@ def main(hotpotato):
     print("Running decimation and smoothing.\n")
 
     params_list= ['dec_name', 'tsamp', 'vsamp', 'do_avg', 'do_smooth', 
-               'do_decimate', 'dec_testing_mode', 't_wdith', 'v_width', 't_sigma', 
+               'do_decimate', 'dec_testing_mode', 't_width', 'v_width', 't_sigma', 
                'v_sigma', 'kernels', 'npz_name']
     fits_params_list= ['TBIN', 'CHAN_BW']
     print_params(params_list)
@@ -20,13 +20,23 @@ def main(hotpotato):
     # Set up dictionary with data-related parameters
     dec_name = get_value(hotpotato, 'dec_name')
     gd = {}
-    print(hotpotato)
-    dt = float(get_value(hotpotato, 'TBIN'))
-    dv = abs(float(get_value(hotpotato, 'CHAN_BW')))
+    if filetype == 'psrfits':
+        dt= get_value(hotpotato, 'TBIN')
+        dv= abs(get_value(hotpotato, 'CHAN_BW'))
+        gd['tsamp'] = get_value(hotpotato, 'tsamp')
+        gd['vsamp'] = get_value(hotpotato, 'vsamp')
+    elif filetype == 'filterbank':
+        dt= get_value(hotpotato, 'tsamp')
+        dv= abs(get_value(hotpotato, 'foff'))
+        # Note the naming convention change:
+        gd['tsamp'] = get_value(hotpotato, 'tcombine')
+        gd['vsamp'] = get_value(hotpotato, 'vcombine')
+    else:
+        print('Filetype not recognized. Quitting... ')
+        sys.exit()
+
     gd['dt'] = dt
     gd['dv'] = dv
-    gd['tsamp'] = int(get_value(hotpotato, 'tsamp'))
-    gd['vsamp'] = int(get_value(hotpotato, 'vsamp'))
 
     # Set up smoothing/decimation parameters
     sd = {} 
