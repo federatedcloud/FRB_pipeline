@@ -28,21 +28,41 @@ def main(hotpotato):
     v_gap = int(get_value(hotpotato, 'v_gap'))
     tstart = get_value(hotpotato, 'tstart')
     testing_mode = get_value(hotpotato, 'fof_testing_mode')
-    
+    filetype = get_value(hotpotato, 'filetype') 
+   
     # set up dictionary of global parameters
-    gd = {} 
-    gd['tsamp'] = int(get_value(hotpotato, 'tsamp'))
-    gd['vsamp'] = int(get_value(hotpotato, 'vsamp'))
-    gd['dt'] = get_value(hotpotato, 'TBIN')
-    gd['dv'] = abs(get_value(hotpotato, 'CHAN_BW')) # for some reason this was negative
-    dv = gd['dv']
-    gd['vlow'] = get_value(hotpotato, 'OBSFREQ') - dv * get_value(hotpotato, 'NCHAN') / 2.0
-    gd['vhigh'] = get_value(hotpotato, 'OBSFREQ') + dv * get_value(hotpotato, 'NCHAN') / 2.0
-    
+    gd = {}
+    if filetype == 'psrfits':
+        dt= get_value(hotpotato, 'TBIN')
+        dv= abs(get_value(hotpotato, 'CHAN_BW'))
+        tsamp= int(get_value(hotpotato, 'tsamp'))
+        vsamp= int(get_value(hotpotato, 'vsamp'))
+        gd['tsamp']= tsamp
+        gd['vsamp']= vsamp
+        gd['vlow'] = get_value(hotpotato, 'OBSFREQ') - dv * get_value(hotpotato, 'NCHAN') / 2.0
+        gd['vhigh'] = get_value(hotpotato, 'OBSFREQ') + dv * get_value(hotpotato, 'NCHAN') / 2.0
+    elif filetype == 'filterbank':
+        dt= get_value(hotpotato, 'tsamp')
+        dv= abs(get_value(hotpotato, 'foff'))
+        # Note the naming convention change:
+        tcombine= int(get_value(hotpotato, 'tcombine'))
+        vcombine= int(get_value(hotpotato, 'vcombine'))
+        gd['tsamp']= tcombine
+        gd['vsamp']= vcombine
+        gd['vlow']= get_value(hotpotato, 'vlow')
+        gd['vhigh']= get_value(hotpotato, 'vhigh')
+    else:
+        print('Filetype not recognized. Quitting... ')
+        sys.exit()
+
+    gd['dt']= dt
+    gd['dv']= dv
+
+   
     # Run algorithm
     fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, False, 0)
-    
+    '''
     cmd= "mv *clust_* %s" %(get_value(hotpotato, 'directory'))
     try_cmd(cmd)
-
+    '''
     return hotpotato
