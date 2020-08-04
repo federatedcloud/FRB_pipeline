@@ -14,7 +14,7 @@ def main(hotpotato):
     # Note: methods should always be in config file
     params_list= ['methods', 'filname', 'directory', 
                   'output_npz_file', 't_start', 't_stop', 'npz_name']
-    fil_params_list= ['nifs', 'nbits', 'nchans', 'hdr_size']
+    fil_params_list= ['nifs', 'NBITS', 'nchans', 'hdr_size']
      
     print_params(params_list)
     print_fil_params(fil_params_list)
@@ -37,12 +37,12 @@ def main(hotpotato):
     #wat= Waterfall(filfile, load_data= False)
     #header= wat.header
     #n_ifs= header[b'nifs']
-    #n_bytes= header[b'nbits'] / 8
+    #n_bytes= header[b'NBITS'] / 8
     #nchans= header[b'nchans']
     #hdr_size= len_header(filfile)
 
     n_ifs= get_value(hotpotato, 'nifs')
-    n_bytes= get_value(hotpotato, 'nbits') / 8
+    n_bytes= get_value(hotpotato, 'NBITS') / 8
     nchans= get_value(hotpotato, 'nchans')
     hdr_size= get_value(hotpotato, 'hdr_size')
     f= open(filfile, 'rb')
