@@ -6,7 +6,7 @@ def main(hotpotato):
     print("Organizing output files")
    
     params_list= ['directory', 'output_directory', 'mask_dir', 'move_npz_file', 
-                  'move_combined_file', 'move_maskdata_file', 'filename_npz'
+                  'move_combined_file', 'move_maskdata_file', 'npz_name',
                   'basename', 'filname']
     print_params(params_list)
      
@@ -14,12 +14,15 @@ def main(hotpotato):
     mask_dir = get_value(hotpotato, 'mask_dir')
     results_dir = get_value(hotpotato, 'output_directory')
     
+    if not os.path.exists(results_dir):
+        os.makedirs(results_dir)
+    
     # Move generated .npz file
     if (get_value(hotpotato, 'move_npz_file') == True):
         if (get_value(hotpotato, 'output_npz_file') == False):
             print("No .npz file output to move, skipping.")
         else:
-            cmd = "mv %s.npz %s" %(get_value(hotpotato, 'filename_npz'), results_dir)
+            cmd = "mv %s.npz %s" %(get_value(hotpotato, 'npz_name'), results_dir)
             try_cmd(cmd)
     
     # Move generated combined .fits file
@@ -33,16 +36,16 @@ def main(hotpotato):
         try_cmd(cmd)
 
 # TODO: rewrite this based on https://stackoverflow.com/questions/21804935/how-to-use-the-mv-command-in-python-with-subprocess    
-#    # Move generated text files
-#    if (get_value(hotpotato, 'move_txt_files') == True):
-#        cmd = "mv *.txt %s" %(results_dir)
-#        try_cmd(cmd)
-#    
-#    # Move generated png files
-#    if (get_value(hotpotato, 'move_png_files') == True):
-#        cmd = "mv *.png %s" %(results_dir)
-#        try_cmd(cmd)
+    # Move generated text files
+    if (get_value(hotpotato, 'move_txt_files') == True):
+        cmd = "mv *.txt %s" %(results_dir)
+        try_cmd(cmd)
     
+    # Move generated png files
+    if (get_value(hotpotato, 'move_png_files') == True):
+        cmd = "mv *.png %s" %(results_dir)
+        try_cmd(cmd)
+   
     
     # Insert more move commands in here as needed to organize results
     

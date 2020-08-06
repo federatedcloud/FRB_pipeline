@@ -18,15 +18,16 @@ def main(hotpotato):
     hotpotato = GetHeaderInfo_method.main(hotpotato)
 
     # Get Data from Fits file
-    infile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'basename') + '.fits'
+    #infile = get_value(hotpotato, 'directory') + '/' + get_value(hotpotato, 'basename') + '.fits'
+    infile = get_value(hotpotato, 'directory') + '/' + 'raw_data_with_mask.fits'
     hdulist = fits.open(infile, ignore_missing_end=True)
     #hdu = hdulist['SUBINT']
     #freqs = hdu.data[0]['dat_freq']
     #dat = hdu.data['DATA']
     hdu = hdulist[1]
     freqs = hdu.data[0]['dat_freq']
-    dat = hdu.data[:]['data']
-
+    data = hdu.data[:]['data']
+    '''
     print('FITS dat shape: ' + str(dat.shape))
     if (get_value(hotpotato, 'NBITS') == 2):
         piece0 = np.bitwise_and(dat >> 6, 0x03)
@@ -50,7 +51,14 @@ def main(hotpotato):
         dd = dd[:, int(128.0/dt):int(128.5/dt)]
     
     print("Testing Mode reduced shape: " + str(dd.shape))
-    if (get_value(hotpotato, 'output_npz_file') == True):
-        save_npz(get_value(hotpotato, 'npz_name'), dd)
+    '''
+    data = data.reshape((data.shape[0]*data.shape[1],data.shape[2],data.shape[3])) # (Ntsamples, NPOL, NCHANS)
+    data = np.moveaxis(data,0,-1) # Move time samples to last axis of array.
+    data = data[0]   # Select required polarization. Data shape = (NCHANS, Ntsamples)
+    print('Data shape:', data.shape)
     
+    if (get_value(hotpotato, 'output_npz_file') == True):
+        save_npz(get_value(hotpotato, 'npz_name'), data)
+    
+
     return hotpotato

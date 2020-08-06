@@ -18,7 +18,7 @@ def main(hotpotato):
     tstart = get_value(hotpotato, 'tstart')
     t0 = get_value(hotpotato, 't0')
     tread = get_value(hotpotato, 'tread')
-    dt = get_value(hotpotato, 'TBIN'] * get_value(hotpotato, 'tsamp')
+    dt = get_value(hotpotato, 'TBIN') * get_value(hotpotato, 'tsamp')
     dv = get_value(hotpotato, 'CHAN_BW') * get_value(hotpotato, 'vsamp')
     nsub = get_value(hotpotato, 'NCHAN') * get_value(hotpotato, 'vsamp')
     vmax = get_value(hotpotato, 'OBSFREQ')

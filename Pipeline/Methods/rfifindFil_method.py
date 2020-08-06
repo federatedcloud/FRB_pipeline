@@ -12,7 +12,7 @@ def main(hotpotato):
     directory= get_value(hotpotato, 'directory')
     rfi_dir = get_value(hotpotato, 'rfi_dir')
     basename = get_value(hotpotato, 'basename')
-    filname = directory + '/' + get_value(hotpotato, 'filname')
+    filname = directory + '/' + get_value(hotpotato, 'filname_withhdr')
     
     print('directory:' + directory)
     print('filname:' + filname)

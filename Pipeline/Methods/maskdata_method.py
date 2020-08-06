@@ -67,9 +67,9 @@ def main(hotpotato):
     set_value(hotpotato, 'hdr_size', 0)
     
     # Output a masked dynamic spectra in the form of an npz file
-    print("NOTE: fil2npz_method is being used to output a masked dynamic spectra as an npz file.\n")
-    temp = __import__('fil2npz_method')
-    hotpotato = temp.main(hotpotato)
+    #print("NOTE: fil2npz_method is being used to output a masked dynamic spectra as an npz file.\n")
+    #temp = __import__('fil2npz_method')
+    #hotpotato = temp.main(hotpotato)
     
     t_md_end = time.time()
     time_md = t_md_end - t_md_start

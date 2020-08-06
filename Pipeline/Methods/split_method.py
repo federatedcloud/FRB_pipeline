@@ -29,7 +29,9 @@ def main(hotpotato):
     if bandpass_name != '':
         filelist= glob('%s*.npy' %(bandpass_name))
         # Note that each bandpass-corrected segment has the same time dimension
+        print('aaaa')
     else:
+        print('bbbb')
         filelist= [npz_name + '.npz']
     
     print(filelist)

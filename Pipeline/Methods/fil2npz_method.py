@@ -20,6 +20,7 @@ def main(hotpotato):
     print_fil_params(fil_params_list)
     
     filetype= get_value(hotpotato, 'filetype')
+
     if filetype=='psrfits':
         set_value(hotpotato, 'nifs', get_value(hotpotato, 'NPOL'))
         set_value(hotpotato, 'nbits', get_value(hotpotato, 'NBITS'))
@@ -42,7 +43,7 @@ def main(hotpotato):
     #hdr_size= len_header(filfile)
 
     n_ifs= get_value(hotpotato, 'nifs')
-    n_bytes= get_value(hotpotato, 'NBITS') / 8
+    n_bytes= get_value(hotpotato, 'nbits') / 8
     nchans= get_value(hotpotato, 'nchans')
     hdr_size= get_value(hotpotato, 'hdr_size')
     f= open(filfile, 'rb')

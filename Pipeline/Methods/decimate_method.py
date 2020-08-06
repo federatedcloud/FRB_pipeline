@@ -18,7 +18,10 @@ def main(hotpotato):
     print_fits_params(fits_params_list)
 
     # Set up dictionary with data-related parameters
-    dec_name = get_value(hotpotato, 'dec_name')
+    split_dir= get_value(hotpotato, 'split_dir')
+    filetype= get_value(hotpotato, 'filetype')
+    dec_name= get_value(hotpotato, 'dec_name')
+
     gd = {}
     if filetype == 'psrfits':
         dt= get_value(hotpotato, 'TBIN')

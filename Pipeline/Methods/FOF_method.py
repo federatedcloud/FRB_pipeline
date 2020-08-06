@@ -49,8 +49,11 @@ def main(hotpotato):
         vcombine= int(get_value(hotpotato, 'vcombine'))
         gd['tsamp']= tcombine
         gd['vsamp']= vcombine
-        gd['vlow']= get_value(hotpotato, 'vlow')
-        gd['vhigh']= get_value(hotpotato, 'vhigh')
+        gd['vlow'] = get_value(hotpotato, 'fch1') - dv * get_value(hotpotato, 'nchans')
+        gd['vhigh'] = get_value(hotpotato, 'fch1')
+        gd['flip']= True
+        #gd['vlow']= get_value(hotpotato, 'fch1') - dv * get_value(hotpotato, 'nchans')
+        #gd['vhigh']= get_value(hotpotato, 'fch1')
     else:
         print('Filetype not recognized. Quitting... ')
         sys.exit()

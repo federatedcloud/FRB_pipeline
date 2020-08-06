@@ -45,8 +45,9 @@ def main():
         if (x == 'data'):
             continue
         temp = __import__(x + '_method')
+        print(hotpotato)
         hotpotato = temp.main(hotpotato)
-    
+        print(hotpotato)
     # Exit cleanly
     log_it("\n Pipeline tasks completed \n=====")
     sys.exit()
