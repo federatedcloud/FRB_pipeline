@@ -15,7 +15,7 @@ import scipy.odr as odr
 from scipy.stats import linregress
 import scipy.ndimage as ni
 from subprocess import call
-from plotnpz import plot_ds
+from plotnpz import plot
 
 # kDM -- Interstellar dispersion constant
 kDM = 4148.808 # MHz^2 / (pc cm^-3)
@@ -68,14 +68,6 @@ class Cluster:
             The fitted DM value is stored in the field <DM>.'''
         # Note: frequency axis is flipped, because high freqs correspond to low array indices
         t_co = (self.t_co * tsamp * dt) + tstart
-        print('v_max_index:', v_max_index)
-        print('type:', type(v_max_index))
-        print('self.v_co:', self.v_co)
-        print('type:', type(self.v_co))
-        print('dv:', dv)
-        print('type:', type(dv))
-        print('vlow:', vlow)
-        print('type:', type(vlow))
         v_co = ((v_max_index-self.v_co) * vsamp * dv) + vlow
         #print(DM_func([560.0*kDM], v_co, t_co[0], v_co[0]))
         data = odr.Data(v_co,t_co) # y-axis is time
@@ -468,8 +460,6 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
         for t in range(tchan):
             if mask[v,t] == 0:
                  labeled_dil[v,t] = 0
-    np.savez('labeled_dil.npz', labeled_dil)
-    print('numclusters:', num_clusters)
     print("Writing Cluster statistics to text file...")
     clust_list = []
     best_clusters = []
@@ -485,7 +475,6 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
 
     # create cluster objects and add to <clust_list> and write stats to file
     for n in range(num_clusters):
-        print('n:', n)
         coords = np.where(labeled_dil==(n+1))
         signals = data[coords]
         new = Cluster(coords,signals,std)
@@ -520,9 +509,9 @@ def fof(gd, data, m1, m2, t_gap, v_gap, tstart, testing_mode, block_mode, block)
         labeled_dil[coords] = clust.clust_SNR  
 
     if testing_mode == False:
-       plot_ds(np.fliplr(labeled_dil), save=True, filename=filename)             #plt.savefig(filename + ".png")
+       plot(np.fliplr(labeled_dil), save=True, filename=filename)             #plt.savefig(filename + ".png")
     if testing_mode == True:
-       plot_ds(np.fliplr(labeled_dil)) 
+       plot(np.fliplr(labeled_dil)) 
 
     print("Finished Search.")
 
