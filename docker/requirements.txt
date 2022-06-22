@@ -15,6 +15,6 @@ acor
 line_profiler 
 jplephem
 numdifftools
-numpy==1.16.4
+numpy==1.22.0
 pdat
 emcee
